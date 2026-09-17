@@ -34,6 +34,12 @@ body{
     min-height:100vh;
     position:relative;
     overflow:hidden;
+    isolation:isolate;
+    color:#e8edf8;
+    background:
+        radial-gradient(circle at 8% 5%,#18243d 0,transparent 30%),
+        radial-gradient(circle at 92% 8%,#241a3f 0,transparent 32%),
+        linear-gradient(135deg,#070a12,#0b1020 55%,#090711);
 }
 
 .calculator-page:before{
@@ -103,7 +109,7 @@ body{
 .site-brand small{
     display:block;
     margin-top:2px;
-    color:#8993a7;
+    color:#748198;
     font-size:9px;
     letter-spacing:.12em;
 }
@@ -115,11 +121,11 @@ body{
 }
 
 .header-pill{
-    border:1px solid #dfe4ed;
-    background:#ffffff9c;
+    border:1px solid #ffffff12;
+    background:#ffffff08;
     padding:8px 11px;
     border-radius:99px;
-    color:#697386;
+    color:#9aa7bd;
     font-size:9px;
     font-weight:700;
     letter-spacing:.08em;
@@ -157,10 +163,10 @@ body{
     align-items:center;
     gap:8px;
     padding:7px 11px;
-    border:1px solid #dce3ef;
-    background:#ffffffa8;
+    border:1px solid #ffffff12;
+    background:#ffffff08;
     border-radius:99px;
-    color:#667085;
+    color:#9aa7bd;
     font-size:9px;
     font-weight:700;
     letter-spacing:.13em;
@@ -180,7 +186,7 @@ body{
     line-height:.98;
     letter-spacing:-.055em;
     margin:0;
-    color:#111827;
+    color:#f5f7ff;
 }
 
 .hero h1 em{
@@ -191,7 +197,7 @@ body{
 }
 
 .hero-description{
-    color:#697386;
+    color:#9aa7bd;
     line-height:1.75;
     font-size:14px;
     max-width:470px;
@@ -206,10 +212,10 @@ body{
 
 .feature{
     padding:9px 12px;
-    border:1px solid #dfe4ec;
-    background:#ffffffa6;
+    border:1px solid #ffffff10;
+    background:#ffffff08;
     border-radius:11px;
-    color:#657084;
+    color:#9aa7bd;
     font-size:10px;
     font-weight:600;
 }
@@ -218,8 +224,8 @@ body{
 
 .calc-card{
     width:100%;
-    background:#ffffffd9;
-    border:1px solid #dce2ec;
+    background:#0d1320e6;
+    border:1px solid #ffffff12;
     border-radius:30px;
     box-shadow:
         0 30px 90px rgba(40,55,90,.15),
@@ -244,9 +250,9 @@ body{
 .calc-mode{
     font-size:8px;
     font-weight:800;
-    color:#6170c9;
-    background:#eef1ff;
-    border:1px solid #e0e5ff;
+    color:#9aa8ff;
+    background:#171d38;
+    border:1px solid #ffffff12;
     padding:6px 9px;
     border-radius:8px;
 }
@@ -255,8 +261,8 @@ body{
     min-height:135px;
     padding:20px;
     border-radius:21px;
-    background:#f5f7fb;
-    border:1px solid #e4e8ef;
+    background:#080d17;
+    border:1px solid #ffffff10;
     display:flex;
     flex-direction:column;
     justify-content:flex-end;
@@ -266,14 +272,14 @@ body{
 
 .previous{
     min-height:22px;
-    color:#9aa3b3;
+    color:#7f8da5;
     font-size:12px;
     overflow:hidden;
     white-space:nowrap;
 }
 
 .current{
-    color:#172033;
+    color:#edf2ff;
     font-size:38px;
     font-weight:700;
     letter-spacing:-.04em;
@@ -290,7 +296,7 @@ body{
     display:flex;
     justify-content:space-between;
     padding:10px 3px 12px;
-    color:#9aa3b3;
+    color:#7f8da5;
     font-size:8px;
     font-weight:700;
     letter-spacing:.08em;
@@ -306,8 +312,8 @@ button{
     height:54px;
     border:0;
     border-radius:14px;
-    background:#f3f5f8;
-    color:#273147;
+    background:#121a29;
+    color:#dbe4f4;
     font-family:inherit;
     font-size:14px;
     font-weight:600;
@@ -317,7 +323,7 @@ button{
 }
 
 button:hover{
-    background:#e9edf4;
+    background:#1a2436;
     transform:translateY(-1px);
 }
 
@@ -326,18 +332,18 @@ button:active{
 }
 
 .function{
-    background:#f0f1f5;
-    color:#697386;
+    background:#151d2b;
+    color:#9aa7bd;
 }
 
 .operator{
-    background:#e9edff;
-    color:#5367cf;
+    background:#171e3d;
+    color:#9aa8ff;
 }
 
 .clear{
-    background:#ffe9e9;
-    color:#d65353;
+    background:#32191d;
+    color:#ff8f9a;
 }
 
 .equals{
@@ -360,7 +366,7 @@ button:active{
     z-index:1000;
     display:none;
     place-items:center;
-    background:#f8fafc;
+    background:#030611;
     overflow:hidden;
 }
 
@@ -372,7 +378,7 @@ button:active{
     position:absolute;
     inset:0;
     background:
-        radial-gradient(circle at center,#ffffff 0,#e8eaff 20%,#aeb8ff 48%,#13172c 100%);
+        radial-gradient(circle at center,#dffcff 0,#5969ff 18%,#191d4a 48%,#030611 100%);
     opacity:0;
 }
 
@@ -458,9 +464,10 @@ button:active{
 }
 
 @keyframes transitionBg{
-    0%{opacity:0;transform:scale(.3)}
-    25%{opacity:1}
-    100%{opacity:1;transform:scale(1.4)}
+    0%{opacity:0;transform:scale(.72);filter:blur(14px)}
+    28%{opacity:1}
+    70%{opacity:1;filter:blur(0)}
+    100%{opacity:1;transform:scale(1.25);filter:blur(0)}
 }
 
 @keyframes coreBlast{
@@ -994,6 +1001,14 @@ footer{
         padding:13px 17px;
     }
 }
+
+/* Prevent calculator/light-mode styles from bleeding into ALEX MODS. */
+.launcher,.launcher *{color-scheme:dark;}
+.launcher{isolation:isolate;}
+.launcher button{appearance:none;}
+@media (prefers-reduced-motion:reduce){
+  .transition.active .transition-bg,.transition.active .transition-core,.transition.active .transition-ring,.transition.active .transition-text,.transition.active .glitch-line,.launcher.show{animation-duration:.01ms!important;animation-iteration-count:1!important;}
+}
 </style>
 </head>
 
@@ -1295,6 +1310,7 @@ const current = document.getElementById("current");
 const previous = document.getElementById("previous");
 
 let expression = "";
+let lastAction = "";
 
 function updateDisplay(){
     current.textContent = expression || "0";
@@ -1302,17 +1318,20 @@ function updateDisplay(){
 
 function append(value){
     expression += value;
+    lastAction = "";
     updateDisplay();
 }
 
 function clearCalc(){
     expression = "";
+    lastAction = "";
     previous.textContent = "";
     updateDisplay();
 }
 
 function backspace(){
     expression = expression.slice(0,-1);
+    lastAction = "";
     updateDisplay();
 }
 
@@ -1320,6 +1339,13 @@ function scientific(type){
 
     if(!expression)return;
 
+    if(type==="square" && expression==="1.20.6"){
+        lastAction="square";
+        triggerSecretTransition();
+        return;
+    }
+
+    lastAction="";
     try{
 
         let value = expression
@@ -1431,9 +1457,9 @@ function triggerSecretTransition(){
     setTimeout(()=>{
 
         document.getElementById("calculatorPage").style.display="none";
-
+        document.body.classList.add("launcher-active");
         transition.style.display="none";
-
+        transition.classList.remove("active");
         document.getElementById("launcher").classList.add("show");
 
         startParticles();
