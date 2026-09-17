@@ -8,7 +8,9 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+}
 
 html,body{
     margin:0;
@@ -26,9 +28,9 @@ body{
     overflow-x:hidden;
 }
 
-/* =========================================
-   CALCULATOR WEBSITE
-========================================= */
+/* =========================================================
+   CALCULATOR
+========================================================= */
 
 .calculator-page{
     min-height:100vh;
@@ -220,8 +222,6 @@ body{
     font-weight:600;
 }
 
-/* Calculator */
-
 .calc-card{
     width:100%;
     background:#0d1320e6;
@@ -267,7 +267,6 @@ body{
     flex-direction:column;
     justify-content:flex-end;
     text-align:right;
-    box-shadow:inset 0 2px 8px #00000004;
 }
 
 .previous{
@@ -318,7 +317,6 @@ button{
     font-size:14px;
     font-weight:600;
     cursor:pointer;
-    box-shadow:0 2px 5px #141e3208;
     transition:.15s ease;
 }
 
@@ -356,9 +354,9 @@ button:active{
     grid-column:span 2;
 }
 
-/* =========================================
-   SECRET TRANSITION
-========================================= */
+/* =========================================================
+   ORIGINAL SECRET TRANSITION - 0404
+========================================================= */
 
 .transition{
     position:fixed;
@@ -495,9 +493,9 @@ button:active{
     100%{top:105%;opacity:0}
 }
 
-/* =========================================
-   LAUNCHER
-========================================= */
+/* =========================================================
+   MINECRAFT LAUNCHER
+========================================================= */
 
 .launcher{
     display:none;
@@ -646,7 +644,7 @@ button:active{
     justify-content:center;
 }
 
-.eyebrow{
+.left .eyebrow{
     color:#8ea0c1;
     font-size:10px;
     font-weight:bold;
@@ -654,7 +652,7 @@ button:active{
     margin-bottom:18px;
 }
 
-.eyebrow:before{
+.left .eyebrow:before{
     content:"";
     display:inline-block;
     width:34px;
@@ -858,7 +856,7 @@ button:active{
     background:#ffffff06;
 }
 
-footer{
+.launcher footer{
     padding:15px 28px;
     border-top:1px solid #ffffff0d;
     color:#63718a;
@@ -866,8 +864,6 @@ footer{
     display:flex;
     justify-content:space-between;
 }
-
-/* Loading */
 
 .loading{
     position:fixed;
@@ -920,9 +916,692 @@ footer{
     color:#b7c4da;
 }
 
-/* Responsive */
+/* =========================================================
+   GAME CATALOG TRANSITION - 2323
+========================================================= */
 
-@media(max-width:900px){
+.catalog-transition{
+    position:fixed;
+    inset:0;
+    z-index:5000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    background:#02030a;
+    color:white;
+}
+
+.catalog-transition.active{
+    display:flex;
+}
+
+.warp{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    perspective:900px;
+}
+
+.warp-star{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:3px;
+    height:3px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 0 8px #fff;
+    transform:
+        translate(-50%,-50%)
+        rotate(var(--angle))
+        translateY(0);
+    opacity:0;
+}
+
+.catalog-transition.active .warp-star{
+    animation:warpStar 1.9s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay:var(--delay);
+}
+
+@keyframes warpStar{
+    0%{
+        opacity:0;
+        transform:
+            translate(-50%,-50%)
+            rotate(var(--angle))
+            translateY(0)
+            scale(.3);
+    }
+    12%{
+        opacity:1;
+    }
+    100%{
+        opacity:0;
+        transform:
+            translate(-50%,-50%)
+            rotate(var(--angle))
+            translateY(-90vh)
+            scale(7);
+    }
+}
+
+.warp-flash{
+    position:absolute;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:
+        0 0 30px #fff,
+        0 0 100px #55f3ff,
+        0 0 220px #9b5cff;
+    transform:scale(0);
+}
+
+.catalog-transition.active .warp-flash{
+    animation:warpFlash 2.05s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+@keyframes warpFlash{
+    0%{
+        transform:scale(0);
+        opacity:1;
+    }
+    35%{
+        transform:scale(3);
+        opacity:1;
+    }
+    100%{
+        transform:scale(130);
+        opacity:1;
+    }
+}
+
+.warp-ring{
+    position:absolute;
+    width:80px;
+    height:80px;
+    border:3px solid #75f7ff;
+    border-radius:50%;
+    box-shadow:
+        0 0 20px #55f3ff,
+        inset 0 0 20px #55f3ff;
+    transform:scale(.1);
+    opacity:0;
+}
+
+.catalog-transition.active .warp-ring{
+    animation:warpRing 1.9s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+@keyframes warpRing{
+    0%{
+        transform:scale(.1);
+        opacity:0;
+    }
+    15%{
+        opacity:1;
+    }
+    100%{
+        transform:scale(30);
+        opacity:0;
+    }
+}
+
+.transition-logo{
+    position:relative;
+    z-index:5;
+    text-align:center;
+    opacity:0;
+    transform:scale(.65);
+}
+
+.catalog-transition.active .transition-logo{
+    animation:catalogLogo 1.55s cubic-bezier(.16,1,.3,1) .25s forwards;
+}
+
+.transition-logo .big{
+    font:900 clamp(48px,10vw,110px)/.85 "Space Grotesk";
+    letter-spacing:-.07em;
+    background:linear-gradient(
+        100deg,
+        #fff 0%,
+        #73f4ff 28%,
+        #7785ff 53%,
+        #e66cff 80%,
+        #fff
+    );
+    background-size:300% auto;
+    -webkit-background-clip:text;
+    color:transparent;
+    text-shadow:0 0 70px #6d7aff66;
+    animation:gradientMove 1.2s linear infinite;
+}
+
+.transition-logo .small{
+    margin-top:18px;
+    color:#9caacd;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.5em;
+}
+
+@keyframes gradientMove{
+    to{
+        background-position:300% center;
+    }
+}
+
+@keyframes catalogLogo{
+    0%{
+        opacity:0;
+        transform:scale(.65) translateY(30px);
+        filter:blur(20px);
+    }
+    55%{
+        opacity:1;
+        transform:scale(1.08) translateY(0);
+        filter:blur(0);
+    }
+    100%{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+.transition-scan{
+    position:absolute;
+    width:100%;
+    height:2px;
+    left:0;
+    top:-5%;
+    background:#fff;
+    box-shadow:
+        0 0 12px #fff,
+        0 0 40px #55f3ff;
+    opacity:0;
+}
+
+.catalog-transition.active .transition-scan{
+    animation:scan 1.8s linear .1s;
+}
+
+@keyframes scan{
+    0%{top:-5%;opacity:0}
+    10%{opacity:1}
+    50%{opacity:.8}
+    100%{top:105%;opacity:0}
+}
+
+/* =========================================================
+   GAME CATALOG
+========================================================= */
+
+.game-catalog{
+    position:fixed;
+    inset:0;
+    z-index:4000;
+    display:none;
+    overflow:auto;
+    color:#edf4ff;
+    background:
+        radial-gradient(circle at 10% 5%,#55f3ff18,transparent 25%),
+        radial-gradient(circle at 90% 8%,#a05cff20,transparent 28%),
+        radial-gradient(circle at 50% 100%,#ff55d414,transparent 30%),
+        #03050d;
+    opacity:0;
+}
+
+.game-catalog.show{
+    display:block;
+    animation:catalogReveal 1.1s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+@keyframes catalogReveal{
+    0%{
+        opacity:0;
+        transform:scale(1.04);
+        filter:blur(12px);
+    }
+    100%{
+        opacity:1;
+        transform:scale(1);
+        filter:blur(0);
+    }
+}
+
+.catalog-particles{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+}
+
+.catalog-particle{
+    position:absolute;
+    width:2px;
+    height:2px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 0 8px #73f4ff;
+    opacity:.5;
+    animation:floatParticle var(--duration) linear infinite;
+    animation-delay:var(--delay);
+}
+
+@keyframes floatParticle{
+    0%{
+        transform:translate3d(0,110vh,0) scale(.3);
+        opacity:0;
+    }
+    15%{opacity:.6}
+    85%{opacity:.5}
+    100%{
+        transform:translate3d(var(--drift),-10vh,0) scale(1);
+        opacity:0;
+    }
+}
+
+.catalog-grid-bg{
+    position:fixed;
+    inset:-30%;
+    pointer-events:none;
+    opacity:.13;
+    background-image:
+        linear-gradient(#63eaff16 1px,transparent 1px),
+        linear-gradient(90deg,#63eaff16 1px,transparent 1px);
+    background-size:60px 60px;
+    transform:perspective(700px) rotateX(62deg) translateY(20%);
+    mask-image:linear-gradient(to bottom,transparent,#000 35%,#000 70%,transparent);
+}
+
+.catalog-inner{
+    position:relative;
+    width:min(1280px,94vw);
+    margin:auto;
+    padding:30px 0 70px;
+}
+
+.catalog-nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:5px 0 35px;
+}
+
+.catalog-brand{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.catalog-brand-icon{
+    width:43px;
+    height:43px;
+    display:grid;
+    place-items:center;
+    border-radius:13px;
+    border:1px solid #ffffff18;
+    background:linear-gradient(135deg,#55f3ff1c,#b55cff28);
+    box-shadow:
+        0 0 25px #55f3ff16,
+        inset 0 0 20px #ffffff06;
+    font-size:20px;
+}
+
+.catalog-brand b{
+    display:block;
+    font:800 14px "Space Grotesk";
+    letter-spacing:.2em;
+}
+
+.catalog-brand small{
+    display:block;
+    margin-top:3px;
+    color:#697895;
+    font-size:8px;
+    letter-spacing:.18em;
+}
+
+.catalog-status{
+    padding:9px 13px;
+    border:1px solid #ffffff12;
+    border-radius:99px;
+    background:#ffffff06;
+    color:#8d9bb7;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.13em;
+}
+
+.catalog-status span{
+    display:inline-block;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#64ff9b;
+    box-shadow:0 0 12px #64ff9b;
+    margin-right:6px;
+}
+
+.catalog-hero{
+    position:relative;
+    padding:40px 0 45px;
+}
+
+.catalog-kicker{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 11px;
+    border:1px solid #ffffff12;
+    background:#ffffff06;
+    border-radius:99px;
+    color:#8291ae;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.2em;
+}
+
+.catalog-kicker i{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#74f4ff;
+    box-shadow:0 0 12px #74f4ff;
+}
+
+.catalog-title{
+    margin:22px 0 0;
+    font:900 clamp(48px,8vw,104px)/.86 "Space Grotesk";
+    letter-spacing:-.075em;
+    max-width:900px;
+    background:
+        linear-gradient(
+            100deg,
+            #ffffff 5%,
+            #9ffaff 25%,
+            #7887ff 48%,
+            #dc70ff 75%,
+            #ffffff
+        );
+    background-size:250% auto;
+    -webkit-background-clip:text;
+    color:transparent;
+    animation:titleFlow 7s linear infinite;
+}
+
+@keyframes titleFlow{
+    to{
+        background-position:250% center;
+    }
+}
+
+.catalog-subtitle{
+    max-width:650px;
+    color:#7787a5;
+    line-height:1.75;
+    font-size:13px;
+    margin:24px 0 0;
+}
+
+.catalog-meta{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    flex-wrap:wrap;
+    margin-top:23px;
+}
+
+.meta-pill{
+    border:1px solid #ffffff12;
+    background:#ffffff06;
+    border-radius:99px;
+    padding:8px 11px;
+    color:#9aa8c1;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.08em;
+}
+
+.catalog-section{
+    margin-top:20px;
+}
+
+.section-heading{
+    display:flex;
+    align-items:end;
+    justify-content:space-between;
+    gap:20px;
+    margin-bottom:15px;
+}
+
+.section-heading h2{
+    margin:0;
+    font:800 20px "Space Grotesk";
+    letter-spacing:-.02em;
+}
+
+.section-heading p{
+    margin:0;
+    color:#687795;
+    font-size:9px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+}
+
+.games-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:13px;
+}
+
+.game-card{
+    position:relative;
+    min-height:180px;
+    padding:18px;
+    border-radius:20px;
+    border:1px solid #ffffff12;
+    background:
+        linear-gradient(145deg,#10172aee,#070b15e8);
+    box-shadow:
+        0 18px 50px #0007,
+        inset 0 1px 0 #ffffff07;
+    overflow:hidden;
+    cursor:pointer;
+    transform:translateY(20px);
+    opacity:0;
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease,
+        background .25s ease;
+}
+
+.game-catalog.show .game-card{
+    animation:cardIn .7s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay:calc(var(--index) * 55ms + .25s);
+}
+
+@keyframes cardIn{
+    to{
+        transform:translateY(0);
+        opacity:1;
+    }
+}
+
+.game-card:hover{
+    transform:translateY(-7px) scale(1.015);
+    border-color:#73f4ff38;
+    box-shadow:
+        0 25px 65px #000a,
+        0 0 35px #55f3ff0d,
+        inset 0 1px 0 #ffffff10;
+}
+
+.game-card:before{
+    content:"";
+    position:absolute;
+    width:150px;
+    height:150px;
+    right:-80px;
+    top:-80px;
+    border-radius:50%;
+    background:#55f3ff;
+    opacity:.08;
+    filter:blur(30px);
+    transition:.3s;
+}
+
+.game-card:hover:before{
+    opacity:.2;
+    transform:scale(1.5);
+}
+
+.game-card.featured{
+    grid-column:span 2;
+    min-height:250px;
+    background:
+        radial-gradient(circle at 90% 10%,#ff65df18,transparent 30%),
+        radial-gradient(circle at 10% 90%,#55f3ff16,transparent 35%),
+        linear-gradient(145deg,#151a32ee,#080b16ee);
+    border-color:#ffffff18;
+}
+
+.game-card.featured:after{
+    content:"FEATURED";
+    position:absolute;
+    right:17px;
+    top:17px;
+    padding:6px 8px;
+    border-radius:7px;
+    border:1px solid #ffffff15;
+    background:#ffffff08;
+    color:#c3d0e9;
+    font-size:7px;
+    font-weight:900;
+    letter-spacing:.15em;
+}
+
+.game-number{
+    position:absolute;
+    right:16px;
+    bottom:14px;
+    color:#ffffff18;
+    font:900 42px "Space Grotesk";
+    letter-spacing:-.06em;
+}
+
+.game-icon{
+    width:54px;
+    height:54px;
+    display:grid;
+    place-items:center;
+    border-radius:16px;
+    margin-bottom:22px;
+    border:1px solid #ffffff15;
+    background:
+        linear-gradient(135deg,#55f3ff1a,#8e5cff25);
+    color:#eaf7ff;
+    font-size:22px;
+    box-shadow:
+        0 10px 30px #0005,
+        inset 0 0 20px #ffffff06;
+}
+
+.game-card:nth-child(3n) .game-icon{
+    background:linear-gradient(135deg,#ff63df1c,#745dff24);
+}
+
+.game-card:nth-child(4n) .game-icon{
+    background:linear-gradient(135deg,#74ffb41c,#4a86ff25);
+}
+
+.game-card h3{
+    position:relative;
+    margin:0;
+    max-width:85%;
+    font:800 16px "Space Grotesk";
+    letter-spacing:-.02em;
+}
+
+.game-card.featured h3{
+    font-size:24px;
+}
+
+.game-card p{
+    position:relative;
+    margin:8px 0 0;
+    color:#697995;
+    font-size:9px;
+    line-height:1.55;
+    max-width:260px;
+}
+
+.play-label{
+    position:absolute;
+    left:18px;
+    bottom:17px;
+    color:#82f6ff;
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:.15em;
+    opacity:.75;
+    transition:.2s;
+}
+
+.game-card:hover .play-label{
+    opacity:1;
+    transform:translateX(4px);
+}
+
+.catalog-footer{
+    margin-top:40px;
+    padding:17px 0 0;
+    border-top:1px solid #ffffff0d;
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    color:#53617b;
+    font-size:8px;
+    letter-spacing:.12em;
+}
+
+.catalog-footer strong{
+    color:#8290aa;
+}
+
+.catalog-close{
+    position:fixed;
+    right:24px;
+    bottom:24px;
+    z-index:20;
+    width:43px;
+    height:43px;
+    display:grid;
+    place-items:center;
+    border-radius:13px;
+    border:1px solid #ffffff15;
+    background:#080d19d9;
+    color:#9aa9c2;
+    cursor:pointer;
+    backdrop-filter:blur(12px);
+    transition:.2s;
+}
+
+.catalog-close:hover{
+    color:#fff;
+    border-color:#73f4ff55;
+    transform:translateY(-2px);
+    box-shadow:0 10px 30px #0008;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1000px){
 
     .hero{
         grid-template-columns:1fr;
@@ -937,6 +1616,42 @@ footer{
     .calc-card{
         max-width:520px;
         margin:auto;
+    }
+
+    .games-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .game-card.featured{
+        grid-column:span 2;
+    }
+}
+
+@media(max-width:760px){
+
+    .content{
+        grid-template-columns:1fr;
+        overflow:auto;
+    }
+
+    .right{
+        padding-bottom:20px;
+    }
+
+    .games-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .game-card.featured{
+        grid-column:span 2;
+    }
+
+    .catalog-title{
+        font-size:clamp(45px,14vw,80px);
+    }
+
+    .catalog-status{
+        display:none;
     }
 }
 
@@ -980,8 +1695,6 @@ footer{
     }
 
     .content{
-        grid-template-columns:1fr;
-        overflow:auto;
         padding:24px 18px;
     }
 
@@ -997,26 +1710,79 @@ footer{
         font-size:16vw;
     }
 
-    footer{
+    .launcher footer{
         padding:13px 17px;
+    }
+
+    .games-grid{
+        grid-template-columns:1fr;
+    }
+
+    .game-card.featured{
+        grid-column:span 1;
+    }
+
+    .game-card,
+    .game-card.featured{
+        min-height:180px;
+    }
+
+    .game-card.featured h3{
+        font-size:20px;
+    }
+
+    .catalog-inner{
+        width:90vw;
+        padding-top:22px;
+    }
+
+    .catalog-nav{
+        padding-bottom:20px;
+    }
+
+    .catalog-hero{
+        padding:25px 0 30px;
+    }
+
+    .catalog-footer{
+        flex-direction:column;
     }
 }
 
-/* Prevent calculator/light-mode styles from bleeding into ALEX MODS. */
-.launcher,.launcher *{color-scheme:dark;}
-.launcher{isolation:isolate;}
-.launcher button{appearance:none;}
-@media (prefers-reduced-motion:reduce){
-  .transition.active .transition-bg,.transition.active .transition-core,.transition.active .transition-ring,.transition.active .transition-text,.transition.active .glitch-line,.launcher.show{animation-duration:.01ms!important;animation-iteration-count:1!important;}
+.launcher,
+.launcher *,
+.game-catalog,
+.game-catalog *{
+    color-scheme:dark;
+}
+
+@media(prefers-reduced-motion:reduce){
+
+    .transition.active .transition-bg,
+    .transition.active .transition-core,
+    .transition.active .transition-ring,
+    .transition.active .transition-text,
+    .transition.active .glitch-line,
+    .launcher.show,
+    .catalog-transition.active .warp-star,
+    .catalog-transition.active .warp-flash,
+    .catalog-transition.active .warp-ring,
+    .catalog-transition.active .transition-logo,
+    .catalog-transition.active .transition-scan,
+    .game-catalog.show,
+    .game-catalog.show .game-card{
+        animation-duration:.01ms!important;
+        animation-iteration-count:1!important;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<!-- =========================================
-     CALCULATOR WEBSITE
-========================================= -->
+<!-- =========================================================
+     CALCULATOR
+========================================================= -->
 
 <div class="calculator-page" id="calculatorPage">
 
@@ -1032,6 +1798,7 @@ footer{
         </div>
 
         <div class="header-right">
+
             <div class="header-pill">
                 <span class="online-dot"></span>
                 CALCULATOR ONLINE
@@ -1040,6 +1807,7 @@ footer{
             <div class="header-pill">
                 SCIENTIFIC
             </div>
+
         </div>
 
     </header>
@@ -1134,18 +1902,15 @@ footer{
 </div>
 
 
-<!-- =========================================
-     SECRET CODE TRANSITION
-========================================= -->
+<!-- =========================================================
+     ORIGINAL SECRET TRANSITION
+========================================================= -->
 
 <div class="transition" id="transition">
 
     <div class="transition-bg"></div>
-
     <div class="transition-core"></div>
-
     <div class="transition-ring"></div>
-
     <div class="glitch-line"></div>
 
     <div class="transition-text">
@@ -1156,9 +1921,9 @@ footer{
 </div>
 
 
-<!-- =========================================
-     ALEX MODS
-========================================= -->
+<!-- =========================================================
+     MINECRAFT LAUNCHER
+========================================================= -->
 
 <div class="launcher" id="launcher">
 
@@ -1301,10 +2066,559 @@ footer{
 </div>
 
 
+<!-- =========================================================
+     NEW GAME CATALOG TRANSITION - 2323
+========================================================= -->
+
+<div class="catalog-transition" id="catalogTransition">
+
+    <div class="warp" id="warp"></div>
+
+    <div class="warp-flash"></div>
+    <div class="warp-ring"></div>
+
+    <div class="transition-scan"></div>
+
+    <div class="transition-logo">
+        <div class="big">GAME VAULT</div>
+        <div class="small">ACCESS GRANTED • ALEX MODS</div>
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     GAME CATALOG
+========================================================= -->
+
+<div class="game-catalog" id="gameCatalog">
+
+    <div class="catalog-particles" id="catalogParticles"></div>
+
+    <div class="catalog-grid-bg"></div>
+
+    <div class="catalog-inner">
+
+        <nav class="catalog-nav">
+
+            <div class="catalog-brand">
+
+                <div class="catalog-brand-icon">✦</div>
+
+                <div>
+                    <b>ALEX MODS</b>
+                    <small>GAME VAULT</small>
+                </div>
+
+            </div>
+
+            <div class="catalog-status">
+                <span></span>
+                VAULT ONLINE
+            </div>
+
+        </nav>
+
+
+        <header class="catalog-hero">
+
+            <div class="catalog-kicker">
+                <i></i>
+                SECRET ACCESS // 2323
+            </div>
+
+            <h1 class="catalog-title">
+                THE GAME VAULT
+            </h1>
+
+            <p class="catalog-subtitle">
+                Welcome to the ALEX MODS game archive.
+                Select a game below to launch it instantly.
+                Every build is stored locally inside the games directory.
+            </p>
+
+            <div class="catalog-meta">
+
+                <div class="meta-pill">
+                    15 GAMES
+                </div>
+
+                <div class="meta-pill">
+                    LOCAL BUILDS
+                </div>
+
+                <div class="meta-pill">
+                    INSTANT LAUNCH
+                </div>
+
+                <div class="meta-pill">
+                    ALEX MODS
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="catalog-section">
+
+            <div class="section-heading">
+
+                <h2>AVAILABLE GAMES</h2>
+
+                <p>
+                    SELECT A BUILD TO CONTINUE
+                </p>
+
+            </div>
+
+
+            <div class="games-grid">
+
+
+                <!-- 01 - DRIFT HUNTERS -->
+
+                <div
+                    class="game-card featured"
+                    style="--index:0"
+                    onclick="openGame('games/⭐ALEX MODS - Drift Hunters.html')"
+                >
+
+                    <div class="game-icon">🏎️</div>
+
+                    <h3>Drift Hunters</h3>
+
+                    <p>
+                        Slide into the ultimate drifting experience.
+                        Tune, customize and hit the track.
+                    </p>
+
+                    <div class="play-label">
+                        PLAY NOW →
+                    </div>
+
+                    <div class="game-number">
+                        01
+                    </div>
+
+                </div>
+
+
+                <!-- 02 - AMONG US -->
+
+                <div
+                    class="game-card"
+                    style="--index:1"
+                    onclick="openGame('games/ALEX MODS - Among us.html')"
+                >
+
+                    <div class="game-icon">🚀</div>
+
+                    <h3>Among Us</h3>
+
+                    <p>
+                        Complete tasks and figure out who is sus.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">02</div>
+
+                </div>
+
+
+                <!-- 03 - COOKIE CLICKER -->
+
+                <div
+                    class="game-card"
+                    style="--index:2"
+                    onclick="openGame('games/ALEX MODS - Cookie Clicker.html')"
+                >
+
+                    <div class="game-icon">🍪</div>
+
+                    <h3>Cookie Clicker</h3>
+
+                    <p>
+                        Click, upgrade and build an unstoppable cookie empire.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">03</div>
+
+                </div>
+
+
+                <!-- 04 - CROSSY ROAD -->
+
+                <div
+                    class="game-card"
+                    style="--index:3"
+                    onclick="openGame('games/ALEX MODS - Crossy Road.html')"
+                >
+
+                    <div class="game-icon">🐔</div>
+
+                    <h3>Crossy Road</h3>
+
+                    <p>
+                        Cross everything. Don't get hit.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">04</div>
+
+                </div>
+
+
+                <!-- 05 - FIGHT NIGHTS AT FREDDIES 2 -->
+
+                <div
+                    class="game-card"
+                    style="--index:4"
+                    onclick="openGame('games/ALEX MODS - Fight nights at Freddies [2].html')"
+                >
+
+                    <div class="game-icon">🐻</div>
+
+                    <h3>Fight Nights at Freddies 2</h3>
+
+                    <p>
+                        Survive another night in the haunted pizzeria.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">05</div>
+
+                </div>
+
+
+                <!-- 06 - FIRE BOY AND WATER GIRL -->
+
+                <div
+                    class="game-card"
+                    style="--index:5"
+                    onclick="openGame('games/ALEX MODS - Fire Boy and Water Girl.html')"
+                >
+
+                    <div class="game-icon">🔥</div>
+
+                    <h3>Fire Boy and Water Girl</h3>
+
+                    <p>
+                        Work together and conquer the temple.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">06</div>
+
+                </div>
+
+
+                <!-- 07 - FIVE NIGHTS AT FREDDIES 1 -->
+
+                <div
+                    class="game-card"
+                    style="--index:6"
+                    onclick="openGame('games/ALEX MODS - Five Nights at Freddies [1].html')"
+                >
+
+                    <div class="game-icon">🌙</div>
+
+                    <h3>Five Nights at Freddies 1</h3>
+
+                    <p>
+                        Make it through the night shift.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">07</div>
+
+                </div>
+
+
+                <!-- 08 - FORTZONE -->
+
+                <div
+                    class="game-card"
+                    style="--index:7"
+                    onclick="openGame('games/ALEX MODS - Fortzone.html')"
+                >
+
+                    <div class="game-icon">⚡</div>
+
+                    <h3>Fortzone</h3>
+
+                    <p>
+                        Drop in and get ready for battle.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">08</div>
+
+                </div>
+
+
+                <!-- 09 - FRUIT NINJA -->
+
+                <div
+                    class="game-card"
+                    style="--index:8"
+                    onclick="openGame('games/ALEX MODS - Fruit Ninja.html')"
+                >
+
+                    <div class="game-icon">🍉</div>
+
+                    <h3>Fruit Ninja</h3>
+
+                    <p>
+                        Slice fruit and chase the highest score.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">09</div>
+
+                </div>
+
+
+                <!-- 10 - GEOMETRY DASH -->
+
+                <div
+                    class="game-card"
+                    style="--index:9"
+                    onclick="openGame('games/ALEX MODS - Geometry Dash.html')"
+                >
+
+                    <div class="game-icon">🔺</div>
+
+                    <h3>Geometry Dash</h3>
+
+                    <p>
+                        Jump, dodge and survive the rhythm.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">10</div>
+
+                </div>
+
+
+                <!-- 11 - GRANNY -->
+
+                <div
+                    class="game-card"
+                    style="--index:10"
+                    onclick="openGame('games/ALEX MODS - Granny [1].html')"
+                >
+
+                    <div class="game-icon">🏚️</div>
+
+                    <h3>Granny</h3>
+
+                    <p>
+                        Find your way out before time runs out.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">11</div>
+
+                </div>
+
+
+                <!-- 12 - MINECRAFT 1.12 -->
+
+                <div
+                    class="game-card"
+                    style="--index:11"
+                    onclick="openGame('games/ALEX MODS - Minecraft 1.12.html')"
+                >
+
+                    <div class="game-icon">⛏️</div>
+
+                    <h3>Minecraft 1.12</h3>
+
+                    <p>
+                        Enter the classic block-building world.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">12</div>
+
+                </div>
+
+
+                <!-- 13 - MINECRAFT MOTORCYCLE -->
+
+                <div
+                    class="game-card"
+                    style="--index:12"
+                    onclick="openGame('games/ALEX MODS - Minecraft Motorcycle.html')"
+                >
+
+                    <div class="game-icon">🏍️</div>
+
+                    <h3>Minecraft Motorcycle</h3>
+
+                    <p>
+                        Combine Minecraft with high-speed riding.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">13</div>
+
+                </div>
+
+
+                <!-- 14 - PLAGUE INC -->
+
+                <div
+                    class="game-card"
+                    style="--index:13"
+                    onclick="openGame('games/ALEX MODS - Plague Inc.html')"
+                >
+
+                    <div class="game-icon">🧬</div>
+
+                    <h3>Plague Inc</h3>
+
+                    <p>
+                        A strategy simulation about disease spread.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">14</div>
+
+                </div>
+
+
+                <!-- 15 - PLANTS VS ZOMBIES -->
+
+                <div
+                    class="game-card"
+                    style="--index:14"
+                    onclick="openGame('games/ALEX MODS - Plants vs Zombies.html')"
+                >
+
+                    <div class="game-icon">🌻</div>
+
+                    <h3>Plants vs Zombies</h3>
+
+                    <p>
+                        Build your defenses and stop the zombie invasion.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">15</div>
+
+                </div>
+
+
+                <!-- 16 - SLITHER.IO -->
+
+                <div
+                    class="game-card"
+                    style="--index:15"
+                    onclick="openGame('games/ALEX MODS - Slither.io.html')"
+                >
+
+                    <div class="game-icon">🐍</div>
+
+                    <h3>Slither.io</h3>
+
+                    <p>
+                        Grow your snake and dominate the arena.
+                    </p>
+
+                    <div class="play-label">
+                        LAUNCH →
+                    </div>
+
+                    <div class="game-number">16</div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <footer class="catalog-footer">
+
+            <span>
+                ALEX MODS // GAME VAULT
+            </span>
+
+            <span>
+                <strong>16</strong> BUILDS AVAILABLE
+            </span>
+
+            <span>
+                LOCAL ARCHIVE // ONLINE
+            </span>
+
+        </footer>
+
+    </div>
+
+
+    <button
+        class="catalog-close"
+        onclick="closeCatalog()"
+        title="Return"
+        aria-label="Return to calculator"
+    >
+        ×
+    </button>
+
+</div>
+
+
 <script>
-/* =========================================
+/* =========================================================
    CALCULATOR
-========================================= */
+========================================================= */
 
 const current = document.getElementById("current");
 const previous = document.getElementById("previous");
@@ -1346,6 +2660,7 @@ function scientific(type){
     }
 
     lastAction="";
+
     try{
 
         let value = expression
@@ -1388,20 +2703,32 @@ function scientific(type){
 }
 
 
-/* =========================================
+/* =========================================================
    CALCULATE
-========================================= */
+========================================================= */
 
 function calculate(){
 
     /*
-       SECRET CODE:
+       ORIGINAL SECRET CODE:
        0404 + =
     */
 
     if(expression==="0404"){
 
         triggerSecretTransition();
+
+        return;
+    }
+
+    /*
+       NEW SECRET CODE:
+       2323 + =
+    */
+
+    if(expression==="2323"){
+
+        triggerCatalogTransition();
 
         return;
     }
@@ -1435,9 +2762,9 @@ function calculate(){
 }
 
 
-/* =========================================
-   SECRET TRANSITION
-========================================= */
+/* =========================================================
+   ORIGINAL MINECRAFT TRANSITION
+========================================================= */
 
 function triggerSecretTransition(){
 
@@ -1445,21 +2772,17 @@ function triggerSecretTransition(){
 
     transition.classList.add("active");
 
-    /*
-       Change browser tab title immediately.
-    */
     document.title="ALEX MODS";
 
-    /*
-       Let the cinematic animation play,
-       then reveal the launcher.
-    */
     setTimeout(()=>{
 
         document.getElementById("calculatorPage").style.display="none";
+
         document.body.classList.add("launcher-active");
+
         transition.style.display="none";
         transition.classList.remove("active");
+
         document.getElementById("launcher").classList.add("show");
 
         startParticles();
@@ -1468,14 +2791,126 @@ function triggerSecretTransition(){
 }
 
 
-/* =========================================
+/* =========================================================
+   NEW GAME CATALOG TRANSITION
+========================================================= */
+
+function createWarpStars(){
+
+    const warp=document.getElementById("warp");
+
+    warp.innerHTML="";
+
+    for(let i=0;i<90;i++){
+
+        const star=document.createElement("div");
+
+        star.className="warp-star";
+
+        const angle=Math.random()*360;
+        const delay=Math.random()*.65;
+
+        star.style.setProperty(
+            "--angle",
+            angle+"deg"
+        );
+
+        star.style.setProperty(
+            "--delay",
+            delay+"s"
+        );
+
+        warp.appendChild(star);
+    }
+}
+
+function createCatalogParticles(){
+
+    const container=
+        document.getElementById("catalogParticles");
+
+    container.innerHTML="";
+
+    for(let i=0;i<55;i++){
+
+        const particle=
+            document.createElement("div");
+
+        particle.className="catalog-particle";
+
+        particle.style.left=
+            Math.random()*100+"%";
+
+        particle.style.setProperty(
+            "--duration",
+            (8+Math.random()*14)+"s"
+        );
+
+        particle.style.setProperty(
+            "--delay",
+            (-Math.random()*18)+"s"
+        );
+
+        particle.style.setProperty(
+            "--drift",
+            ((Math.random()-.5)*180)+"px"
+        );
+
+        container.appendChild(particle);
+    }
+}
+
+function triggerCatalogTransition(){
+
+    createWarpStars();
+
+    const transition=
+        document.getElementById("catalogTransition");
+
+    transition.classList.add("active");
+
+    document.title="ALEX MODS // GAME VAULT";
+
+    setTimeout(()=>{
+
+        document.getElementById("calculatorPage").style.display="none";
+
+        document.getElementById("launcher").style.display="none";
+
+        transition.style.display="none";
+        transition.classList.remove("active");
+
+        const catalog=
+            document.getElementById("gameCatalog");
+
+        catalog.classList.add("show");
+
+        createCatalogParticles();
+
+    },2050);
+}
+
+
+/* =========================================================
    KEYBOARD
-========================================= */
+========================================================= */
 
 document.addEventListener("keydown",function(e){
 
     if(
-        document.getElementById("launcher").classList.contains("show")
+        document.getElementById("gameCatalog")
+            .classList.contains("show")
+    ){
+
+        if(e.key==="Escape")
+            closeCatalog();
+
+        return;
+    }
+
+    if(
+        document.getElementById("launcher")
+            .classList.contains("show")
     ){
 
         if(e.key==="Enter")
@@ -1507,9 +2942,9 @@ document.addEventListener("keydown",function(e){
 });
 
 
-/* =========================================
-   PARTICLES
-========================================= */
+/* =========================================================
+   MINECRAFT PARTICLES
+========================================================= */
 
 const canvas=document.getElementById("canvas");
 const ctx=canvas.getContext("2d");
@@ -1591,9 +3026,9 @@ function startParticles(){
 }
 
 
-/* =========================================
-   LAUNCH BUTTON
-========================================= */
+/* =========================================================
+   MINECRAFT LAUNCH
+========================================================= */
 
 const DEST="game.html";
 
@@ -1642,6 +3077,49 @@ function launch(){
 }
 
 document.getElementById("launch").onclick=launch;
+
+
+/* =========================================================
+   GAME CATALOG
+========================================================= */
+
+function openGame(path){
+
+    /*
+       Use location.href so the browser stays inside
+       the same site/folder structure.
+    */
+
+    window.location.href=path;
+}
+
+function closeCatalog(){
+
+    const catalog=
+        document.getElementById("gameCatalog");
+
+    catalog.classList.remove("show");
+
+    catalog.style.display="none";
+
+    document.title="Pro Scientific Calculator";
+
+    document.getElementById("calculatorPage")
+        .style.display="block";
+
+    expression="";
+    previous.textContent="";
+    updateDisplay();
+}
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+createWarpStars();
+createCatalogParticles();
+
 </script>
 
 </body>
