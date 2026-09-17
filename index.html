@@ -1,57 +1,1622 @@
 <!DOCTYPE html>
-<html style="width:100%;height:100%;background-color:black;">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
-		<meta name="description" content="Play minecraft 1.20.6 in your browser" />
-		<meta name="keywords" content="eaglercraft, eaglercraftx, minecraft, 1.20, 1.20.6" />
-		<title>ALEX MODS</title>
-		<meta property="og:locale" content="en-US" />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content="EaglercraftX 1.20.6 WASM-GC" />
-		<meta property="og:description" content="Play minecraft 1.20.6 in your browser" />
-		<meta property="og:image" content="favicon.png" />
-		<link type="image/png" rel="shortcut icon" href="favicon.png" />
-		<script type="text/javascript" src="bootstrap.js?v=20260824-5430efd6"></script>
-		<script type="text/javascript">
-			"use strict";
-			window.addEventListener("load", function() {
-				if(window.location.href.indexOf("file:") === 0) {
-					alert("HTTP please, do not open this file locally, run a local HTTP server and load it via HTTP");
-				}else {
-					
-					// %%%%%%%%% launch options %%%%%%%%%%%%
-					
-					var relayId = Math.floor(Math.random() * 3);
-					window.eaglercraftXOpts = {
-						demoMode: false,
-						container: "game_frame",
-						assetsURI: "https://raw.githubusercontent.com/eymenwsmc/offline/main/120.epw?v=5430efd6",
-						worldsDB: "worlds",
-						servers: [
-							/* example: { addr: "ws://localhost:8081/", name: "Local test server" } */
-						],
-						relays: [
-							{ addr: "wss://relay.deev.is/", comment: "lax1dude relay #1", primary: relayId == 0 },
-							{ addr: "wss://relay.lax1dude.net/", comment: "lax1dude relay #2", primary: relayId == 1 },
-							{ addr: "wss://relay.shhnowisnottheti.me/", comment: "ayunami relay #1", primary: relayId == 2 }
-						]
-					};
-					
-					// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-					
-					var q = window.location.search;
-					if((typeof q === "string") && q[0] === "?" && (typeof window.URLSearchParams !== "undefined")) {
-						q = new window.URLSearchParams(q);
-						var s = q.get("server");
-						if(s) window.eaglercraftXOpts.joinServer = s;
-					}
-					
-					main();
-					
-				}
-			});
-		</script>
-	</head>
-	<body style="margin:0px;width:100%;height:100%;overflow:hidden;background-color:black;" id="game_frame"></body>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pro Scientific Calculator</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    width:100%;
+    min-height:100%;
+}
+
+body{
+    font-family:"Inter",sans-serif;
+    color:#172033;
+    background:
+        radial-gradient(circle at 10% 5%,#dbeafe 0,transparent 28%),
+        radial-gradient(circle at 90% 10%,#ede9fe 0,transparent 30%),
+        linear-gradient(135deg,#f8fafc,#eef2ff);
+    overflow-x:hidden;
+}
+
+/* =========================================
+   CALCULATOR WEBSITE
+========================================= */
+
+.calculator-page{
+    min-height:100vh;
+    position:relative;
+    overflow:hidden;
+}
+
+.calculator-page:before{
+    content:"";
+    position:fixed;
+    width:600px;
+    height:600px;
+    left:-250px;
+    bottom:-300px;
+    background:#818cf8;
+    opacity:.08;
+    filter:blur(100px);
+    border-radius:50%;
+    pointer-events:none;
+}
+
+.calculator-page:after{
+    content:"";
+    position:fixed;
+    width:500px;
+    height:500px;
+    right:-200px;
+    top:-200px;
+    background:#38bdf8;
+    opacity:.08;
+    filter:blur(100px);
+    border-radius:50%;
+    pointer-events:none;
+}
+
+.site-header{
+    height:76px;
+    width:min(1180px,94vw);
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:relative;
+    z-index:2;
+}
+
+.site-brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-icon{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    color:white;
+    font-size:18px;
+    font-weight:800;
+    background:linear-gradient(135deg,#667eea,#7c5cff);
+    box-shadow:0 8px 25px #667eea40;
+}
+
+.site-brand strong{
+    display:block;
+    font-size:13px;
+    letter-spacing:.08em;
+}
+
+.site-brand small{
+    display:block;
+    margin-top:2px;
+    color:#8993a7;
+    font-size:9px;
+    letter-spacing:.12em;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.header-pill{
+    border:1px solid #dfe4ed;
+    background:#ffffff9c;
+    padding:8px 11px;
+    border-radius:99px;
+    color:#697386;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.08em;
+}
+
+.online-dot{
+    display:inline-block;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#31c878;
+    box-shadow:0 0 9px #31c878;
+    margin-right:5px;
+}
+
+.hero{
+    width:min(1180px,94vw);
+    margin:auto;
+    min-height:calc(100vh - 76px);
+    display:grid;
+    grid-template-columns:1fr 500px;
+    align-items:center;
+    gap:70px;
+    padding:30px 0 70px;
+    position:relative;
+    z-index:1;
+}
+
+.hero-copy{
+    max-width:520px;
+}
+
+.eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 11px;
+    border:1px solid #dce3ef;
+    background:#ffffffa8;
+    border-radius:99px;
+    color:#667085;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.13em;
+    margin-bottom:20px;
+}
+
+.eyebrow span{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#667eea;
+    box-shadow:0 0 10px #667eea;
+}
+
+.hero h1{
+    font-size:clamp(43px,5vw,70px);
+    line-height:.98;
+    letter-spacing:-.055em;
+    margin:0;
+    color:#111827;
+}
+
+.hero h1 em{
+    font-style:normal;
+    background:linear-gradient(100deg,#667eea,#765cff,#9b5cff);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+.hero-description{
+    color:#697386;
+    line-height:1.75;
+    font-size:14px;
+    max-width:470px;
+    margin:22px 0 27px;
+}
+
+.feature-row{
+    display:flex;
+    gap:9px;
+    flex-wrap:wrap;
+}
+
+.feature{
+    padding:9px 12px;
+    border:1px solid #dfe4ec;
+    background:#ffffffa6;
+    border-radius:11px;
+    color:#657084;
+    font-size:10px;
+    font-weight:600;
+}
+
+/* Calculator */
+
+.calc-card{
+    width:100%;
+    background:#ffffffd9;
+    border:1px solid #dce2ec;
+    border-radius:30px;
+    box-shadow:
+        0 30px 90px rgba(40,55,90,.15),
+        0 8px 25px rgba(40,55,90,.07);
+    padding:17px;
+    backdrop-filter:blur(20px);
+}
+
+.calc-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:5px 7px 15px;
+}
+
+.calc-name{
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.08em;
+}
+
+.calc-mode{
+    font-size:8px;
+    font-weight:800;
+    color:#6170c9;
+    background:#eef1ff;
+    border:1px solid #e0e5ff;
+    padding:6px 9px;
+    border-radius:8px;
+}
+
+.display{
+    min-height:135px;
+    padding:20px;
+    border-radius:21px;
+    background:#f5f7fb;
+    border:1px solid #e4e8ef;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    text-align:right;
+    box-shadow:inset 0 2px 8px #00000004;
+}
+
+.previous{
+    min-height:22px;
+    color:#9aa3b3;
+    font-size:12px;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+.current{
+    color:#172033;
+    font-size:38px;
+    font-weight:700;
+    letter-spacing:-.04em;
+    overflow-x:auto;
+    white-space:nowrap;
+    scrollbar-width:none;
+}
+
+.current::-webkit-scrollbar{
+    display:none;
+}
+
+.calc-status{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 3px 12px;
+    color:#9aa3b3;
+    font-size:8px;
+    font-weight:700;
+    letter-spacing:.08em;
+}
+
+.buttons{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+}
+
+button{
+    height:54px;
+    border:0;
+    border-radius:14px;
+    background:#f3f5f8;
+    color:#273147;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 2px 5px #141e3208;
+    transition:.15s ease;
+}
+
+button:hover{
+    background:#e9edf4;
+    transform:translateY(-1px);
+}
+
+button:active{
+    transform:scale(.95);
+}
+
+.function{
+    background:#f0f1f5;
+    color:#697386;
+}
+
+.operator{
+    background:#e9edff;
+    color:#5367cf;
+}
+
+.clear{
+    background:#ffe9e9;
+    color:#d65353;
+}
+
+.equals{
+    background:linear-gradient(135deg,#667eea,#7c5cff);
+    color:white;
+    box-shadow:0 9px 23px #667eea3d;
+}
+
+.zero{
+    grid-column:span 2;
+}
+
+/* =========================================
+   SECRET TRANSITION
+========================================= */
+
+.transition{
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    display:none;
+    place-items:center;
+    background:#f8fafc;
+    overflow:hidden;
+}
+
+.transition.active{
+    display:grid;
+}
+
+.transition-bg{
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(circle at center,#ffffff 0,#e8eaff 20%,#aeb8ff 48%,#13172c 100%);
+    opacity:0;
+}
+
+.transition.active .transition-bg{
+    animation:transitionBg 2.5s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+.transition-core{
+    position:absolute;
+    width:15px;
+    height:15px;
+    border-radius:50%;
+    background:white;
+    box-shadow:
+        0 0 20px white,
+        0 0 70px #7c5cff,
+        0 0 150px #55f3ff;
+    transform:scale(0);
+}
+
+.transition.active .transition-core{
+    animation:coreBlast 2.25s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+.transition-ring{
+    position:absolute;
+    width:80px;
+    height:80px;
+    border:2px solid white;
+    border-radius:50%;
+    opacity:0;
+    transform:scale(.2);
+}
+
+.transition.active .transition-ring{
+    animation:ringBlast 2s cubic-bezier(.16,1,.3,1) .08s forwards;
+}
+
+.transition-text{
+    position:relative;
+    z-index:3;
+    opacity:0;
+    text-align:center;
+    transform:scale(.7) translateY(20px);
+}
+
+.transition-text h2{
+    margin:0;
+    font-family:"Space Grotesk",sans-serif;
+    font-size:clamp(38px,7vw,80px);
+    font-weight:800;
+    letter-spacing:-.06em;
+    color:white;
+    text-shadow:
+        0 0 20px #fff,
+        0 0 60px #8b7cff,
+        0 0 100px #55f3ff;
+}
+
+.transition-text p{
+    margin:12px 0 0;
+    color:#dfe4ff;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.3em;
+}
+
+.transition.active .transition-text{
+    animation:textReveal 1.15s cubic-bezier(.16,1,.3,1) .55s forwards;
+}
+
+.glitch-line{
+    position:absolute;
+    width:100%;
+    height:2px;
+    left:0;
+    background:#fff;
+    opacity:0;
+}
+
+.transition.active .glitch-line{
+    animation:glitchSweep 1.7s linear .2s;
+}
+
+@keyframes transitionBg{
+    0%{opacity:0;transform:scale(.3)}
+    25%{opacity:1}
+    100%{opacity:1;transform:scale(1.4)}
+}
+
+@keyframes coreBlast{
+    0%{transform:scale(0);opacity:1}
+    35%{transform:scale(5);opacity:1}
+    100%{transform:scale(220);opacity:1}
+}
+
+@keyframes ringBlast{
+    0%{transform:scale(.2);opacity:0}
+    20%{opacity:1}
+    100%{transform:scale(35);opacity:0}
+}
+
+@keyframes textReveal{
+    0%{opacity:0;transform:scale(.7) translateY(20px)}
+    60%{opacity:1;transform:scale(1.08) translateY(0)}
+    100%{opacity:1;transform:scale(1)}
+}
+
+@keyframes glitchSweep{
+    0%{top:-5%;opacity:0}
+    10%{opacity:.8}
+    50%{top:105%;opacity:.4}
+    100%{top:105%;opacity:0}
+}
+
+/* =========================================
+   LAUNCHER
+========================================= */
+
+.launcher{
+    display:none;
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    background:#030611;
+    color:white;
+    opacity:0;
+    transform:scale(1.08);
+}
+
+.launcher.show{
+    display:block;
+    animation:launcherReveal 1.3s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+@keyframes launcherReveal{
+    0%{
+        opacity:0;
+        transform:scale(1.08);
+        filter:blur(18px);
+    }
+    100%{
+        opacity:1;
+        transform:scale(1);
+        filter:blur(0);
+    }
+}
+
+.launcher canvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+}
+
+.bg{
+    position:fixed;
+    inset:0;
+    background:
+        radial-gradient(circle at 15% 10%,#55f3ff22,transparent 27%),
+        radial-gradient(circle at 90% 15%,#b35cff28,transparent 30%),
+        radial-gradient(circle at 60% 100%,#ff4fd820,transparent 30%),
+        linear-gradient(135deg,#040712,#07101f 50%,#0a0618);
+    pointer-events:none;
+}
+
+.grid{
+    position:fixed;
+    inset:-20%;
+    opacity:.15;
+    background-image:
+        linear-gradient(#70eaff14 1px,transparent 1px),
+        linear-gradient(90deg,#70eaff14 1px,transparent 1px);
+    background-size:48px 48px;
+    transform:perspective(650px) rotateX(65deg) translateY(18%);
+    pointer-events:none;
+}
+
+.shell{
+    position:relative;
+    width:min(1180px,94vw);
+    height:min(800px,92vh);
+    margin:4vh auto;
+    border:1px solid #ffffff18;
+    border-radius:28px;
+    background:#080e1dcc;
+    backdrop-filter:blur(24px);
+    box-shadow:0 30px 100px #000b;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    overflow:hidden;
+}
+
+.top{
+    padding:22px 28px;
+    border-bottom:1px solid #ffffff10;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.brand{
+    display:flex;
+    gap:13px;
+    align-items:center;
+}
+
+.logo{
+    width:45px;
+    height:45px;
+    border-radius:13px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,#55f3ff38,#b35cff35);
+    border:1px solid #ffffff20;
+    font-size:23px;
+    box-shadow:0 0 30px #55f3ff22;
+}
+
+.brand b{
+    font:800 15px "Space Grotesk";
+    letter-spacing:.2em;
+}
+
+.brand small{
+    display:block;
+    color:#7887a5;
+    font-size:9px;
+    letter-spacing:.18em;
+    margin-top:3px;
+}
+
+.status{
+    font-size:10px;
+    letter-spacing:.1em;
+    padding:9px 13px;
+    border:1px solid #64ff9b30;
+    border-radius:99px;
+    color:#baffd0;
+    background:#64ff9b0b;
+}
+
+.dot{
+    display:inline-block;
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#64ff9b;
+    box-shadow:0 0 14px #64ff9b;
+    margin-right:7px;
+}
+
+.content{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:28px;
+    padding:35px;
+    min-height:0;
+}
+
+.left{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.eyebrow{
+    color:#8ea0c1;
+    font-size:10px;
+    font-weight:bold;
+    letter-spacing:.22em;
+    margin-bottom:18px;
+}
+
+.eyebrow:before{
+    content:"";
+    display:inline-block;
+    width:34px;
+    height:1px;
+    background:#55f3ff;
+    margin-right:10px;
+    vertical-align:middle;
+}
+
+.left h1{
+    font:900 clamp(55px,7vw,105px)/.83 "Space Grotesk";
+    margin:0;
+    letter-spacing:-.06em;
+    background:linear-gradient(110deg,#fff,#a9faff,#7786ff,#e675ff);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+.left h1 span{
+    display:block;
+    font-size:.29em;
+    letter-spacing:.23em;
+    margin:15px 0 0 6px;
+    background:linear-gradient(90deg,#8290ac,#fff);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+.desc{
+    max-width:630px;
+    color:#8d9bb5;
+    font-size:14px;
+    line-height:1.75;
+    margin:25px 0;
+}
+
+.desc strong{
+    color:#eaf0ff;
+}
+
+.game{
+    max-width:610px;
+    padding:17px;
+    border-radius:19px;
+    border:1px solid #ffffff15;
+    background:linear-gradient(135deg,#6270ff12,#101a31a8);
+    box-shadow:0 20px 55px #0005;
+}
+
+.game-row{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.cubeicon{
+    width:57px;
+    height:57px;
+    border-radius:15px;
+    display:grid;
+    place-items:center;
+    font-size:28px;
+    background:linear-gradient(135deg,#62e6ff,#6968ff 55%,#bb58ff);
+    box-shadow:0 12px 30px #6870ff40;
+}
+
+.game b{
+    font:800 16px "Space Grotesk";
+}
+
+.pills{
+    display:flex;
+    gap:7px;
+    margin-top:7px;
+    flex-wrap:wrap;
+}
+
+.pill{
+    font-size:9px;
+    color:#aab6cf;
+    border:1px solid #ffffff10;
+    background:#ffffff06;
+    padding:5px 8px;
+    border-radius:99px;
+}
+
+.right{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.card{
+    width:min(420px,100%);
+    padding:26px;
+    border-radius:24px;
+    border:1px solid #ffffff18;
+    background:linear-gradient(160deg,#11182dd4,#080c17c7);
+    box-shadow:0 28px 70px #0008;
+    position:relative;
+    overflow:hidden;
+}
+
+.cardtop{
+    position:relative;
+    display:flex;
+    justify-content:space-between;
+    color:#8795b2;
+    font-size:9px;
+    letter-spacing:.17em;
+    font-weight:bold;
+}
+
+.version{
+    color:#e8efff;
+    background:#ffffff08;
+    border:1px solid #ffffff10;
+    padding:7px 9px;
+    border-radius:8px;
+}
+
+.mc{
+    width:120px;
+    height:120px;
+    margin:30px auto 23px;
+    position:relative;
+    transform-style:preserve-3d;
+    animation:spin 9s linear infinite;
+}
+
+.face{
+    position:absolute;
+    inset:0;
+    border:2px solid #ffffff20;
+    background:linear-gradient(135deg,#62e6ff2e,#7060ff28);
+    box-shadow:inset 0 0 35px #ffffff0d;
+}
+
+.f{transform:translateZ(60px)}
+.b{transform:rotateY(180deg) translateZ(60px)}
+.r{transform:rotateY(90deg) translateZ(60px)}
+.l{transform:rotateY(-90deg) translateZ(60px)}
+.t{transform:rotateX(90deg) translateZ(60px)}
+.bt{transform:rotateX(-90deg) translateZ(60px)}
+
+@keyframes spin{
+    to{
+        transform:rotateX(360deg) rotateY(360deg) rotateZ(360deg)
+    }
+}
+
+.card h2{
+    position:relative;
+    text-align:center;
+    font:800 22px "Space Grotesk";
+    margin:0;
+}
+
+.sub{
+    position:relative;
+    text-align:center;
+    color:#7f8ca6;
+    font-size:11px;
+    line-height:1.6;
+    margin:10px auto 20px;
+    max-width:290px;
+}
+
+.launch-button{
+    position:relative;
+    width:100%;
+    border:0;
+    border-radius:15px;
+    padding:17px;
+    color:#07101b;
+    font:800 12px "Space Grotesk";
+    letter-spacing:.15em;
+    cursor:pointer;
+    background:linear-gradient(100deg,#73f4ff,#7985ff 52%,#d56cff);
+    box-shadow:0 13px 38px #6877ff55;
+    transition:.2s;
+}
+
+.launch-button:hover{
+    transform:translateY(-2px) scale(1.01);
+    filter:brightness(1.07);
+}
+
+.tip{
+    text-align:center;
+    color:#65728a;
+    font-size:9px;
+    margin-top:12px;
+}
+
+.key{
+    border:1px solid #ffffff15;
+    border-radius:5px;
+    padding:3px 6px;
+    color:#aab5cb;
+    background:#ffffff06;
+}
+
+footer{
+    padding:15px 28px;
+    border-top:1px solid #ffffff0d;
+    color:#63718a;
+    font-size:9px;
+    display:flex;
+    justify-content:space-between;
+}
+
+/* Loading */
+
+.loading{
+    position:fixed;
+    inset:0;
+    z-index:20;
+    display:none;
+    place-items:center;
+    text-align:center;
+    background:#030611;
+}
+
+.loading.on{
+    display:grid;
+}
+
+.loadtitle{
+    font:900 clamp(35px,8vw,80px) "Space Grotesk";
+    background:linear-gradient(90deg,#fff,#77f4ff,#9d8fff,#ef76ff);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+.loadsub{
+    color:#7886a0;
+    font-size:10px;
+    letter-spacing:.18em;
+    margin-top:12px;
+}
+
+.bar{
+    width:min(500px,80vw);
+    height:5px;
+    background:#ffffff0d;
+    border-radius:99px;
+    margin:30px auto 10px;
+    overflow:hidden;
+}
+
+.bar i{
+    display:block;
+    width:0;
+    height:100%;
+    background:linear-gradient(90deg,#54f3ff,#797dff,#df68ff);
+    box-shadow:0 0 18px #55f3ff99;
+    transition:.15s;
+}
+
+.pct{
+    font:11px "Space Grotesk";
+    color:#b7c4da;
+}
+
+/* Responsive */
+
+@media(max-width:900px){
+
+    .hero{
+        grid-template-columns:1fr;
+        gap:35px;
+        padding-top:20px;
+    }
+
+    .hero-copy{
+        max-width:650px;
+    }
+
+    .calc-card{
+        max-width:520px;
+        margin:auto;
+    }
+}
+
+@media(max-width:560px){
+
+    .site-header{
+        width:92vw;
+    }
+
+    .header-pill{
+        display:none;
+    }
+
+    .hero{
+        width:92vw;
+        padding-bottom:40px;
+    }
+
+    .hero h1{
+        font-size:43px;
+    }
+
+    .calc-card{
+        border-radius:23px;
+        padding:13px;
+    }
+
+    .buttons{
+        gap:6px;
+    }
+
+    button{
+        height:50px;
+    }
+
+    .shell{
+        width:96vw;
+        height:95vh;
+        margin:2.5vh auto;
+        border-radius:20px;
+    }
+
+    .content{
+        grid-template-columns:1fr;
+        overflow:auto;
+        padding:24px 18px;
+    }
+
+    .top{
+        padding:16px 17px;
+    }
+
+    .status{
+        display:none;
+    }
+
+    .left h1{
+        font-size:16vw;
+    }
+
+    footer{
+        padding:13px 17px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================
+     CALCULATOR WEBSITE
+========================================= -->
+
+<div class="calculator-page" id="calculatorPage">
+
+    <header class="site-header">
+
+        <div class="site-brand">
+            <div class="brand-icon">∑</div>
+
+            <div>
+                <strong>PRO CALCULATOR</strong>
+                <small>PRECISION TOOLS</small>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div class="header-pill">
+                <span class="online-dot"></span>
+                CALCULATOR ONLINE
+            </div>
+
+            <div class="header-pill">
+                SCIENTIFIC
+            </div>
+        </div>
+
+    </header>
+
+    <main class="hero">
+
+        <section class="hero-copy">
+
+            <div class="eyebrow">
+                <span></span>
+                ADVANCED CALCULATION SUITE
+            </div>
+
+            <h1>
+                Calculate<br>
+                <em>with precision.</em>
+            </h1>
+
+            <p class="hero-description">
+                A modern scientific calculator designed for quick
+                calculations, advanced functions and everyday problem
+                solving — all in one clean workspace.
+            </p>
+
+            <div class="feature-row">
+                <div class="feature">✓ Scientific Functions</div>
+                <div class="feature">✓ Keyboard Support</div>
+                <div class="feature">✓ Precision Mode</div>
+            </div>
+
+        </section>
+
+        <section class="calc-card">
+
+            <div class="calc-top">
+                <div class="calc-name">SCIENTIFIC CALCULATOR</div>
+                <div class="calc-mode">DEG • SCI</div>
+            </div>
+
+            <div class="display">
+                <div class="previous" id="previous"></div>
+                <div class="current" id="current">0</div>
+            </div>
+
+            <div class="calc-status">
+                <span>READY</span>
+                <span>MEMORY OFF</span>
+            </div>
+
+            <div class="buttons">
+
+                <button class="clear" onclick="clearCalc()">AC</button>
+                <button class="function" onclick="backspace()">DEL</button>
+                <button class="function" onclick="append('(')">(</button>
+                <button class="function" onclick="append(')')">)</button>
+                <button class="operator" onclick="append('/')">÷</button>
+
+                <button class="function" onclick="scientific('sin')">sin</button>
+                <button class="function" onclick="scientific('cos')">cos</button>
+                <button class="function" onclick="scientific('tan')">tan</button>
+                <button class="function" onclick="scientific('sqrt')">√</button>
+                <button class="operator" onclick="append('*')">×</button>
+
+                <button onclick="append('7')">7</button>
+                <button onclick="append('8')">8</button>
+                <button onclick="append('9')">9</button>
+                <button class="function" onclick="scientific('log')">log</button>
+                <button class="operator" onclick="append('-')">−</button>
+
+                <button onclick="append('4')">4</button>
+                <button onclick="append('5')">5</button>
+                <button onclick="append('6')">6</button>
+                <button class="function" onclick="scientific('ln')">ln</button>
+                <button class="operator" onclick="append('+')">+</button>
+
+                <button onclick="append('1')">1</button>
+                <button onclick="append('2')">2</button>
+                <button onclick="append('3')">3</button>
+                <button class="function" onclick="scientific('square')">x²</button>
+                <button class="equals" onclick="calculate()">=</button>
+
+                <button class="zero" onclick="append('0')">0</button>
+                <button onclick="append('.')">.</button>
+                <button class="function" onclick="append('π')">π</button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================
+     SECRET CODE TRANSITION
+========================================= -->
+
+<div class="transition" id="transition">
+
+    <div class="transition-bg"></div>
+
+    <div class="transition-core"></div>
+
+    <div class="transition-ring"></div>
+
+    <div class="glitch-line"></div>
+
+    <div class="transition-text">
+        <h2>ALEX MODS</h2>
+        <p>INITIALIZING LAUNCH SEQUENCE</p>
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     ALEX MODS
+========================================= -->
+
+<div class="launcher" id="launcher">
+
+    <canvas id="canvas"></canvas>
+
+    <div class="bg"></div>
+    <div class="grid"></div>
+
+    <main class="shell">
+
+        <header class="top">
+
+            <div class="brand">
+
+                <div class="logo">✦</div>
+
+                <div>
+                    <b>ALEX MODS</b>
+                    <small>CREATED BY ALEX KING</small>
+                </div>
+
+            </div>
+
+            <div class="status">
+                <span class="dot"></span>
+                SYSTEM READY
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            <div class="left">
+
+                <div class="eyebrow">
+                    Running as CBC Administrator
+                </div>
+
+                <h1>
+                    ALEX MODS
+                    <span>MINECRAFT - Unblocked</span>
+                </h1>
+
+                <p class="desc">
+                    Welcome to <strong>ALEX MODS</strong>.
+                    Launch the game by pressing the LAUNCH GAME button.
+                </p>
+
+                <div class="game">
+
+                    <div class="game-row">
+
+                        <div class="cubeicon">⛏</div>
+
+                        <div>
+
+                            <b>Minecraft 1.20.6</b>
+
+                            <div class="pills">
+                                <span class="pill">UNBLOCKED</span>
+                                <span class="pill">BYPASSED</span>
+                                <span class="pill">HACKED</span>
+                                <span class="pill">UNPATCHED</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="right">
+
+                <div class="card">
+
+                    <div class="cardtop">
+                        <span>SELECTED BUILD</span>
+                        <span class="version">v1.20.6</span>
+                    </div>
+
+                    <div class="mc">
+                        <i class="face f"></i>
+                        <i class="face b"></i>
+                        <i class="face r"></i>
+                        <i class="face l"></i>
+                        <i class="face t"></i>
+                        <i class="face bt"></i>
+                    </div>
+
+                    <h2>Minecraft 1.20.6</h2>
+
+                    <div class="sub">
+                        Launch the ALEX MODS experience and head straight to the game hub.
+                    </div>
+
+                    <button class="launch-button" id="launch">
+                        LAUNCH GAME
+                    </button>
+
+                    <div class="tip">
+                        Press <span class="key">ENTER</span> to launch
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <footer>
+            <span>VERSION <b>1.0.0</b></span>
+            <span>STATUS <b>UNBLOCKED</b></span>
+            <span>© ALEX MODS</span>
+        </footer>
+
+    </main>
+
+    <div class="loading" id="loading">
+
+        <div>
+
+            <div class="loadtitle">ALEX MODS</div>
+
+            <div class="loadsub">
+                PREPARING LAUNCH SEQUENCE...
+            </div>
+
+            <div class="bar">
+                <i id="bar"></i>
+            </div>
+
+            <div class="pct" id="pct">0%</div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+/* =========================================
+   CALCULATOR
+========================================= */
+
+const current = document.getElementById("current");
+const previous = document.getElementById("previous");
+
+let expression = "";
+
+function updateDisplay(){
+    current.textContent = expression || "0";
+}
+
+function append(value){
+    expression += value;
+    updateDisplay();
+}
+
+function clearCalc(){
+    expression = "";
+    previous.textContent = "";
+    updateDisplay();
+}
+
+function backspace(){
+    expression = expression.slice(0,-1);
+    updateDisplay();
+}
+
+function scientific(type){
+
+    if(!expression)return;
+
+    try{
+
+        let value = expression
+            .replace(/π/g,"Math.PI")
+            .replace(/×/g,"*")
+            .replace(/÷/g,"/");
+
+        let number = Function(
+            '"use strict"; return (' + value + ')'
+        )();
+
+        if(type==="sin")
+            number=Math.sin(number*Math.PI/180);
+
+        if(type==="cos")
+            number=Math.cos(number*Math.PI/180);
+
+        if(type==="tan")
+            number=Math.tan(number*Math.PI/180);
+
+        if(type==="sqrt")
+            number=Math.sqrt(number);
+
+        if(type==="log")
+            number=Math.log10(number);
+
+        if(type==="ln")
+            number=Math.log(number);
+
+        if(type==="square")
+            number=number*number;
+
+        expression=String(number);
+        updateDisplay();
+
+    }catch{
+
+        current.textContent="Error";
+    }
+}
+
+
+/* =========================================
+   CALCULATE
+========================================= */
+
+function calculate(){
+
+    /*
+       SECRET CODE:
+       0404 + =
+    */
+
+    if(expression==="0404"){
+
+        triggerSecretTransition();
+
+        return;
+    }
+
+    try{
+
+        previous.textContent=expression+" =";
+
+        let safeExpression=expression
+            .replace(/π/g,"Math.PI")
+            .replace(/×/g,"*")
+            .replace(/÷/g,"/")
+            .replace(/−/g,"-");
+
+        let result=Function(
+            '"use strict"; return ('+safeExpression+')'
+        )();
+
+        if(!Number.isFinite(result))
+            throw new Error();
+
+        expression=String(result);
+
+        current.textContent=expression;
+
+    }catch{
+
+        current.textContent="Error";
+        expression="";
+    }
+}
+
+
+/* =========================================
+   SECRET TRANSITION
+========================================= */
+
+function triggerSecretTransition(){
+
+    const transition=document.getElementById("transition");
+
+    transition.classList.add("active");
+
+    /*
+       Change browser tab title immediately.
+    */
+    document.title="ALEX MODS";
+
+    /*
+       Let the cinematic animation play,
+       then reveal the launcher.
+    */
+    setTimeout(()=>{
+
+        document.getElementById("calculatorPage").style.display="none";
+
+        transition.style.display="none";
+
+        document.getElementById("launcher").classList.add("show");
+
+        startParticles();
+
+    },2600);
+}
+
+
+/* =========================================
+   KEYBOARD
+========================================= */
+
+document.addEventListener("keydown",function(e){
+
+    if(
+        document.getElementById("launcher").classList.contains("show")
+    ){
+
+        if(e.key==="Enter")
+            launch();
+
+        return;
+    }
+
+    if(/^[0-9]$/.test(e.key))
+        append(e.key);
+
+    if(e.key==".")
+        append(".");
+
+    if(["+","-","*","/"].includes(e.key))
+        append(e.key);
+
+    if(e.key==="("||e.key===")")
+        append(e.key);
+
+    if(e.key==="Backspace")
+        backspace();
+
+    if(e.key==="Escape")
+        clearCalc();
+
+    if(e.key==="Enter"||e.key==="=")
+        calculate();
+});
+
+
+/* =========================================
+   PARTICLES
+========================================= */
+
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+let w,h,particles=[];
+let animationStarted=false;
+
+function sizeCanvas(){
+
+    w=canvas.width=innerWidth;
+    h=canvas.height=innerHeight;
+
+    particles=Array.from(
+        {
+            length:Math.min(120,innerWidth/9)
+        },
+        ()=>({
+
+            x:Math.random()*w,
+            y:Math.random()*h,
+            r:Math.random()*1.5+.3,
+            vx:(Math.random()-.5)*.18,
+            vy:(Math.random()-.5)*.18,
+            a:Math.random()*.5+.1
+
+        })
+    );
+}
+
+function drawParticles(){
+
+    ctx.clearRect(0,0,w,h);
+
+    particles.forEach(p=>{
+
+        p.x+=p.vx;
+        p.y+=p.vy;
+
+        if(p.x<0)p.x=w;
+        if(p.x>w)p.x=0;
+
+        if(p.y<0)p.y=h;
+        if(p.y>h)p.y=0;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.r,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fillStyle=
+            `rgba(130,220,255,${p.a})`;
+
+        ctx.fill();
+
+    });
+
+    requestAnimationFrame(drawParticles);
+}
+
+function startParticles(){
+
+    if(animationStarted)return;
+
+    animationStarted=true;
+
+    sizeCanvas();
+
+    window.addEventListener(
+        "resize",
+        sizeCanvas
+    );
+
+    drawParticles();
+}
+
+
+/* =========================================
+   LAUNCH BUTTON
+========================================= */
+
+const DEST="game.html";
+
+let busy=false;
+
+function launch(){
+
+    if(busy)return;
+
+    busy=true;
+
+    const loading=
+        document.getElementById("loading");
+
+    const bar=
+        document.getElementById("bar");
+
+    const pct=
+        document.getElementById("pct");
+
+    loading.classList.add("on");
+
+    let n=0;
+
+    const timer=setInterval(()=>{
+
+        n+=Math.floor(Math.random()*18)+8;
+
+        if(n>=100){
+
+            n=100;
+
+            clearInterval(timer);
+
+            setTimeout(()=>{
+
+                window.location.href=DEST;
+
+            },260);
+        }
+
+        bar.style.width=n+"%";
+        pct.textContent=n+"%";
+
+    },130);
+}
+
+document.getElementById("launch").onclick=launch;
+</script>
+
+</body>
 </html>
