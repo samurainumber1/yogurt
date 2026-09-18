@@ -1775,6 +1775,22 @@ button:active{
         animation-iteration-count:1!important;
     }
 }
+
+/* Added game viewer and navigation */
+.launcher-nav,.catalog-nav-actions{display:flex;gap:10px;align-items:center}
+.catalog-action,.launcher-back{border:1px solid #ffffff18;background:#ffffff08;color:#dce8ff;padding:11px 15px;border-radius:12px;font:800 10px "Space Grotesk";letter-spacing:.08em;cursor:pointer}
+.catalog-action:hover,.launcher-back:hover{border-color:#73f4ff66;transform:translateY(-2px)}
+.catalog-launcher-btn{position:relative;overflow:hidden;border:1px solid #73f4ff88!important;background:linear-gradient(100deg,#73f4ff,#7785ff,#e36cff)!important;color:#06101b!important;box-shadow:0 0 18px #73f4ff55,0 0 45px #9b5cff22;animation:launcherShine 2.2s linear infinite}
+.catalog-launcher-btn:after{content:"";position:absolute;inset:-80% -30%;background:linear-gradient(110deg,transparent 40%,#fff9 50%,transparent 60%);transform:translateX(-80%);animation:shine 2.2s linear infinite}
+@keyframes shine{to{transform:translateX(80%)}}
+@keyframes launcherShine{50%{box-shadow:0 0 28px #73f4ff88,0 0 70px #9b5cff44}}
+.game-viewer{position:fixed;inset:0;z-index:6000;display:none;background:#02040a;color:white;flex-direction:column}
+.game-viewer.show{display:flex}
+.game-viewer-bar{height:62px;display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid #ffffff14;background:#080d18}
+.game-viewer-title{font:800 14px "Space Grotesk";letter-spacing:.12em}
+.game-viewer iframe{width:100%;height:calc(100vh - 62px);border:0;background:#000}
+@media(max-width:600px){.catalog-nav-actions{flex-wrap:wrap;justify-content:flex-end}.game-viewer-title{font-size:10px}}
+
 </style>
 </head>
 
@@ -1950,7 +1966,7 @@ button:active{
             <div class="status">
                 <span class="dot"></span>
                 SYSTEM READY
-            </div>
+            </div><button class="launcher-back" onclick="backToCatalogFromLauncher()">← GAME CATALOG</button>
 
         </header>
 
@@ -2116,6 +2132,10 @@ button:active{
                 <span></span>
                 VAULT ONLINE
             </div>
+            <div class="catalog-nav-actions">
+                <button class="catalog-action catalog-launcher-btn" onclick="goToLauncher()">✦ MINECRAFT LAUNCHER</button>
+                <button class="catalog-action" onclick="closeCatalog()">← CALCULATOR</button>
+            </div>
 
         </nav>
 
@@ -2140,11 +2160,11 @@ button:active{
             <div class="catalog-meta">
 
                 <div class="meta-pill">
-                    15 GAMES
+                    17 GAMES
                 </div>
 
                 <div class="meta-pill">
-                    LOCAL BUILDS
+                    RUNNING LOCALLY - 
                 </div>
 
                 <div class="meta-pill">
@@ -2203,6 +2223,15 @@ button:active{
 
                 </div>
 
+
+                <!-- 02 - DRIFT HUNTERS 2 -->
+                <div class="game-card featured" style="--index:1" onclick="openGame('games/⭐ALEX MODS - Drift Hunters [2].html')">
+                    <div class="game-icon">🏁</div>
+                    <h3>Drift Hunters 2</h3>
+                    <p>More cars, more tuning and more high-speed drifting.</p>
+                    <div class="play-label">PLAY NOW →</div>
+                    <div class="game-number">02</div>
+                </div>
 
                 <!-- 02 - AMONG US -->
 
@@ -3084,15 +3113,42 @@ document.getElementById("launch").onclick=launch;
 ========================================================= */
 
 function openGame(path){
-
-    /*
-       Use location.href so the browser stays inside
-       the same site/folder structure.
-    */
-
-    window.location.href=path;
+    const viewer=document.getElementById("gameViewer");
+    const frame=document.getElementById("gameFrame");
+    const catalog=document.getElementById("gameCatalog");
+    frame.src=path;
+    document.getElementById("gameViewerTitle").textContent="GAME VAULT // "+decodeURIComponent(path.split("/").pop());
+    catalog.classList.remove("show");
+    catalog.style.display="none";
+    viewer.classList.add("show");
+}
+function backToCatalog(){
+    document.getElementById("gameFrame").src="about:blank";
+    document.getElementById("gameViewer").classList.remove("show");
+    const catalog=document.getElementById("gameCatalog");
+    catalog.style.display="block";
+    requestAnimationFrame(()=>catalog.classList.add("show"));
+}
+function closeGameViewer(){
+    document.getElementById("gameFrame").src="about:blank";
+    document.getElementById("gameViewer").classList.remove("show");
+    document.getElementById("calculatorPage").style.display="block";
 }
 
+function goToLauncher(){
+    document.getElementById("gameCatalog").classList.remove("show");
+    document.getElementById("gameCatalog").style.display="none";
+    const launcher=document.getElementById("launcher");
+    launcher.classList.add("show");
+    startParticles();
+}
+function backToCatalogFromLauncher(){
+    document.getElementById("launcher").classList.remove("show");
+    document.getElementById("launcher").style.display="none";
+    const catalog=document.getElementById("gameCatalog");
+    catalog.style.display="block";
+    requestAnimationFrame(()=>catalog.classList.add("show"));
+}
 function closeCatalog(){
 
     const catalog=
@@ -3121,6 +3177,17 @@ createWarpStars();
 createCatalogParticles();
 
 </script>
+
+<div class="game-viewer" id="gameViewer">
+  <div class="game-viewer-bar">
+    <div class="game-viewer-title" id="gameViewerTitle">GAME VAULT // PLAYING</div>
+    <div class="launcher-nav">
+      <button class="launcher-back" onclick="backToCatalog()">← BACK TO GAME CATALOG</button>
+      <button class="launcher-back" onclick="closeGameViewer()">✕ CLOSE</button>
+    </div>
+  </div>
+  <iframe id="gameFrame" title="Game frame" allowfullscreen></iframe>
+</div>
 
 </body>
 </html>
