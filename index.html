@@ -1791,10 +1791,140 @@ button:active{
 .game-viewer iframe{width:100%;height:calc(100vh - 62px);border:0;background:#000}
 @media(max-width:600px){.catalog-nav-actions{flex-wrap:wrap;justify-content:flex-end}.game-viewer-title{font-size:10px}}
 
+.auth-overlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(2,6,23,.82);
+    backdrop-filter:blur(18px);
+    z-index:1300;
+}
+.auth-overlay.hidden{display:none}
+.auth-card{
+    width:min(430px,92vw);
+    background:rgba(10,15,28,.92);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:26px;
+    padding:26px 22px 20px;
+    box-shadow:0 30px 80px rgba(12,17,32,.6);
+}
+.auth-header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.auth-brand{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#71d9ff,#667eea,#8b5cf6);color:#08111d;font-weight:800}
+.auth-title strong{display:block;font-size:17px;letter-spacing:.12em}
+.auth-title small{display:block;color:#8aa2c2;font-size:10px;letter-spacing:.16em;margin-top:4px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.auth-tab{height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#131d2e;color:#ccd9f4;font:700 11px "Space Grotesk";letter-spacing:.12em;cursor:pointer}
+.auth-tab.active{background:linear-gradient(135deg,#667eea,#7c5cff);border-color:transparent;color:white;box-shadow:0 10px 22px rgba(124,92,255,.35)}
+.auth-form{display:none}
+.auth-form.active{display:block}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;color:#9fb0cc;font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px}
+.auth-field input{width:100%;height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#0d1524;padding:0 14px;color:#eef5ff;font:600 14px Inter;outline:none}
+.auth-field input:focus{border-color:#73f4ff;box-shadow:0 0 0 3px rgba(115,244,255,.15)}
+.auth-submit{width:100%;height:48px;border-radius:12px;background:linear-gradient(135deg,#73f4ff,#7785ff,#a76dff);border:0;color:#07111d;font:800 12px "Space Grotesk";letter-spacing:.12em;cursor:pointer;box-shadow:0 14px 26px rgba(115,244,255,.25)}
+.auth-message{min-height:18px;margin-top:12px;font-size:12px;color:#ffb9c4}
+.auth-message.success{color:#9ae6b4}
+.admin-panel{
+    position:fixed;
+    right:18px;
+    top:18px;
+    width:min(420px,calc(100vw - 28px));
+    max-height:78vh;
+    overflow:auto;
+    background:rgba(7,12,22,.9);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:22px;
+    padding:18px;
+    z-index:1250;
+    box-shadow:0 20px 60px rgba(1,4,10,.45);
+}
+.admin-panel.hidden{display:none}
+.admin-panel-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.admin-panel-title{font:800 12px "Space Grotesk";letter-spacing:.12em;color:#dfe8ff}
+.admin-close{height:34px;padding:0 10px;border-radius:10px;background:#101b2a;border:1px solid rgba(255,255,255,.08);color:#dfe8ff;font:700 10px "Space Grotesk";letter-spacing:.12em;cursor:pointer}
+.client-list{display:grid;gap:10px}
+.client-card{border:1px solid rgba(255,255,255,.08);background:#0d1728;border-radius:14px;padding:12px}
+.client-card-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.client-name{font-weight:800;color:#f2f7ff}
+.client-role{font-size:10px;padding:5px 8px;border-radius:999px;background:#18263d;color:#9eb4ff;letter-spacing:.08em;text-transform:uppercase}
+.client-meta{color:#9aaec9;font-size:11px;line-height:1.6}
+.client-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.client-action{height:34px;padding:0 12px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:#111d2f;color:#e5eeff;font:700 9px "Space Grotesk";letter-spacing:.1em;cursor:pointer}
+.client-action.warn{background:#2f1f1f;border-color:rgba(255,122,122,.25);color:#ffb4b4}
+.client-action.info{background:#1d233f;border-color:rgba(123,140,255,.35);color:#d6e4ff}
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:24px;
+    transform:translateX(-50%);
+    max-width:min(540px,88vw);
+    background:rgba(9,15,27,.94);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:999px;
+    padding:12px 18px;
+    color:#edf4ff;
+    font-size:12px;
+    letter-spacing:.06em;
+    z-index:1350;
+}
+.toast.hidden{display:none}
+.user-chip{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#101c2e;border:1px solid rgba(255,255,255,.08);color:#dfe7ff;font-size:10px;letter-spacing:.09em;text-transform:uppercase}
+.user-chip strong{font-weight:800}
+.user-chip button{height:28px;padding:0 10px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:#131e30;color:#eaf2ff;font:700 9px "Space Grotesk";letter-spacing:.1em;cursor:pointer}
+.account-button{height:38px;padding:0 14px;border-radius:999px;background:linear-gradient(135deg,#73f4ff,#7785ff,#a76dff);border:none;color:#07111d;font:800 10px "Space Grotesk";letter-spacing:.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 12px 24px rgba(115,244,255,.2)}
+.account-button.secondary{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#edf4ff;box-shadow:none}
+@media(max-width:600px){.auth-card{padding:18px 16px}.admin-panel{right:10px;top:10px;max-height:72vh}}
 </style>
 </head>
 
 <body>
+
+<div class="auth-overlay hidden" id="authOverlay">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-brand">A</div>
+            <div class="auth-title">
+                <strong>ALEX MODS</strong>
+                <small>ACCOUNT ACCESS</small>
+            </div>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" data-mode="login" type="button">SIGN IN</button>
+            <button class="auth-tab" data-mode="register" type="button">SIGN UP</button>
+        </div>
+
+        <form id="loginForm" class="auth-form active">
+            <div class="auth-field">
+                <label for="loginUsername">Username</label>
+                <input id="loginUsername" name="username" type="text" placeholder="Admin" autocomplete="username" required>
+            </div>
+            <div class="auth-field">
+                <label for="loginPassword">Password</label>
+                <input id="loginPassword" name="password" type="password" placeholder="Enter password" autocomplete="current-password" required>
+            </div>
+            <button class="auth-submit" type="submit">SIGN IN</button>
+        </form>
+
+        <form id="registerForm" class="auth-form">
+            <div class="auth-field">
+                <label for="registerUsername">Username</label>
+                <input id="registerUsername" name="username" type="text" placeholder="Choose a username" autocomplete="username" required>
+            </div>
+            <div class="auth-field">
+                <label for="registerPassword">Password</label>
+                <input id="registerPassword" name="password" type="password" placeholder="Create password" autocomplete="new-password" required>
+            </div>
+            <button class="auth-submit" type="submit">CREATE ACCOUNT</button>
+        </form>
+
+        <div id="authMessage" class="auth-message"></div>
+    </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
 
 <!-- =========================================================
      CALCULATOR
@@ -1823,6 +1953,8 @@ button:active{
             <div class="header-pill">
                 SCIENTIFIC
             </div>
+
+            <button class="account-button" id="accountButton" type="button">GUEST</button>
 
         </div>
 
@@ -3061,6 +3193,324 @@ function startParticles(){
 
 const DEST="game.html";
 
+const sessionState = {
+    user: null,
+    currentPage: "calculator",
+    adminRefreshTimer: null,
+};
+
+async function apiRequest(path, options = {}) {
+    const response = await fetch(path, {
+        method: options.method || "GET",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {})
+        },
+        body: options.body ? JSON.stringify(options.body) : undefined
+    });
+
+    let data = {};
+    try {
+        data = await response.json();
+    } catch {
+        data = {};
+    }
+
+    if (!response.ok && data.message) {
+        throw new Error(data.message);
+    }
+
+    return data;
+}
+
+function showToast(message, isError = false) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.remove("hidden");
+    toast.style.borderColor = isError ? "rgba(255,125,125,.35)" : "rgba(255,255,255,.12)";
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => toast.classList.add("hidden"), 4200);
+}
+
+function setAuthMode(mode) {
+    document.querySelectorAll(".auth-tab").forEach(tab => {
+        tab.classList.toggle("active", tab.dataset.mode === mode);
+    });
+    document.getElementById("loginForm").classList.toggle("active", mode === "login");
+    document.getElementById("registerForm").classList.toggle("active", mode === "register");
+}
+
+function setAuthMessage(message, success = false) {
+    const el = document.getElementById("authMessage");
+    el.textContent = message || "";
+    el.classList.toggle("success", success);
+}
+
+function openAuthModal() {
+    document.getElementById("authOverlay").classList.remove("hidden");
+    setAuthMessage("Continue as a guest or sign in to keep your account saved.");
+}
+
+function closeAuthModal() {
+    document.getElementById("authOverlay").classList.add("hidden");
+}
+
+function updateUserChip() {
+    const header = document.querySelector(".header-right");
+    const accountButton = document.getElementById("accountButton");
+    if (!header || !accountButton) return;
+
+    const adminLink = document.getElementById("adminLinkButton");
+    if (adminLink) adminLink.remove();
+
+    let chip = document.getElementById("userChip");
+    if (!sessionState.user) {
+        if (chip) chip.remove();
+        accountButton.textContent = "GUEST";
+        accountButton.classList.remove("secondary");
+        accountButton.onclick = openAuthModal;
+        return;
+    }
+
+    if (!chip) {
+        chip = document.createElement("div");
+        chip.id = "userChip";
+        chip.className = "user-chip";
+        chip.innerHTML = '<strong>' + sessionState.user.username + '</strong><button type="button" onclick="logoutUser()">LOG OUT</button>';
+        header.insertBefore(chip, accountButton);
+    } else {
+        chip.innerHTML = '<strong>' + sessionState.user.username + '</strong><button type="button" onclick="logoutUser()">LOG OUT</button>';
+    }
+
+    accountButton.textContent = sessionState.user.role === "admin" ? "ADMIN" : "ACCOUNT";
+    accountButton.classList.add("secondary");
+    accountButton.onclick = () => {
+        if (sessionState.user && sessionState.user.role === "admin") {
+            window.location.href = "/admin";
+            return;
+        }
+        openAuthModal();
+    };
+
+    if (sessionState.user.role === "admin") {
+        const adminButton = document.createElement("button");
+        adminButton.id = "adminLinkButton";
+        adminButton.type = "button";
+        adminButton.className = "account-button secondary";
+        adminButton.textContent = "ADMIN PANEL";
+        adminButton.onclick = () => window.location.href = "/admin";
+        header.insertBefore(adminButton, accountButton);
+    }
+}
+
+function setCurrentPage(page) {
+    sessionState.currentPage = page;
+    if (sessionState.user) {
+        heartbeatClient();
+    }
+}
+
+async function heartbeatClient() {
+    if (!sessionState.user) return;
+
+    try {
+        const result = await apiRequest("/api/client/heartbeat", {
+            method: "POST",
+            body: { page: sessionState.currentPage }
+        });
+        if (result.messages && result.messages.length) {
+            result.messages.forEach(message => showToast(message.text));
+        }
+        if (result.disconnected) {
+            sessionState.user = null;
+            updateUserChip();
+            document.getElementById("authOverlay").classList.remove("hidden");
+            setAuthMessage("Your session was disconnected by an administrator.", false);
+        }
+    } catch (error) {
+        console.warn("Heartbeat failed:", error.message);
+    }
+}
+
+async function refreshAdminList() {
+    if (!sessionState.user || sessionState.user.role !== "admin") return;
+
+    try {
+        const data = await apiRequest("/api/admin/clients");
+        const list = document.getElementById("adminClientList");
+        if (!data.clients || !data.clients.length) {
+            list.innerHTML = '<div class="client-card"><div class="client-meta">No clients connected right now.</div></div>';
+            return;
+        }
+
+        list.innerHTML = data.clients.map(client => `
+            <div class="client-card">
+                <div class="client-card-header">
+                    <div class="client-name">${client.username}</div>
+                    <span class="client-role">${client.role}</span>
+                </div>
+                <div class="client-meta">
+                    <div>Page: ${client.page}</div>
+                    <div>Status: ${client.connected ? "Connected" : "Disconnected"}</div>
+                    <div>Last seen: ${client.last_seen || "Just now"}</div>
+                </div>
+                <div class="client-actions">
+                    <button class="client-action warn" data-action="disconnect" data-client-id="${client.client_id}" type="button">DISCONNECT</button>
+                    <button class="client-action info" data-action="message" data-client-id="${client.client_id}" data-username="${client.username}" type="button">SEND MESSAGE</button>
+                </div>
+            </div>
+        `).join("");
+    } catch (error) {
+        showToast(error.message, true);
+    }
+}
+
+async function handleAdminAction(event) {
+    const target = event.target.closest("[data-action]");
+    if (!target || !sessionState.user || sessionState.user.role !== "admin") return;
+
+    const clientId = target.dataset.clientId;
+    const action = target.dataset.action;
+
+    if (action === "disconnect") {
+        try {
+            const result = await apiRequest("/api/admin/disconnect", {
+                method: "POST",
+                body: { client_id: clientId }
+            });
+            showToast(result.message || "Client disconnected.");
+            refreshAdminList();
+        } catch (error) {
+            showToast(error.message, true);
+        }
+        return;
+    }
+
+    if (action === "message") {
+        const username = target.dataset.username || "client";
+        const message = window.prompt("Send a message to " + username + ":");
+        if (!message || !message.trim()) return;
+
+        try {
+            const result = await apiRequest("/api/admin/message", {
+                method: "POST",
+                body: { client_id: clientId, message: message.trim() }
+            });
+            showToast(result.message || "Message sent.");
+            refreshAdminList();
+        } catch (error) {
+            showToast(error.message, true);
+        }
+    }
+}
+
+async function localLogin(username, password) {
+    const result = await apiRequest("/api/login", {
+        method: "POST",
+        body: { username, password }
+    });
+    sessionState.user = result.user;
+    updateUserChip();
+    setAuthMessage("Welcome back, " + result.user.username + ".", true);
+    closeAuthModal();
+    showToast("Logged in as " + result.user.username);
+    heartbeatClient();
+}
+
+async function localRegister(username, password) {
+    const result = await apiRequest("/api/register", {
+        method: "POST",
+        body: { username, password }
+    });
+    sessionState.user = result.user;
+    updateUserChip();
+    closeAuthModal();
+    showToast("Account created for " + result.user.username);
+    setAuthMessage("Account created successfully.", true);
+    heartbeatClient();
+}
+
+async function logoutUser() {
+    try {
+        await apiRequest("/api/logout", { method: "POST" });
+    } catch (error) {
+        console.warn(error.message);
+    }
+    sessionState.user = null;
+    updateUserChip();
+    setAuthMessage("You have been signed out.");
+    showToast("Logged out.");
+}
+
+async function initAuth() {
+    document.querySelectorAll(".auth-tab").forEach(button => {
+        button.addEventListener("click", () => setAuthMode(button.dataset.mode));
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const username = document.getElementById("loginUsername").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+        if (!username || !password) {
+            setAuthMessage("Please enter both username and password.");
+            return;
+        }
+
+        try {
+            setAuthMessage("");
+            await localLogin(username, password);
+        } catch (error) {
+            setAuthMessage(error.message, false);
+        }
+    });
+
+    document.getElementById("registerForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const username = document.getElementById("registerUsername").value.trim();
+        const password = document.getElementById("registerPassword").value.trim();
+        if (!username || !password) {
+            setAuthMessage("Please complete the registration fields.");
+            return;
+        }
+
+        try {
+            setAuthMessage("");
+            await localRegister(username, password);
+        } catch (error) {
+            setAuthMessage(error.message, false);
+        }
+    });
+
+    document.getElementById("accountButton").addEventListener("click", openAuthModal);
+
+    try {
+        const session = await apiRequest("/api/session");
+        if (session.authenticated) {
+            sessionState.user = session.user;
+            closeAuthModal();
+            updateUserChip();
+            heartbeatClient();
+        } else {
+            sessionState.user = null;
+            updateUserChip();
+            setAuthMessage("Guest access is active. Sign in or create an account anytime.");
+        }
+    } catch (error) {
+        sessionState.user = null;
+        updateUserChip();
+        setAuthMessage(error.message || "Unable to load your session.");
+    }
+
+    setInterval(() => {
+        if (sessionState.user) {
+            heartbeatClient();
+        }
+    }, 9000);
+}
+
+initAuth();
+
 let busy=false;
 
 function launch(){
@@ -3188,6 +3638,12 @@ createCatalogParticles();
   </div>
   <iframe id="gameFrame" title="Game frame" allowfullscreen></iframe>
 </div>
+
+<script>
+        if (window.location.hostname === "samurainumber1.github.io") {
+            window.location.replace("https://yogurt-ws0r.onrender.com/");
+        }
+    </script>
 
 </body>
 </html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; min-height: 100%; background: linear-gradient(135deg, #07111d, #0e1727 45%, #110d1d); color: white; font-family: Inter, sans-serif;
+        }
+        body { padding: 40px 16px; }
+        .wrap { max-width: 1100px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 26px; }
+        .header h1 { margin: 0; letter-spacing: .12em; font-size: 14px; text-transform: uppercase; }
+        .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        button {
+            border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.04); color: white; border-radius: 12px; padding: 12px 16px; cursor: pointer; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 10px;
+        }
+        .danger { background: rgba(120, 32, 32, .5); border-color: rgba(255, 125, 125, .3); }
+        .primary { background: linear-gradient(135deg, #73f4ff, #7c5cff); color: #07111d; border: none; }
+        .status { padding: 14px 18px; border-radius: 14px; border: 1px solid rgba(255,255,255,.08); background: rgba(12,18,30,.74); margin-bottom: 22px; color: #d3def5; }
+        .panel { background: rgba(10,15,24,.78); border: 1px solid rgba(255,255,255,.08); border-radius: 22px; padding: 20px; box-shadow: 0 20px 60px rgba(1,5,12,.4); }
+        .client-list { display: grid; gap: 14px; }
+        .client-card { padding: 16px; border-radius: 16px; background: rgba(15,24,38,.9); border: 1px solid rgba(255,255,255,.08); }
+        .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .name { font-size: 18px; font-weight: 800; }
+        .role { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; padding: 6px 9px; border-radius: 999px; background: rgba(122, 145, 255, .14); color: #dfe7ff; }
+        .meta { margin-top: 8px; color: #a8b8d0; font-size: 12px; line-height: 1.7; }
+        .controls { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+        .message-box { margin-top: 18px; display: none; padding: 14px; border-radius: 14px; background: rgba(16,24,37,.9); border: 1px solid rgba(255,255,255,.08); }
+        .message-box.visible { display: block; }
+        .message-box textarea { width: 100%; min-height: 90px; resize: vertical; border-radius: 12px; border: 1px solid rgba(255,255,255,.08); background: #0b1220; color: white; padding: 12px; }
+        .empty { color: #a7b5ce; padding: 20px; border: 1px dashed rgba(255,255,255,.12); border-radius: 14px; }
+        @media (max-width: 640px) { body { padding-top: 24px; } .header { flex-direction: column; align-items: flex-start; } }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="header">
+            <h1>Admin Panel</h1>
+            <div class="actions">
+                <button class="primary" type="button" onclick="refreshClients()">Refresh</button>
+                <button type="button" onclick="window.location.href='/'">Home</button>
+            </div>
+        </div>
+
+        <div id="adminStatus" class="status">Checking admin session...</div>
+
+        <div class="panel">
+            <div id="clientList" class="client-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const adminStatus = document.getElementById('adminStatus');
+        const clientList = document.getElementById('clientList');
+
+        async function apiRequest(path, options = {}) {
+            const response = await fetch(path, {
+                method: options.method || 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(options.headers || {})
+                },
+                body: options.body ? JSON.stringify(options.body) : undefined
+            });
+            let data = {};
+            try { data = await response.json(); } catch (e) { data = {}; }
+            if (!response.ok && data.message) {
+                throw new Error(data.message);
+            }
+            return data;
+        }
+
+        function renderAdminState(message, isError = false) {
+            adminStatus.textContent = message;
+            adminStatus.style.borderColor = isError ? 'rgba(255, 125, 125, .35)' : 'rgba(255,255,255,.08)';
+            adminStatus.style.color = isError ? '#ffb4b4' : '#d3def5';
+        }
+
+        function toggleMessageBox(clientId, visible) {
+            const box = document.getElementById('message-box-' + clientId);
+            if (box) {
+                box.classList.toggle('visible', !!visible);
+            }
+        }
+
+        async function refreshClients() {
+            try {
+                const session = await apiRequest('/api/session');
+                if (!session.authenticated || session.user.role !== 'admin') {
+                    renderAdminState('Admin access required. Please sign in as Admin first.', true);
+                    clientList.innerHTML = '<div class="empty">You are not signed in as the admin account.</div>';
+                    return;
+                }
+
+                renderAdminState('Connected clients: ' + (session.user.username || 'Admin'));
+                const data = await apiRequest('/api/admin/clients');
+                if (!data.clients || !data.clients.length) {
+                    clientList.innerHTML = '<div class="empty">No connected clients right now.</div>';
+                    return;
+                }
+
+                clientList.innerHTML = data.clients.map(client => `
+                    <div class="client-card">
+                        <div class="row">
+                            <div class="name">${client.username}</div>
+                            <span class="role">${client.role}</span>
+                        </div>
+                        <div class="meta">
+                            <div>Page: ${client.page}</div>
+                            <div>Status: ${client.connected ? 'Connected' : 'Disconnected'}</div>
+                            <div>Last seen: ${client.last_seen || 'Just now'}</div>
+                        </div>
+                        <div class="controls">
+                            <button class="danger" type="button" data-action="disconnect" data-client-id="${client.client_id}">Disconnect</button>
+                            <button type="button" data-action="show-message" data-client-id="${client.client_id}">Send Message</button>
+                        </div>
+                        <div class="message-box" id="message-box-${client.client_id}">
+                            <textarea id="message-input-${client.client_id}" placeholder="Type a message to send to ${client.username}..."></textarea>
+                            <div class="controls" style="margin-top: 10px;">
+                                <button class="primary" type="button" data-action="send-message" data-client-id="${client.client_id}">Send</button>
+                                <button type="button" data-action="hide-message" data-client-id="${client.client_id}">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                renderAdminState(error.message || 'Unable to load admin data.', true);
+            }
+        }
+
+        async function handleAction(event) {
+            const target = event.target.closest('[data-action]');
+            if (!target) return;
+
+            const action = target.dataset.action;
+            const clientId = target.dataset.clientId;
+
+            if (action === 'disconnect') {
+                try {
+                    const result = await apiRequest('/api/admin/disconnect', { method: 'POST', body: { client_id: clientId } });
+                    renderAdminState(result.message || 'Client disconnected.');
+                    refreshClients();
+                } catch (error) {
+                    renderAdminState(error.message || 'Disconnect failed.', true);
+                }
+                return;
+            }
+
+            if (action === 'show-message') {
+                toggleMessageBox(clientId, true);
+                return;
+            }
+
+            if (action === 'hide-message') {
+                toggleMessageBox(clientId, false);
+                return;
+            }
+
+            if (action === 'send-message') {
+                const input = document.getElementById('message-input-' + clientId);
+                const message = (input ? input.value : '').trim();
+                if (!message) {
+                    renderAdminState('Message cannot be empty.', true);
+                    return;
+                }
+
+                try {
+                    const result = await apiRequest('/api/admin/message', {
+                        method: 'POST',
+                        body: { client_id: clientId, message }
+                    });
+                    renderAdminState(result.message || 'Message sent.');
+                    toggleMessageBox(clientId, false);
+                    refreshClients();
+                } catch (error) {
+                    renderAdminState(error.message || 'Unable to send message.', true);
+                }
+            }
+        }
+
+        document.addEventListener('click', handleAction);
+        refreshClients();
+        setInterval(refreshClients, 8000);
+    </script>
+</body>
+</html>
