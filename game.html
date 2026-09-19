@@ -8,7 +8,7 @@
 		<title>ALEX MODS</title>
 		<meta property="og:locale" content="en-US" />
 		<meta property="og:type" content="website" />
-		<meta property="og:title" content="EaglercraftX 1.20.6 WASM-GC" />
+		<meta property="og:title" content="ALEX MODS" />
 		<meta property="og:description" content="Play minecraft 1.20.6 in your browser" />
 		<meta property="og:image" content="favicon.png" />
 		<link type="image/png" rel="shortcut icon" href="favicon.png" />
@@ -17,7 +17,7 @@
 			"use strict";
 			window.addEventListener("load", function() {
 				if(window.location.href.indexOf("file:") === 0) {
-					alert("HTTP please, do not open this file locally, run a local HTTP server and load it via HTTP");
+					alert("Don't run this locally.");
 				}else {
 					
 					// %%%%%%%%% launch options %%%%%%%%%%%%
@@ -26,7 +26,7 @@
 					window.eaglercraftXOpts = {
 						demoMode: false,
 						container: "game_frame",
-						assetsURI: "https://raw.githubusercontent.com/eymenwsmc/offline/main/120.epw?v=5430efd6",
+						assetsURI: "120.epw",
 						worldsDB: "worlds",
 						servers: [
 							/* example: { addr: "ws://localhost:8081/", name: "Local test server" } */
@@ -47,7 +47,21 @@
 						if(s) window.eaglercraftXOpts.joinServer = s;
 					}
 					
-					main();
+					fetch("120.epw", { cache: "no-store" })
+    .then(r => r.arrayBuffer())
+    .then(buf => {
+        const v = new DataView(buf);
+        console.log("EPW URL:", new URL("120.epw", location.href).href);
+        console.log("Downloaded bytes:", buf.byteLength);
+        console.log("Declared bytes:", v.getUint32(8, true));
+        console.log(
+            "Magic:",
+            new TextDecoder().decode(new Uint8Array(buf, 0, 8))
+        );
+    })
+    .catch(err => console.error("EPW TEST ERROR:", err));
+
+main();
 					
 				}
 			});
