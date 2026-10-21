@@ -1401,6 +1401,9 @@ button:active{
     position:relative;
     min-height:180px;
     padding:18px;
+    display:block;
+    color:inherit;
+    text-decoration:none;
     border-radius:20px;
     border:1px solid #ffffff12;
     background:
@@ -1438,6 +1441,11 @@ button:active{
         0 25px 65px #000a,
         0 0 35px #55f3ff0d,
         inset 0 1px 0 #ffffff10;
+}
+
+.game-card:focus-visible{
+    outline:2px solid #73f4ff;
+    outline-offset:4px;
 }
 
 .game-card:before{
@@ -1792,6 +1800,22 @@ button:active{
 .game-open-tab{display:inline-flex;align-items:center;text-decoration:none}
 .game-viewer iframe{width:100%;height:calc(100vh - 62px);border:0;background:#000}
 @media(max-width:600px){.catalog-nav-actions{flex-wrap:wrap;justify-content:flex-end}.game-viewer-bar{height:auto;min-height:62px;flex-wrap:wrap;gap:10px;padding:10px 12px}.game-viewer-title{font-size:10px;flex:1}.game-viewer-hint{order:3;flex-basis:100%}.launcher-nav{flex-wrap:wrap;justify-content:flex-end}}
+.subway-launcher{position:fixed;inset:0;z-index:5900;display:none;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% 0%,#14274cdd,#030611f5 72%);color:#f4f7ff}
+.subway-launcher.show{display:flex;animation:subwayLauncherIn .35s ease both}
+@keyframes subwayLauncherIn{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:scale(1)}}
+.subway-launcher-panel{width:min(1050px,96vw);max-height:92vh;overflow:auto;padding:clamp(20px,4vw,38px);border:1px solid #73f4ff30;border-radius:28px;background:linear-gradient(145deg,#101a30f5,#080c18f7);box-shadow:0 28px 100px #000b,0 0 55px #55d7ff12}
+.subway-launcher-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.subway-launcher-kicker{margin:0 0 9px;color:#73f4ff;font:800 10px "Space Grotesk";letter-spacing:.2em}
+.subway-launcher-title{margin:0;color:#f4f7ff;font:900 clamp(28px,5vw,48px) "Space Grotesk";letter-spacing:-.04em}
+.subway-launcher-copy{margin:10px 0 24px;color:#9aaac4;font-size:14px}
+.subway-map-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.subway-map-button{position:relative;min-height:125px;padding:18px;text-align:left;border:1px solid #ffffff18;border-radius:18px;background:linear-gradient(145deg,#17213a,#0a1020);color:#f4f7ff;cursor:pointer;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.subway-map-button:hover,.subway-map-button:focus-visible{border-color:#73f4ff88;box-shadow:0 12px 35px #0008,0 0 24px #73f4ff16;outline:none}
+.subway-map-number{display:block;margin-bottom:18px;color:#73f4ff;font:800 10px "Space Grotesk";letter-spacing:.14em}
+.subway-map-name{display:block;font:800 clamp(15px,2vw,20px) "Space Grotesk"}
+.subway-map-play{display:block;margin-top:7px;color:#8797b3;font:700 9px "Space Grotesk";letter-spacing:.12em}
+@media(max-width:720px){.subway-map-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.subway-launcher{padding:12px}.subway-launcher-panel{max-height:96vh;padding:20px}}
+@media(max-width:370px){.subway-map-grid{grid-template-columns:1fr}.subway-map-button{min-height:100px}}
 
 .auth-overlay{
     position:fixed;
@@ -2777,22 +2801,21 @@ button:active{
 
             <p class="catalog-subtitle">
                 Welcome to the ALEX MODS game archive.
-                Select a game below to launch it instantly.
-                Every build is stored locally inside the games directory.
+                Launch games from their files in the local game vault.
             </p>
 
             <div class="catalog-meta">
 
                 <div class="meta-pill">
-                    LOTS OF GAMES
+                    <span id="gameCount">21</span> GAME PICKS
                 </div>
 
                 <div class="meta-pill">
-                    RUNNING LOCALLY - NEVER BLOCKED
+                    LOCAL GAME FILES
                 </div>
 
                 <div class="meta-pill">
-                    INSTANT LAUNCH
+                    LAUNCHES IN THE VAULT
                 </div>
 
                 <div class="meta-pill">
@@ -2819,10 +2842,7 @@ button:active{
 
             <div class="games-grid">
 
-
-                <!-- 01 - DRIFT HUNTERS -->
-
-                <div
+<div
                     class="game-card featured"
                     style="--index:0"
                     onclick="openGame('games/⭐ALEX MODS - Drift Hunters.html')"
@@ -2847,9 +2867,7 @@ button:active{
 
                 </div>
 
-
-                <!-- 02 - DRIFT HUNTERS 2 -->
-                <div class="game-card featured" style="--index:1" onclick="openGame('games/⭐ALEX MODS - Drift Hunters [2].html')">
+<div class="game-card featured" style="--index:1" onclick="openGame('games/⭐ALEX MODS - Drift Hunters [2].html')">
                     <div class="game-icon">🏁</div>
                     <h3>Drift Simulator</h3>
                     <p>More cars, more tuning and more high-speed drifting.</p>
@@ -2857,9 +2875,7 @@ button:active{
                     <div class="game-number">02</div>
                 </div>
 
-                <!-- 02 - AMONG US -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:1"
                     onclick="openGame('games/ALEX MODS - Among us.html')"
@@ -2877,14 +2893,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">02</div>
+                    <div class="game-number">03</div>
 
                 </div>
 
-
-                <!-- 03 - COOKIE CLICKER -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:2"
                     onclick="openGame('games/ALEX MODS - Cookie Clicker.html')"
@@ -2902,14 +2915,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">03</div>
+                    <div class="game-number">04</div>
 
                 </div>
 
-
-                <!-- 04 - CROSSY ROAD -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:3"
                     onclick="openGame('games/ALEX MODS - Crossy Road.html')"
@@ -2927,14 +2937,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">04</div>
+                    <div class="game-number">05</div>
 
                 </div>
 
-
-                <!-- 05 - FIGHT NIGHTS AT FREDDIES 2 -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:4"
                     onclick="openGame('games/ALEX MODS - Fight nights at Freddies [2].html')"
@@ -2952,14 +2959,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">05</div>
+                    <div class="game-number">06</div>
 
                 </div>
 
-
-                <!-- 06 - FIRE BOY AND WATER GIRL -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:5"
                     onclick="openGame('games/ALEX MODS - Fire Boy and Water Girl.html')"
@@ -2977,14 +2981,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">06</div>
+                    <div class="game-number">07</div>
 
                 </div>
 
-
-                <!-- 07 - FIVE NIGHTS AT FREDDIES 1 -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:6"
                     onclick="openGame('games/ALEX MODS - Five Nights at Freddies [1].html')"
@@ -3002,14 +3003,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">07</div>
+                    <div class="game-number">08</div>
 
                 </div>
 
-
-                <!-- 08 - FORTZONE -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:7"
                     onclick="openGame('games/ALEX MODS - Fortzone.html')"
@@ -3027,14 +3025,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">08</div>
+                    <div class="game-number">09</div>
 
                 </div>
 
-
-                <!-- 09 - FRUIT NINJA -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:8"
                     onclick="openGame('games/ALEX MODS - Fruit Ninja.html')"
@@ -3052,14 +3047,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">09</div>
+                    <div class="game-number">10</div>
 
                 </div>
 
-
-                <!-- 10 - GEOMETRY DASH -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:9"
                     onclick="openGame('games/ALEX MODS - Geometry Dash.html')"
@@ -3077,14 +3069,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">10</div>
+                    <div class="game-number">11</div>
 
                 </div>
 
-
-                <!-- 11 - GRANNY -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:10"
                     onclick="openGame('games/ALEX MODS - Granny [1].html')"
@@ -3102,14 +3091,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">11</div>
+                    <div class="game-number">12</div>
 
                 </div>
 
-
-                <!-- 12 - MINECRAFT 1.12 -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:11"
                     onclick="openGame('games/ALEX MODS - Minecraft 1.12.html')"
@@ -3127,14 +3113,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">12</div>
+                    <div class="game-number">13</div>
 
                 </div>
 
-
-                <!-- 13 - MINECRAFT MOTORCYCLE -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:12"
                     onclick="openGame('games/ALEX MODS - Minecraft Motorcycle.html')"
@@ -3152,14 +3135,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">13</div>
+                    <div class="game-number">14</div>
 
                 </div>
 
-
-                <!-- 14 - PLAGUE INC -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:13"
                     onclick="openGame('games/ALEX MODS - Plague Inc.html')"
@@ -3177,14 +3157,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">14</div>
+                    <div class="game-number">15</div>
 
                 </div>
 
-
-                <!-- 15 - PLANTS VS ZOMBIES -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:14"
                     onclick="openGame('games/ALEX MODS - Plants vs Zombies.html')"
@@ -3202,14 +3179,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">15</div>
+                    <div class="game-number">16</div>
 
                 </div>
 
-
-                <!-- 16 - SLITHER.IO -->
-
-                <div
+<div
                     class="game-card"
                     style="--index:15"
                     onclick="openGame('games/ALEX MODS - Slither.io.html')"
@@ -3227,11 +3201,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">16</div>
+                    <div class="game-number">17</div>
 
                 </div>
 
-                <div
+<div
                     class="game-card"
                     style="--index:16"
                     onclick="openGame('games/ALEX MODS - Drive Mad.html')"
@@ -3249,11 +3223,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">17</div>
+                    <div class="game-number">18</div>
 
                 </div>
 
-                <div
+<div
                     class="game-card"
                     style="--index:17"
                     onclick="openGame('games/ALEX MODS - Basketball Stars.html')"
@@ -3271,12 +3245,11 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">18</div>
+                    <div class="game-number">19</div>
 
                 </div>
 
-
-                <div
+<div
                     class="game-card"
                     style="--index:18"
                     onclick="openGame('games/ALEX MODS - Slope.html')"
@@ -3294,8 +3267,24 @@ button:active{
                         LAUNCH →
                     </div>
 
-                    <div class="game-number">19</div>
+                    <div class="game-number">20</div>
 
+                </div>
+
+<div class="game-card" style="--index:20" onclick="openSubwayLauncher()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSubwayLauncher()}" role="button" tabindex="0" aria-label="Choose a Subway Surfers map">
+    <div class="game-icon">🚇</div>
+    <h3>Subway Surfers</h3>
+    <p>Pick a city map and jump into the run.</p>
+    <div class="play-label">CHOOSE A MAP →</div>
+                    <div class="game-number">21</div>
+</div>
+
+<div class="game-card" style="--index:21" onclick="openGame('games/2048/index.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openGame('games/2048/index.html')}" role="button" tabindex="0" aria-label="Launch the locally bundled 2048 game">
+    <div class="game-icon">🔢</div>
+    <h3>2048</h3>
+    <p>Join the tiles and aim for 2048.</p>
+    <div class="play-label">LAUNCH ↗</div>
+    <div class="game-number">22</div>
                 </div>
 
             </div>
@@ -3310,11 +3299,11 @@ button:active{
             </span>
 
             <span>
-                <strong>16</strong> BUILDS AVAILABLE
+                <strong id="gameCountFooter">22</strong> GAMES IN THE VAULT
             </span>
 
             <span>
-                LOCAL ARCHIVE // ONLINE
+                LOCAL GAME FILES
             </span>
 
         </footer>
@@ -3331,6 +3320,20 @@ button:active{
         ×
     </button>
 
+</div>
+
+<div class="subway-launcher" id="subwayLauncher" role="dialog" aria-modal="true" aria-labelledby="subwayLauncherTitle">
+    <section class="subway-launcher-panel">
+        <div class="subway-launcher-top">
+            <div>
+                <p class="subway-launcher-kicker">SUBWAY SURFERS // WORLD TOUR</p>
+                <h2 class="subway-launcher-title" id="subwayLauncherTitle">Pick your map</h2>
+            </div>
+            <button class="launcher-back" type="button" onclick="closeSubwayLauncher()">← GAME CATALOG</button>
+        </div>
+        <p class="subway-launcher-copy">Choose a city to launch its Subway Surfers map.</p>
+        <div class="subway-map-grid" id="subwayMapGrid"></div>
+    </section>
 </div>
 
 
@@ -4125,6 +4128,63 @@ document.getElementById("launch").onclick=launch;
    GAME CATALOG
 ========================================================= */
 
+const subwayMaps=[
+    {city:"Barcelona",file:"ALEXMODS - Subway Surfers - Barcelona.html"},
+    {city:"Beijing",file:"ALEXMODS - Subway Surfers - Beijing.html"},
+    {city:"Berlin",file:"ALEXMODS - Subway Surfers - Berlin.html"},
+    {city:"Buenos Aires",file:"ALEXMODS - Subway Surfers - Buenos Aires.html"},
+    {city:"Havana",file:"ALEXMODS - Subway Surfers - Havana.html"},
+    {city:"Houston",file:"ALEXMODS - Subway Surfers - Houston.html"},
+    {city:"Iceland",file:"ALEXMODS - Subway Surfers - Iceland.html"},
+    {city:"London",file:"ALEXMODS - Subway Surfers - London.html"}
+];
+let subwayFlowActive=false;
+
+function openSubwayLauncher(){
+    subwayFlowActive=true;
+    document.getElementById("subwayLauncher").classList.add("show");
+}
+function closeSubwayLauncher(){
+    document.getElementById("subwayLauncher").classList.remove("show");
+    subwayFlowActive=false;
+    const catalog=document.getElementById("gameCatalog");
+    catalog.style.removeProperty("display");
+    catalog.classList.add("show");
+}
+function openSubwayMap(file){
+    const map=subwayMaps.find(item=>item.file===file);
+    if(!map){
+        console.error("Unknown Subway Surfers map:",file);
+        return;
+    }
+    document.getElementById("subwayLauncher").classList.remove("show");
+    openGame("games/Subway Surfers/"+map.file);
+}
+function renderSubwayMaps(){
+    const grid=document.getElementById("subwayMapGrid");
+    subwayMaps.forEach((map,index)=>{
+        const button=document.createElement("button");
+        button.type="button";
+        button.className="subway-map-button";
+        button.addEventListener("click",()=>openSubwayMap(map.file));
+
+        const number=document.createElement("span");
+        number.className="subway-map-number";
+        number.textContent="MAP "+String(index+1).padStart(2,"0");
+
+        const name=document.createElement("span");
+        name.className="subway-map-name";
+        name.textContent=map.city;
+
+        const play=document.createElement("span");
+        play.className="subway-map-play";
+        play.textContent="PLAY THIS CITY →";
+
+        button.append(number,name,play);
+        grid.appendChild(button);
+    });
+}
+
 function openGame(path){
     const viewer=document.getElementById("gameViewer");
     const frame=document.getElementById("gameFrame");
@@ -4139,6 +4199,10 @@ function openGame(path){
 function backToCatalog(){
     document.getElementById("gameFrame").src="about:blank";
     document.getElementById("gameViewer").classList.remove("show");
+    if(subwayFlowActive){
+        document.getElementById("subwayLauncher").classList.add("show");
+        return;
+    }
     const catalog=document.getElementById("gameCatalog");
     catalog.style.removeProperty("display");
     requestAnimationFrame(()=>catalog.classList.add("show"));
@@ -4146,6 +4210,10 @@ function backToCatalog(){
 function closeGameViewer(){
     document.getElementById("gameFrame").src="about:blank";
     document.getElementById("gameViewer").classList.remove("show");
+    if(subwayFlowActive){
+        document.getElementById("subwayLauncher").classList.add("show");
+        return;
+    }
     document.getElementById("calculatorPage").style.removeProperty("display");
 }
 function goToLauncher(){
@@ -4186,15 +4254,19 @@ function closeCatalog(){
 
 createWarpStars();
 createCatalogParticles();
+renderSubwayMaps();
+const gameCount=document.querySelectorAll(".games-grid .game-card").length;
+document.getElementById("gameCount").textContent=gameCount;
+document.getElementById("gameCountFooter").textContent=gameCount;
 
 </script>
 
 <div class="game-viewer" id="gameViewer">
   <div class="game-viewer-bar">
-    <div class="game-viewer-title">ALEX MODS</div>
+    <div class="game-viewer-title" id="gameViewerTitle">ALEX MODS</div>
     <div class="game-viewer-hint">Large games may take 20–30 seconds to start. If it stays blank, try refreshing the page, or opening in a new tab.</div>
     <div class="launcher-nav">
-      <a class="launcher-back game-open-tab" id="openGameTab" target="_blank" rel="noopener noreferrer">OPEN IN NEW TAB ↗</a>
+      <a class="launcher-back game-open-tab" id="openGameTab" target="_blank" rel="noopener noreferrer">FULLSCREEN IN NEW TAB ↗</a>
       <button class="launcher-back" onclick="backToCatalog()">← BACK TO GAME CATALOG</button>
       <button class="launcher-back" onclick="closeGameViewer()">✕ CLOSE</button>
     </div>
