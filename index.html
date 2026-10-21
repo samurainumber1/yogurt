@@ -469,15 +469,15 @@ button:active{
 }
 
 @keyframes coreBlast{
-    0%{transform:scale(0);opacity:1}
-    35%{transform:scale(5);opacity:1}
-    100%{transform:scale(220);opacity:1}
+    0%{opacity:0}
+    35%{opacity:1}
+    100%{opacity:.72}
 }
 
 @keyframes ringBlast{
     0%{transform:scale(.2);opacity:0}
     20%{opacity:1}
-    100%{transform:scale(35);opacity:0}
+    100%{transform:scale(2.2);opacity:0}
 }
 
 @keyframes textReveal{
@@ -1005,16 +1005,16 @@ button:active{
 
 @keyframes warpFlash{
     0%{
-        transform:scale(0);
-        opacity:1;
+        clip-path:circle(0 at 50% 50%);
+        opacity:.4;
     }
     35%{
-        transform:scale(3);
+        clip-path:circle(48vmax at 50% 50%);
         opacity:1;
     }
     100%{
-        transform:scale(130);
-        opacity:1;
+        clip-path:circle(120vmax at 50% 50%);
+        opacity:.82;
     }
 }
 
@@ -1044,7 +1044,7 @@ button:active{
         opacity:1;
     }
     100%{
-        transform:scale(30);
+        transform:scale(2.2);
         opacity:0;
     }
 }
@@ -1788,8 +1788,10 @@ button:active{
 .game-viewer.show{display:flex}
 .game-viewer-bar{height:62px;display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid #ffffff14;background:#080d18}
 .game-viewer-title{font:800 14px "Space Grotesk";letter-spacing:.12em}
+.game-viewer-hint{color:#8493ad;font-size:10px;line-height:1.5}
+.game-open-tab{display:inline-flex;align-items:center;text-decoration:none}
 .game-viewer iframe{width:100%;height:calc(100vh - 62px);border:0;background:#000}
-@media(max-width:600px){.catalog-nav-actions{flex-wrap:wrap;justify-content:flex-end}.game-viewer-title{font-size:10px}}
+@media(max-width:600px){.catalog-nav-actions{flex-wrap:wrap;justify-content:flex-end}.game-viewer-bar{height:auto;min-height:62px;flex-wrap:wrap;gap:10px;padding:10px 12px}.game-viewer-title{font-size:10px;flex:1}.game-viewer-hint{order:3;flex-basis:100%}.launcher-nav{flex-wrap:wrap;justify-content:flex-end}}
 
 .auth-overlay{
     position:fixed;
@@ -1876,6 +1878,495 @@ button:active{
 .account-button{height:38px;padding:0 14px;border-radius:999px;background:linear-gradient(135deg,#73f4ff,#7785ff,#a76dff);border:none;color:#07111d;font:800 10px "Space Grotesk";letter-spacing:.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 12px 24px rgba(115,244,255,.2)}
 .account-button.secondary{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#edf4ff;box-shadow:none}
 @media(max-width:600px){.auth-card{padding:18px 16px}.admin-panel{right:10px;top:10px;max-height:72vh}}
+
+/* =========================================================
+   NEON MOTION PASS
+========================================================= */
+
+.calculator-page{
+    background:
+        radial-gradient(ellipse at 50% 50%,#15213a 0,transparent 46%),
+        radial-gradient(circle at 8% 5%,#18243d 0,transparent 30%),
+        radial-gradient(circle at 92% 8%,#241a3f 0,transparent 32%),
+        linear-gradient(135deg,#070a12,#0b1020 55%,#090711);
+}
+
+.calculator-page:before{
+    animation:ambientDrift 15s ease-in-out infinite alternate;
+}
+
+.calculator-page:after{
+    animation:ambientDrift 19s ease-in-out -7s infinite alternate-reverse;
+}
+
+@keyframes ambientDrift{
+    from{transform:translate3d(-3vw,-2vh,0) scale(.92);opacity:.06}
+    to{transform:translate3d(4vw,3vh,0) scale(1.12);opacity:.13}
+}
+
+.site-header{
+    animation:headerArrive .8s cubic-bezier(.16,1,.3,1) both;
+}
+
+@keyframes headerArrive{
+    from{opacity:0;transform:translateY(-16px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+.brand-icon{
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 8px 25px #667eea40,0 0 36px #667eea30;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease;
+}
+
+.brand-icon:after{
+    content:"";
+    position:absolute;
+    inset:-60% -100%;
+    background:linear-gradient(110deg,transparent 42%,#ffffffbb 50%,transparent 58%);
+    transform:translateX(-70%) rotate(15deg);
+    animation:brandShine 5s ease-in-out 1.2s infinite;
+}
+
+.site-brand:hover .brand-icon{
+    transform:rotate(-9deg) scale(1.08);
+    box-shadow:0 10px 32px #667eea70,0 0 48px #55f3ff30;
+}
+
+@keyframes brandShine{
+    0%,65%{transform:translateX(-70%) rotate(15deg)}
+    100%{transform:translateX(70%) rotate(15deg)}
+}
+
+.header-pill,
+.eyebrow,
+.feature{
+    backdrop-filter:blur(12px);
+    transition:border-color .28s ease,background .28s ease,color .28s ease,transform .28s cubic-bezier(.2,.8,.2,1);
+}
+
+.header-pill:hover,
+.eyebrow:hover,
+.feature:hover{
+    border-color:#8c8cff55;
+    background:#ffffff10;
+    color:#e1e8ff;
+    transform:translateY(-3px);
+}
+
+.online-dot,
+.eyebrow span{
+    animation:signalPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes signalPulse{
+    50%{opacity:.55;box-shadow:0 0 18px currentColor;transform:scale(1.3)}
+}
+
+.hero-copy > *{
+    animation:copyArrive .85s cubic-bezier(.16,1,.3,1) both;
+}
+
+.hero-copy > :nth-child(1){animation-delay:.12s}
+.hero-copy > :nth-child(2){animation-delay:.22s}
+.hero-copy > :nth-child(3){animation-delay:.34s}
+.hero-copy > :nth-child(4){animation-delay:.46s}
+
+@keyframes copyArrive{
+    from{opacity:0;transform:translateY(24px);filter:blur(8px)}
+    to{opacity:1;transform:translateY(0);filter:blur(0)}
+}
+
+.hero h1 em{
+    background-size:200% auto;
+    animation:titleGlow 6s ease-in-out infinite alternate;
+    filter:drop-shadow(0 0 22px #8b6cff35);
+}
+
+@keyframes titleGlow{
+    from{background-position:0% center;filter:drop-shadow(0 0 12px #8b6cff25)}
+    to{background-position:100% center;filter:drop-shadow(0 0 28px #55f3ff55)}
+}
+
+.calc-card{
+    position:relative;
+    overflow:hidden;
+    border:1px solid transparent;
+    background:
+        linear-gradient(145deg,#0d1320f5,#0a101cf5) padding-box,
+        linear-gradient(135deg,#ffffff35,#8b7cff55 35%,#55f3ff55 68%,#ffffff18) border-box;
+    box-shadow:0 30px 90px #0006,0 8px 25px #28375a20,0 0 55px #776bff12;
+    animation:cardArrive 1s cubic-bezier(.16,1,.3,1) .18s both;
+    transition:box-shadow .4s ease,border-color .4s ease;
+}
+
+.calc-card:before{
+    content:"";
+    position:absolute;
+    z-index:0;
+    top:0;
+    left:-80%;
+    width:60%;
+    height:1px;
+    background:linear-gradient(90deg,transparent,#a9faff,#fff,transparent);
+    box-shadow:0 0 18px #73f4ff;
+    animation:cardScan 6s ease-in-out 1.3s infinite;
+    pointer-events:none;
+}
+
+.calc-card:after{
+    content:"";
+    position:absolute;
+    z-index:0;
+    inset:0;
+    border-radius:inherit;
+    background:radial-gradient(ellipse at 50% 0%,#8b7cff16,transparent 68%);
+    opacity:.45;
+    animation:cardAura 5s ease-in-out 1.2s infinite alternate;
+    pointer-events:none;
+}
+
+.calc-card > *{
+    position:relative;
+    z-index:1;
+}
+
+.calc-card:hover{
+    box-shadow:0 38px 100px #0008,0 10px 34px #28375a35,0 0 70px #776bff25;
+}
+
+@keyframes cardArrive{
+    from{opacity:0;transform:translate3d(0,30px,0) scale(.97);filter:blur(12px)}
+    to{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+}
+
+@keyframes cardAura{
+    from{opacity:.25}
+    to{opacity:.8}
+}
+
+@keyframes cardScan{
+    0%,12%{left:-80%;opacity:0}
+    20%{opacity:1}
+    55%,100%{left:120%;opacity:0}
+}
+
+.display{
+    position:relative;
+    overflow:hidden;
+    background:
+        radial-gradient(ellipse at 100% 0%,#5866ff1c,transparent 55%),
+        linear-gradient(145deg,#080d17,#070b14);
+    box-shadow:inset 0 1px #ffffff0a,inset 0 0 35px #5e68ff0b;
+    transition:border-color .3s ease,box-shadow .3s ease;
+}
+
+.calc-card:focus-within .display{
+    border-color:#8e8cff66;
+    box-shadow:inset 0 0 28px #5e68ff16,0 0 22px #5e68ff14;
+}
+
+.current{
+    text-shadow:0 0 28px #97a1ff18;
+}
+
+.buttons button{
+    position:relative;
+    overflow:hidden;
+    border:1px solid #ffffff08;
+    box-shadow:inset 0 1px #ffffff08,0 5px 12px #0002;
+    transition:transform .24s cubic-bezier(.2,.8,.2,1),background .24s ease,border-color .24s ease,box-shadow .24s ease,color .24s ease;
+}
+
+.buttons button:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    opacity:0;
+    background:radial-gradient(circle at 50% 120%,#9f9bff55,transparent 70%);
+    transition:opacity .25s ease;
+    pointer-events:none;
+}
+
+.buttons button:hover{
+    position:relative;
+    z-index:1;
+    border-color:#a4a1ff52;
+    background:#202a42;
+    color:#fff;
+    transform:translateY(-3px) scale(1.035);
+    box-shadow:0 10px 24px #0005,0 0 20px #7b76ff18,inset 0 1px #ffffff20;
+}
+
+.buttons button:hover:before{
+    opacity:1;
+}
+
+.buttons button:active{
+    transform:translateY(0) scale(.96);
+    box-shadow:0 2px 8px #0004;
+}
+
+.buttons button:focus-visible,
+.account-button:focus-visible,
+.catalog-action:focus-visible,
+.launcher-back:focus-visible{
+    outline:2px solid #73f4ff;
+    outline-offset:3px;
+}
+
+.buttons .equals{
+    background:linear-gradient(135deg,#718cff,#855cff 55%,#b25cff);
+    box-shadow:0 9px 23px #667eea4d,inset 0 1px #ffffff55;
+}
+
+.buttons .equals:hover{
+    background:linear-gradient(135deg,#8aa2ff,#986dff 55%,#ce71ff);
+    box-shadow:0 12px 30px #667eea70,0 0 24px #a178ff55;
+}
+
+.account-button,
+.catalog-action,
+.launcher-back{
+    transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s ease,border-color .25s ease,background .25s ease;
+}
+
+.account-button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 30px #73f4ff38;
+}
+
+.transition-bg{
+    background:
+        radial-gradient(circle at center,#f0ffff 0,#82bfff 7%,#6472ff 19%,#6229b5 42%,#111535 69%,#030611 100%);
+}
+
+.transition-bg:before,
+.transition-bg:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    opacity:0;
+    background:repeating-conic-gradient(from 0deg at 50% 50%,#ffffff00 0deg 8deg,#9beeff20 8.2deg 8.6deg,#ffffff00 9deg 16deg);
+}
+
+.transition.active .transition-bg:before{
+    animation:portalSpin 2.5s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+.transition.active .transition-bg:after{
+    background:radial-gradient(ellipse at center,transparent 0 22%,#d5fbff22 23% 23.2%,transparent 24% 40%,#a18aff22 40.2% 40.5%,transparent 41%);
+    animation:portalPulse 1.8s ease-out .2s both;
+}
+
+@keyframes portalSpin{
+    0%{opacity:0;transform:rotate(-35deg) scale(.55)}
+    25%{opacity:.8}
+    100%{opacity:.48;transform:rotate(55deg) scale(1.2)}
+}
+
+@keyframes portalPulse{
+    0%{opacity:0;transform:scale(.45)}
+    45%{opacity:1}
+    100%{opacity:0;transform:scale(1.35)}
+}
+
+.transition-core{
+    inset:0;
+    width:auto;
+    height:auto;
+    border-radius:0;
+    mix-blend-mode:screen;
+    background:radial-gradient(circle,#fff 0 8%,#bdfaff 20%,#798aff 46%,#814dff 68%,transparent 74%);
+    box-shadow:none;
+}
+
+.transition.active .transition-core{
+    animation:coreBlast 2.25s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+.transition-ring{
+    width:100vmin;
+    height:100vmin;
+    box-shadow:0 0 24px #fff,0 0 55px #55f3ff,inset 0 0 25px #8b7cff;
+}
+
+.transition-ring:before,
+.transition-ring:after{
+    content:"";
+    position:absolute;
+    inset:-18px;
+    border:1px solid #92fbff;
+    border-radius:50%;
+}
+
+.transition-ring:after{
+    inset:-42px;
+    border-color:#c3a2ff;
+}
+
+.transition.active .transition-ring:before{
+    animation:ringEcho 1.8s cubic-bezier(.16,1,.3,1) .12s both;
+}
+
+.transition.active .transition-ring:after{
+    animation:ringEcho 1.8s cubic-bezier(.16,1,.3,1) .3s both;
+}
+
+@keyframes ringEcho{
+    from{opacity:.9;transform:scale(.15)}
+    to{opacity:0;transform:scale(1.8)}
+}
+
+.transition-text h2{
+    background:linear-gradient(100deg,#fff,#bdfaff 35%,#c7aaff 68%,#fff);
+    background-size:200% auto;
+    -webkit-background-clip:text;
+    color:transparent;
+    animation:transitionTitleGlow 2s linear infinite;
+}
+
+@keyframes transitionTitleGlow{
+    to{background-position:200% center}
+}
+
+.transition-text p{
+    text-shadow:0 0 18px #73f4ff88;
+    animation:subtitlePulse 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes subtitlePulse{
+    to{opacity:.58;letter-spacing:.38em}
+}
+
+.glitch-line{
+    height:3px;
+    background:linear-gradient(90deg,transparent,#55f3ff,#fff,#e66cff,transparent);
+    box-shadow:0 0 16px #55f3ff,0 0 40px #e66cff;
+}
+
+.warp-star{
+    width:2px;
+    height:clamp(22px,6vh,70px);
+    border-radius:99px;
+    background:linear-gradient(to top,transparent,#8ffaff 58%,#fff);
+    box-shadow:0 0 12px #55f3ff,0 0 28px #8b7cff;
+}
+
+.warp-flash{
+    inset:0;
+    width:auto;
+    height:auto;
+    border-radius:0;
+    box-shadow:none;
+    transform:none;
+    clip-path:circle(0 at 50% 50%);
+    background:radial-gradient(circle at center,#fff 0,#d9ffff 3%,#7ef4ff 12%,#8772ff66 42%,transparent 76%);
+}
+
+.warp-ring{
+    width:100vmin;
+    height:100vmin;
+    box-shadow:0 0 28px #55f3ff,inset 0 0 26px #55f3ff,0 0 80px #8b5cff;
+}
+
+.transition-logo .big{
+    filter:drop-shadow(0 0 22px #73f4ff88);
+}
+
+.game-catalog.show .game-card{
+    animation:gameCardArrive .75s cubic-bezier(.16,1,.3,1) both;
+}
+
+.game-catalog.show .game-card:nth-child(3n + 1){animation-delay:.08s}
+.game-catalog.show .game-card:nth-child(3n + 2){animation-delay:.16s}
+.game-catalog.show .game-card:nth-child(3n){animation-delay:.24s}
+
+@keyframes gameCardArrive{
+    from{opacity:0;transform:translateY(24px) scale(.97);filter:blur(8px)}
+    to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+}
+
+.game-card{
+    transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s ease,box-shadow .35s ease,background .35s ease;
+}
+
+.game-card:hover{
+    transform:translateY(-7px) scale(1.015);
+    border-color:#73f4ff66;
+    box-shadow:0 22px 55px #0008,0 0 34px #5cafff20;
+}
+
+.game-icon{
+    transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease;
+}
+
+.game-card:hover .game-icon{
+    transform:rotate(-7deg) scale(1.1);
+    box-shadow:0 12px 36px #0007,0 0 30px #73f4ff33,inset 0 0 20px #ffffff12;
+}
+
+.game-viewer.show{
+    animation:viewerArrive .55s cubic-bezier(.16,1,.3,1) both;
+}
+
+@keyframes viewerArrive{
+    from{opacity:0;transform:scale(1.025);filter:blur(10px)}
+    to{opacity:1;transform:scale(1);filter:blur(0)}
+}
+
+@media(max-width:760px){
+    .calc-card{
+        animation:cardArrive .8s cubic-bezier(.16,1,.3,1) .18s both;
+    }
+
+    .game-catalog.show .game-card:nth-child(n){
+        animation-delay:.08s;
+    }
+}
+
+@media(prefers-reduced-motion:reduce){
+    .calculator-page:before,
+    .calculator-page:after,
+    .site-header,
+    .brand-icon:after,
+    .online-dot,
+    .eyebrow span,
+    .hero-copy > *,
+    .hero h1 em,
+    .calc-card,
+    .calc-card:before,
+    .calc-card:after,
+    .transition.active .transition-bg:before,
+    .transition.active .transition-bg:after,
+    .transition.active .transition-ring:before,
+    .transition.active .transition-ring:after,
+    .transition-text h2,
+    .transition-text p,
+    .game-catalog.show .game-card,
+    .game-viewer.show{
+        animation:none!important;
+    }
+
+    .calculator-page:before,
+    .calculator-page:after{
+        opacity:.08;
+    }
+
+    .buttons button,
+    .feature,
+    .game-card,
+    .game-icon,
+    .brand-icon,
+    .header-pill,
+    .eyebrow,
+    .account-button,
+    .catalog-action,
+    .launcher-back{
+        transition:none!important;
+    }
+}
 </style>
 </head>
 
@@ -1978,6 +2469,7 @@ button:active{
                 A modern scientific calculator designed for quick
                 calculations, advanced functions and everyday problem
                 solving — all in one clean workspace.
+                Created by <strong>ALEX KING</strong> for students, engineers and professionals.
             </p>
 
             <div class="feature-row">
@@ -2292,7 +2784,7 @@ button:active{
             <div class="catalog-meta">
 
                 <div class="meta-pill">
-                    16 GAMES
+                    LOTS OF GAMES
                 </div>
 
                 <div class="meta-pill">
@@ -2997,9 +3489,12 @@ function triggerSecretTransition(){
 
     const transition=document.getElementById("transition");
 
+    transition.style.removeProperty("display");
     transition.classList.add("active");
 
     document.title="ALEX MODS";
+
+    const delay=window.matchMedia("(prefers-reduced-motion: reduce)").matches?0:2600;
 
     setTimeout(()=>{
 
@@ -3007,14 +3502,15 @@ function triggerSecretTransition(){
 
         document.body.classList.add("launcher-active");
 
-        transition.style.display="none";
         transition.classList.remove("active");
 
-        document.getElementById("launcher").classList.add("show");
+        const launcher=document.getElementById("launcher");
+        launcher.style.removeProperty("display");
+        launcher.classList.add("show");
 
         startParticles();
 
-    },2600);
+    },delay);
 }
 
 
@@ -3094,27 +3590,28 @@ function triggerCatalogTransition(){
     const transition=
         document.getElementById("catalogTransition");
 
+    transition.style.removeProperty("display");
     transition.classList.add("active");
 
     document.title="ALEX MODS // GAME VAULT";
+
+    const delay=window.matchMedia("(prefers-reduced-motion: reduce)").matches?0:2050;
 
     setTimeout(()=>{
 
         document.getElementById("calculatorPage").style.display="none";
 
-        document.getElementById("launcher").style.display="none";
-
-        transition.style.display="none";
         transition.classList.remove("active");
 
         const catalog=
             document.getElementById("gameCatalog");
 
+        catalog.style.removeProperty("display");
         catalog.classList.add("show");
 
         createCatalogParticles();
 
-    },2050);
+    },delay);
 }
 
 
@@ -3632,37 +4129,36 @@ function openGame(path){
     const viewer=document.getElementById("gameViewer");
     const frame=document.getElementById("gameFrame");
     const catalog=document.getElementById("gameCatalog");
-    frame.src=path;
+    frame.src=new URL(path,document.baseURI).href;
+    document.getElementById("openGameTab").href=frame.src;
     document.getElementById("gameViewerTitle").textContent="GAME VAULT // "+decodeURIComponent(path.split("/").pop());
     catalog.classList.remove("show");
-    catalog.style.display="none";
+    catalog.style.removeProperty("display");
     viewer.classList.add("show");
 }
 function backToCatalog(){
     document.getElementById("gameFrame").src="about:blank";
     document.getElementById("gameViewer").classList.remove("show");
     const catalog=document.getElementById("gameCatalog");
-    catalog.style.display="block";
+    catalog.style.removeProperty("display");
     requestAnimationFrame(()=>catalog.classList.add("show"));
 }
 function closeGameViewer(){
     document.getElementById("gameFrame").src="about:blank";
     document.getElementById("gameViewer").classList.remove("show");
-    document.getElementById("calculatorPage").style.display="block";
+    document.getElementById("calculatorPage").style.removeProperty("display");
 }
-
 function goToLauncher(){
     document.getElementById("gameCatalog").classList.remove("show");
-    document.getElementById("gameCatalog").style.display="none";
     const launcher=document.getElementById("launcher");
+    launcher.style.removeProperty("display");
     launcher.classList.add("show");
     startParticles();
 }
 function backToCatalogFromLauncher(){
     document.getElementById("launcher").classList.remove("show");
-    document.getElementById("launcher").style.display="none";
     const catalog=document.getElementById("gameCatalog");
-    catalog.style.display="block";
+    catalog.style.removeProperty("display");
     requestAnimationFrame(()=>catalog.classList.add("show"));
 }
 function closeCatalog(){
@@ -3671,13 +4167,12 @@ function closeCatalog(){
         document.getElementById("gameCatalog");
 
     catalog.classList.remove("show");
-
-    catalog.style.display="none";
+    catalog.style.removeProperty("display");
 
     document.title="Pro Scientific Calculator";
 
     document.getElementById("calculatorPage")
-        .style.display="block";
+        .style.removeProperty("display");
 
     expression="";
     previous.textContent="";
@@ -3696,8 +4191,10 @@ createCatalogParticles();
 
 <div class="game-viewer" id="gameViewer">
   <div class="game-viewer-bar">
-    <div class="game-viewer-title" id="gameViewerTitle">GAME VAULT // PLAYING</div>
+    <div class="game-viewer-title">ALEX MODS</div>
+    <div class="game-viewer-hint">Large games may take 20–30 seconds to start. If it stays blank, try refreshing the page, or opening in a new tab.</div>
     <div class="launcher-nav">
+      <a class="launcher-back game-open-tab" id="openGameTab" target="_blank" rel="noopener noreferrer">OPEN IN NEW TAB ↗</a>
       <button class="launcher-back" onclick="backToCatalog()">← BACK TO GAME CATALOG</button>
       <button class="launcher-back" onclick="closeGameViewer()">✕ CLOSE</button>
     </div>
