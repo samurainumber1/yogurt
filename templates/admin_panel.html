@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#35e58e">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Admin panel — Alex Mods</title>
+    <link rel="stylesheet" href="/assets/admin.css">
+    <script src="/assets/admin.js" defer></script>
+</head>
+<body>
+    <main class="admin-shell">
+        <header class="admin-topbar">
+            <a class="admin-brand" href="/scientific-calculator">
+                <span class="admin-brand-mark">A</span>
+                <span class="admin-brand-copy"><strong>ALEX MODS</strong><small>ADMIN CONTROL</small></span>
+            </a>
+            <form method="post" action="/admin/logout">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button class="logout-button" type="submit">Sign out</button>
+            </form>
+        </header>
+
+        <section class="admin-panel" aria-labelledby="dashboardTitle">
+            <p class="admin-kicker">LIVE OVERVIEW</p>
+            <h1 id="dashboardTitle">Arcade dashboard</h1>
+            <p class="admin-subtitle">Anonymous active-tab counts; visitor IDs rotate with each browser tab.</p>
+
+            <div class="metric-grid">
+                <article class="metric-card">
+                    <div class="metric-label">Online now</div>
+                    <div class="metric-value" id="onlineUsers" aria-live="polite">—</div>
+                    <div class="metric-caption">Active in the last 90 seconds</div>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-label">12-hour peak</div>
+                    <div class="metric-value" id="peakCount">—</div>
+                    <div class="metric-caption">Highest observed count in a 10-minute interval</div>
+                </article>
+            </div>
+
+            <section class="chart-card" aria-labelledby="chartTitle">
+                <div class="chart-heading">
+                    <div><h2 id="chartTitle">Online users · past 12 hours</h2><p>Peak concurrent online count, grouped into 10-minute intervals.</p></div>
+                    <span class="peak-label" id="peakLabel">Loading history…</span>
+                </div>
+                <div class="chart-wrap"><canvas id="trafficChart" role="img" aria-label="Online user history chart"></canvas></div>
+                <div class="chart-axis" aria-hidden="true"><span>12 hours ago</span><span>6 hours ago</span><span>Now</span></div>
+            </section>
+
+            <div class="admin-actions">
+                <div>
+                    <button class="lock-button" id="catalogLockButton" type="button" aria-pressed="false">Lock games catalog</button>
+                    <p class="metric-caption" id="catalogLockStatus" role="status">Checking catalog status…</p>
+                </div>
+                <a class="logout-button" href="/scientific-calculator">Return to catalog</a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

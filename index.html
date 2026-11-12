@@ -6,12 +6,24 @@
     <meta name="theme-color" content="#9500ff">
     <meta name="description" content="A curated arcade of browser games, from quick classics to full-screen adventures.">
     <title>Arcade — Alex Mods</title>
+    <script>document.documentElement.classList.add("catalog-lock-pending");</script>
     <script src="assets/access-guard.js"></script>
     <script src="assets/theme.js"></script>
+    <script src="assets/presence.js" defer></script>
+    <script src="assets/catalog-lock.js" defer></script>
+    <link rel="stylesheet" href="assets/catalog-lock.css">
     <link rel="stylesheet" href="assets/catalog.css">
     <script src="assets/catalog.js" defer></script>
 </head>
 <body>
+    <section class="catalog-lock-screen" id="catalogLockScreen" aria-live="assertive" aria-atomic="true" hidden>
+        <div class="catalog-lock-card">
+            <span class="catalog-lock-icon" id="catalogLockIcon" aria-hidden="true">🔒</span>
+            <p class="catalog-lock-eyebrow">ARCADE ACCESS</p>
+            <h1 id="catalogLockTitle">ALEX MODS was locked by an Administrator.</h1>
+            <p id="catalogLockMessage">It will be back shortly. Speak to an admin if it persists.</p>
+        </div>
+    </section>
     <header class="site-header">
         <a class="brand" href="/scientific-calculator" aria-label="Alex Mods game catalog">
             <span class="brand-mark" aria-hidden="true">A</span>

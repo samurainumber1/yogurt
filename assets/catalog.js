@@ -3,6 +3,7 @@
 const games = [
     { title: "Drift Hunters", path: "games/⭐ALEX MODS - Drift Hunters.html", icon: "🏎️", category: "Racing", art: "racing", description: "Tune your ride and master the art of the drift." },
     { title: "Drift Simulator", path: "games/⭐ALEX MODS - Drift Hunters [2].html", icon: "🏁", category: "Racing", art: "racing-alt", description: "Slide through the corners and chase a cleaner line." },
+    { title: "Slow Roads", path: "games/ALEX MODS - Slowroads.io.html", icon: "🛣️", category: "Racing", art: "racing", description: "Take a quiet drive through an endless open road." },
     { title: "Among Us", path: "games/ALEX MODS - Among us.html", icon: "🚀", category: "Arcade", art: "sci-fi", description: "Find the impostor before the crew runs out of time." },
     { title: "Cookie Clicker", path: "games/ALEX MODS - Cookie Clicker.html", icon: "🍪", category: "Arcade", art: "idle", description: "Start with a cookie. See how far your bakery can grow." },
     { title: "Crossy Road", path: "games/ALEX MODS - Crossy Road.html", icon: "🐔", category: "Arcade", art: "road", description: "Hop across busy roads, rivers and railway tracks." },
@@ -141,6 +142,11 @@ function closeMapPicker() {
 }
 
 function openGame(game) {
+    if (game.externalUrl) {
+        window.location.assign(game.externalUrl);
+        return;
+    }
+
     lastFocusedElement = document.activeElement;
     document.querySelector("#playerTitle").textContent = game.title;
     gameFrame.title = `${game.title} game`;

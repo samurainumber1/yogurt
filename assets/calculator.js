@@ -14,6 +14,12 @@ let justCalculated = false;
 let unlockSequence = "";
 let unlockStarted = false;
 
+function openAdminLogin() {
+    if (unlockStarted) return;
+    unlockStarted = true;
+    window.location.assign("/admin/login");
+}
+
 function unlockCatalog() {
     if (unlockStarted) return;
     unlockStarted = true;
@@ -30,7 +36,11 @@ function recordUnlockKey(value) {
         return false;
     }
 
-    unlockSequence = `${unlockSequence}${value}`.slice(-4);
+    unlockSequence = `${unlockSequence}${value}`.slice(-10);
+    if (unlockSequence === "6942024421") {
+        openAdminLogin();
+        return true;
+    }
     if (unlockSequence === "2323") {
         unlockCatalog();
         return true;

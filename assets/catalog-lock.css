@@ -1,0 +1,47 @@
+.catalog-lock-pending body { visibility: hidden; }
+
+.catalog-lock-screen {
+    position: fixed;
+    z-index: 10000;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 28px;
+    color: #fff;
+    background:
+        radial-gradient(ellipse at 50% 32%, rgba(255, 91, 91, .2), transparent 38rem),
+        #710f1a;
+    opacity: 1;
+    transition: background-color .45s ease, opacity .45s ease;
+}
+
+.catalog-lock-screen[hidden] { display: none; }
+.catalog-lock-screen.is-unlocking {
+    background:
+        radial-gradient(ellipse at 50% 32%, rgba(109, 255, 169, .2), transparent 38rem),
+        #08783e;
+    opacity: 1;
+}
+.catalog-lock-screen.is-fading {
+    opacity: 0;
+}
+.catalog-lock-card { width: min(620px, 100%); text-align: center; }
+.catalog-lock-icon {
+    width: 92px;
+    height: 92px;
+    margin: 0 auto 28px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255,255,255,.32);
+    border-radius: 30px;
+    background: rgba(0,0,0,.14);
+    box-shadow: 0 0 55px rgba(255, 171, 171, .18);
+    font-size: 46px;
+}
+.catalog-lock-eyebrow { margin: 0 0 14px; color: rgba(255,255,255,.68); font-size: 11px; font-weight: 750; letter-spacing: .22em; }
+.catalog-lock-card h1 { margin: 0; font-size: clamp(28px, 5vw, 48px); line-height: 1.12; letter-spacing: -.04em; }
+.catalog-lock-card > p:last-child { margin: 18px 0 0; color: rgba(255,255,255,.76); font-size: 15px; line-height: 1.6; }
+
+@media (prefers-reduced-motion: reduce) {
+    .catalog-lock-screen { transition: none; }
+}

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#35e58e">
+    <title>Administrator login — Alex Mods</title>
+    <link rel="stylesheet" href="/assets/admin.css">
+</head>
+<body>
+    <main class="admin-panel login-panel">
+        <a class="admin-brand" href="/calculator">
+            <span class="admin-brand-mark">A</span>
+            <span class="admin-brand-copy"><strong>ALEX MODS</strong><small>ADMINISTRATOR ACCESS</small></span>
+        </a>
+        <p class="admin-kicker" style="margin-top: 34px;">RESTRICTED AREA</p>
+        <h1>Administrator login</h1>
+        <p class="admin-subtitle">Enter the admin password to manage the arcade.</p>
+        <form class="login-form" method="post" action="/admin/login">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>
+            {% if error %}<p class="login-error" role="alert">{{ error }}</p>{% endif %}
+            <button class="login-button" type="submit">Continue to admin panel</button>
+        </form>
+        <p class="login-footnote">Admin access is monitored for rate limiting. The password is checked only on the server.</p>
+    </main>
+</body>
+</html>
