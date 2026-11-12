@@ -27,9 +27,18 @@ def test_calculator_is_the_only_default_page(client):
     assert response.status_code == 200
     assert b"assets/calculator.js" in response.data
     assert b"assets/catalog.js" not in response.data
-    assert b"themePicker" in response.data
+    assert b"id=\"themeTrigger\"" in response.data
     assert b"scientific-calculator" not in response.data
-    assert b'value="#9500ff"' in response.data
+    swatches = re.findall(rb'data-theme="([^"]+)" data-rgb="[^"]+" data-tooltip="([^"]+)"', response.data)
+    assert swatches == [
+        (b"#9500ff", b"Default"),
+        (b"#ff3b4f", b"Red"),
+        (b"#ff8a00", b"Orange"),
+        (b"#ffd43b", b"Yellow"),
+        (b"#00c781", b"Green"),
+        (b"#1687ff", b"Blue"),
+        (b"#7136f2", b"Purple"),
+    ]
 
 
 def test_catalog_and_minecraft_use_gated_routes(client):

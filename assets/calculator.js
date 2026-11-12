@@ -5,7 +5,8 @@ const previousDisplay = document.querySelector("#previous");
 const calculatorStatus = document.querySelector(".calculator-status");
 const keypad = document.querySelector("#keypad");
 const angleModeButton = document.querySelector("#angleMode");
-const themePicker = document.querySelector("#themePicker");
+const themePicker = document.querySelector("#themePalette");
+const themeTrigger = document.querySelector("#themeTrigger");
 const themeColor = document.querySelector('meta[name="theme-color"]');
 let expression = "";
 let angleMode = "DEG";
@@ -30,20 +31,39 @@ function setTheme(color, rgb) {
     document.documentElement.style.setProperty("--accent-rgb", rgb);
     themeColor.setAttribute("content", color);
     localStorage.setItem("calculatorTheme", color);
+    themePicker.querySelectorAll(".theme-swatch").forEach(swatch => {
+        swatch.setAttribute("aria-pressed", String(swatch.dataset.theme === color));
+    });
 }
 
-const savedTheme = localStorage.getItem("calculatorTheme");
-if (savedTheme) {
-    const savedOption = [...themePicker.options].find(option => option.value === savedTheme);
-    if (savedOption) {
-        themePicker.value = savedTheme;
-        setTheme(savedOption.value, savedOption.dataset.rgb);
+setTheme(
+    getComputedStyle(document.documentElement).getPropertyValue("--accent").trim(),
+    getComputedStyle(document.documentElement).getPropertyValue("--accent-rgb").trim()
+);
+
+function toggleThemePicker(open) {
+    const shouldOpen = open ?? themePicker.hidden;
+    themePicker.hidden = !shouldOpen;
+    themeTrigger.setAttribute("aria-expanded", String(shouldOpen));
+    if (shouldOpen) themePicker.querySelector('[aria-pressed="true"]').focus();
+}
+
+themeTrigger.addEventListener("click", () => toggleThemePicker());
+themePicker.addEventListener("click", event => {
+    const swatch = event.target.closest(".theme-swatch");
+    if (!swatch) return;
+    setTheme(swatch.dataset.theme, swatch.dataset.rgb);
+    toggleThemePicker(false);
+    themeTrigger.focus();
+});
+document.addEventListener("click", event => {
+    if (!event.target.closest(".theme-picker")) toggleThemePicker(false);
+});
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !themePicker.hidden) {
+        toggleThemePicker(false);
+        themeTrigger.focus();
     }
-}
-
-themePicker.addEventListener("change", () => {
-    const selected = themePicker.selectedOptions[0];
-    setTheme(selected.value, selected.dataset.rgb);
 });
 
 function updateDisplay() {

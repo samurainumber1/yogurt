@@ -17,17 +17,22 @@
             <span class="brand-copy"><strong>ALEX MODS</strong><small>TOOLS</small></span>
         </a>
         <div class="header-actions">
-            <label class="theme-picker">
-                <span>THEME</span>
-                <select id="themePicker" aria-label="Theme color">
-                    <option value="#9500ff" data-rgb="149, 0, 255">Violet</option>
-                    <option value="#1687ff" data-rgb="22, 135, 255">Blue</option>
-                    <option value="#00b8d9" data-rgb="0, 184, 217">Cyan</option>
-                    <option value="#00c781" data-rgb="0, 199, 129">Green</option>
-                    <option value="#ff8a00" data-rgb="255, 138, 0">Orange</option>
-                    <option value="#ff3d71" data-rgb="255, 61, 113">Pink</option>
-                </select>
-            </label>
+            <div class="theme-picker">
+                <button class="theme-trigger" id="themeTrigger" type="button" aria-label="Choose a theme color" aria-expanded="false" aria-controls="themePalette">
+                    <span class="theme-trigger-swatches" aria-hidden="true"><i></i><i></i><i></i></span>
+                    <span>THEME</span>
+                    <span class="theme-trigger-arrow" aria-hidden="true">⌄</span>
+                </button>
+                <div class="theme-palette" id="themePalette" role="group" aria-label="Theme colors" hidden>
+                    <button class="theme-swatch" type="button" data-theme="#9500ff" data-rgb="149, 0, 255" data-tooltip="Default" aria-label="Default theme" aria-pressed="true" style="--swatch: #9500ff; --swatch-rgb: 149, 0, 255"><span class="theme-check" aria-hidden="true">✓</span></button>
+                    <button class="theme-swatch" type="button" data-theme="#ff3b4f" data-rgb="255, 59, 79" data-tooltip="Red" aria-label="Red theme" aria-pressed="false" style="--swatch: #ff3b4f; --swatch-rgb: 255, 59, 79"><span class="theme-check" aria-hidden="true">✓</span></button>
+                    <button class="theme-swatch" type="button" data-theme="#ff8a00" data-rgb="255, 138, 0" data-tooltip="Orange" aria-label="Orange theme" aria-pressed="false" style="--swatch: #ff8a00; --swatch-rgb: 255, 138, 0"><span class="theme-check" aria-hidden="true">✓</span></button>
+                    <button class="theme-swatch" type="button" data-theme="#ffd43b" data-rgb="255, 212, 59" data-tooltip="Yellow" aria-label="Yellow theme" aria-pressed="false" style="--swatch: #ffd43b; --swatch-rgb: 255, 212, 59"><span class="theme-check" aria-hidden="true">✓</span></button>
+                    <button class="theme-swatch" type="button" data-theme="#00c781" data-rgb="0, 199, 129" data-tooltip="Green" aria-label="Green theme" aria-pressed="false" style="--swatch: #00c781; --swatch-rgb: 0, 199, 129"><span class="theme-check" aria-hidden="true">✓</span></button>
+                    <button class="theme-swatch" type="button" data-theme="#1687ff" data-rgb="22, 135, 255" data-tooltip="Blue" aria-label="Blue theme" aria-pressed="false" style="--swatch: #1687ff; --swatch-rgb: 22, 135, 255"><span class="theme-check" aria-hidden="true">✓</span></button>
+                    <button class="theme-swatch" type="button" data-theme="#7136f2" data-rgb="113, 54, 242" data-tooltip="Purple" aria-label="Purple theme" aria-pressed="false" style="--swatch: #7136f2; --swatch-rgb: 113, 54, 242"><span class="theme-check" aria-hidden="true">✓</span></button>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -46,12 +51,20 @@
 
         <section class="calculator" aria-label="Scientific calculator">
             <div class="calculator-top">
-                <div><span class="calculator-label">SCIENTIFIC</span><span class="calculator-status"><i></i> READY</span></div>
-                <button id="angleMode" class="mode-button" type="button" aria-label="Change angle mode">DEG</button>
+                <div class="calculator-identity">
+                    <span class="calculator-emblem" aria-hidden="true">∑</span>
+                    <span class="calculator-label">CORE<span> / SCIENTIFIC</span></span>
+                </div>
+                <div class="calculator-controls">
+                    <span class="calculator-status"><i></i> <span>ONLINE</span></span>
+                    <button id="angleMode" class="mode-button" type="button" aria-label="Change angle mode">DEG</button>
+                </div>
             </div>
             <div class="display" aria-live="polite" aria-atomic="true">
-                <div class="previous" id="previous"></div>
+                <div class="display-meta"><span><i></i> LIVE OUTPUT</span><span>DEC <b>10</b></span></div>
+                <div class="previous" id="previous" aria-label="Previous calculation"></div>
                 <div class="current" id="current">0</div>
+                <span class="display-cursor" aria-hidden="true"></span>
             </div>
             <div class="keypad" id="keypad">
                 <button class="key function-key" type="button" data-scientific="sin">sin</button>
@@ -88,7 +101,7 @@
                 <button class="key zero-key" type="button" data-append="0">0</button>
                 <button class="key" type="button" data-append=".">.</button>
             </div>
-            <p class="calculator-footnote">Calculations stay on this device.</p>
+            <div class="calculator-footnote"><span><i></i> LOCAL PROCESSING</span><span>NO DATA LEAVES THIS DEVICE</span></div>
         </section>
     </main>
 
