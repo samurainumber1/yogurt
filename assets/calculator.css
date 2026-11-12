@@ -174,6 +174,27 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .site-footer a:hover { color: var(--accent); }
 .site-footer a span { color: var(--accent); }
 
+.unlock-transition { position: fixed; z-index: 50; inset: 0; display: grid; place-items: center; overflow: hidden; background: radial-gradient(ellipse at center, rgba(var(--accent-rgb), .2), rgba(8,10,16,.96) 58%); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .42s ease, visibility .42s ease; }
+.unlock-transition::before, .unlock-transition::after { position: absolute; inset: 0; content: ""; pointer-events: none; }
+.unlock-transition::before { background: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px); background-size: 48px 48px; mask-image: radial-gradient(ellipse at center, #000, transparent 68%); }
+.unlock-transition::after { border: 1px solid rgba(var(--accent-rgb), .12); transform: scale(.92); transition: transform .65s cubic-bezier(.16, 1, .3, 1); }
+.is-unlocking .unlock-transition { opacity: 1; visibility: visible; }
+.is-unlocking .unlock-transition::after { transform: scale(1); }
+.unlock-ring { width: min(56vw, 440px); aspect-ratio: 1; position: absolute; border: 1px solid rgba(var(--accent-rgb), .34); border-radius: 50%; opacity: 0; transform: scale(.62); transition: opacity .55s ease, transform .72s cubic-bezier(.16, 1, .3, 1); }
+.unlock-ring::before, .unlock-ring::after { position: absolute; border: 1px solid rgba(var(--accent-rgb), .2); border-radius: 50%; content: ""; }
+.unlock-ring::before { inset: 12%; }
+.unlock-ring::after { inset: 25%; }
+.is-unlocking .unlock-ring { opacity: 1; transform: scale(1); }
+.unlock-message { position: relative; display: grid; justify-items: center; gap: 12px; text-align: center; opacity: 0; transform: translateY(12px) scale(.97); transition: opacity .3s ease .12s, transform .45s cubic-bezier(.16, 1, .3, 1) .12s; }
+.is-unlocking .unlock-message { opacity: 1; transform: translateY(0) scale(1); }
+.unlock-icon { width: 54px; height: 54px; display: grid; place-items: center; border: 1px solid rgba(var(--accent-rgb), .56); border-radius: 17px; color: white; background: rgba(var(--accent-rgb), .22); box-shadow: 0 0 36px rgba(var(--accent-rgb), .28), inset 0 1px 0 rgba(255,255,255,.2); font-size: 25px; }
+.unlock-kicker { color: var(--accent); font: 700 10px "Space Grotesk", sans-serif; letter-spacing: .24em; }
+.unlock-message strong { color: #f7f4fc; font: 600 clamp(24px, 5vw, 34px) "Space Grotesk", sans-serif; letter-spacing: -.04em; }
+.unlock-loader { width: 136px; height: 2px; margin-top: 5px; overflow: hidden; border-radius: 2px; background: rgba(255,255,255,.12); }
+.unlock-loader i { width: 40%; height: 100%; display: block; border-radius: inherit; background: var(--accent); box-shadow: 0 0 12px var(--accent); transform: translateX(-110%); }
+.is-unlocking .unlock-loader i { animation: unlock-progress .62s cubic-bezier(.4, 0, .2, 1) forwards; }
+@keyframes unlock-progress { to { transform: translateX(260%); } }
+
 @media (max-width: 760px) {
     .site-header, .calculator-layout, .site-footer { width: calc(100% - 36px); }
     .site-header { min-height: 70px; }

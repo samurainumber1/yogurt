@@ -28,6 +28,8 @@ def test_calculator_is_the_only_default_page(client):
     assert b"assets/calculator.js" in response.data
     assert b"assets/catalog.js" not in response.data
     assert b"id=\"themeTrigger\"" in response.data
+    assert b"id=\"unlockTransition\"" in response.data
+    assert b"Entering the arcade" in response.data
     assert b"scientific-calculator" not in response.data
     swatches = re.findall(rb'data-theme="([^"]+)" data-rgb="[^"]+" data-tooltip="([^"]+)"', response.data)
     assert swatches == [

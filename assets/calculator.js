@@ -12,18 +12,30 @@ let expression = "";
 let angleMode = "DEG";
 let justCalculated = false;
 let unlockSequence = "";
+let unlockStarted = false;
+
+function unlockCatalog() {
+    if (unlockStarted) return;
+    unlockStarted = true;
+    sessionStorage.setItem("arcadeUnlocked", "1");
+    document.querySelector("#unlockTransition").setAttribute("aria-hidden", "false");
+    document.body.classList.add("is-unlocking");
+    const transitionTime = matchMedia("(prefers-reduced-motion: reduce)").matches ? 180 : 720;
+    window.setTimeout(() => window.location.assign("/scientific-calculator"), transitionTime);
+}
 
 function recordUnlockKey(value) {
     if (!/^\d$/.test(value)) {
         unlockSequence = "";
-        return;
+        return false;
     }
 
     unlockSequence = `${unlockSequence}${value}`.slice(-4);
     if (unlockSequence === "2323") {
-        sessionStorage.setItem("arcadeUnlocked", "1");
-        window.location.assign("/scientific-calculator");
+        unlockCatalog();
+        return true;
     }
+    return false;
 }
 
 function setTheme(color, rgb) {
@@ -71,7 +83,7 @@ function updateDisplay() {
 }
 
 function append(value) {
-    recordUnlockKey(value);
+    if (unlockStarted || recordUnlockKey(value)) return;
     if (justCalculated && (/^[0-9.]$/.test(value) || value === "π" || value === "(")) {
         expression = "";
         previousDisplay.textContent = "";
