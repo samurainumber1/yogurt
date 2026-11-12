@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#9500ff">
+    <meta name="description" content="A clean scientific calculator with keyboard support.">
+    <title>Scientific Calculator — Alex Mods</title>
+    <script src="assets/theme.js"></script>
+    <link rel="stylesheet" href="assets/calculator.css">
+    <script src="assets/calculator.js" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="/calculator" aria-label="Scientific calculator">
+            <span class="brand-mark" aria-hidden="true">A</span>
+            <span class="brand-copy"><strong>ALEX MODS</strong><small>TOOLS</small></span>
+        </a>
+        <div class="header-actions">
+            <label class="theme-picker">
+                <span>THEME</span>
+                <select id="themePicker" aria-label="Theme color">
+                    <option value="#9500ff" data-rgb="149, 0, 255">Violet</option>
+                    <option value="#1687ff" data-rgb="22, 135, 255">Blue</option>
+                    <option value="#00b8d9" data-rgb="0, 184, 217">Cyan</option>
+                    <option value="#00c781" data-rgb="0, 199, 129">Green</option>
+                    <option value="#ff8a00" data-rgb="255, 138, 0">Orange</option>
+                    <option value="#ff3d71" data-rgb="255, 61, 113">Pink</option>
+                </select>
+            </label>
+        </div>
+    </header>
+
+    <main class="calculator-layout">
+        <section class="intro">
+            <p class="eyebrow"><span class="status-dot"></span> BUILT FOR EVERYDAY MATH</p>
+            <h1>Clear thinking.<br><span>Clean answers.</span></h1>
+            <p class="intro-copy">A focused scientific calculator for quick sums and more involved calculations. Use the keys or type directly from your keyboard.</p>
+            <div class="feature-list">
+                <span><i aria-hidden="true">✓</i> Scientific functions</span>
+                <span><i aria-hidden="true">✓</i> Degree and radian modes</span>
+                <span><i aria-hidden="true">✓</i> Full keyboard support</span>
+            </div>
+            <p class="keyboard-hint">TIP <span>Enter</span> to calculate <span>Esc</span> to clear</p>
+        </section>
+
+        <section class="calculator" aria-label="Scientific calculator">
+            <div class="calculator-top">
+                <div><span class="calculator-label">SCIENTIFIC</span><span class="calculator-status"><i></i> READY</span></div>
+                <button id="angleMode" class="mode-button" type="button" aria-label="Change angle mode">DEG</button>
+            </div>
+            <div class="display" aria-live="polite" aria-atomic="true">
+                <div class="previous" id="previous"></div>
+                <div class="current" id="current">0</div>
+            </div>
+            <div class="keypad" id="keypad">
+                <button class="key function-key" type="button" data-scientific="sin">sin</button>
+                <button class="key function-key" type="button" data-scientific="cos">cos</button>
+                <button class="key function-key" type="button" data-scientific="tan">tan</button>
+                <button class="key function-key" type="button" data-scientific="sqrt">√</button>
+                <button class="key operator-key" type="button" data-append="÷">÷</button>
+
+                <button class="key function-key" type="button" data-scientific="log">log</button>
+                <button class="key function-key" type="button" data-scientific="ln">ln</button>
+                <button class="key function-key" type="button" data-scientific="square">x²</button>
+                <button class="key function-key" type="button" data-append="π">π</button>
+                <button class="key operator-key" type="button" data-append="×">×</button>
+
+                <button class="key" type="button" data-append="7">7</button>
+                <button class="key" type="button" data-append="8">8</button>
+                <button class="key" type="button" data-append="9">9</button>
+                <button class="key function-key" type="button" data-append="(">(</button>
+                <button class="key operator-key" type="button" data-append="−">−</button>
+
+                <button class="key" type="button" data-append="4">4</button>
+                <button class="key" type="button" data-append="5">5</button>
+                <button class="key" type="button" data-append="6">6</button>
+                <button class="key function-key" type="button" data-append=")">)</button>
+                <button class="key operator-key" type="button" data-append="+">+</button>
+
+                <button class="key" type="button" data-append="1">1</button>
+                <button class="key" type="button" data-append="2">2</button>
+                <button class="key" type="button" data-append="3">3</button>
+                <button class="key clear-key" type="button" data-action="delete" aria-label="Delete last character">DEL</button>
+                <button class="key equals-key" type="button" data-action="calculate" aria-label="Calculate">=</button>
+
+                <button class="key clear-key" type="button" data-action="clear">AC</button>
+                <button class="key zero-key" type="button" data-append="0">0</button>
+                <button class="key" type="button" data-append=".">.</button>
+            </div>
+            <p class="calculator-footnote">Calculations stay on this device.</p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <span>Alex Mods <span class="footer-divider">/</span> Calculator</span>
+        <span>Scientific calculator</span>
+    </footer>
+</body>
+</html>

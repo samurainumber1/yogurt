@@ -1,71 +1,31 @@
-<!DOCTYPE html>
-<html style="width:100%;height:100%;background-color:black;">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
-		<meta name="description" content="Play minecraft 1.20.6 in your browser" />
-		<meta name="keywords" content="eaglercraft, eaglercraftx, minecraft, 1.20, 1.20.6" />
-		<title>ALEX MODS</title>
-		<meta property="og:locale" content="en-US" />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content="ALEX MODS" />
-		<meta property="og:description" content="Play minecraft 1.20.6 in your browser" />
-		<meta property="og:image" content="favicon.png" />
-		<link type="image/png" rel="shortcut icon" href="favicon.png" />
-		<script type="text/javascript" src="bootstrap.js?v=20260824-5430efd6"></script>
-		<script type="text/javascript">
-			"use strict";
-			window.addEventListener("load", function() {
-				if(window.location.href.indexOf("file:") === 0) {
-					alert("Don't run this locally.");
-				}else {
-					
-					// %%%%%%%%% launch options %%%%%%%%%%%%
-					
-					var relayId = Math.floor(Math.random() * 3);
-					window.eaglercraftXOpts = {
-						demoMode: false,
-						container: "game_frame",
-						assetsURI: "120.epw",
-						worldsDB: "worlds",
-						servers: [
-							/* example: { addr: "ws://localhost:8081/", name: "Local test server" } */
-						],
-						relays: [
-							{ addr: "wss://relay.deev.is/", comment: "lax1dude relay #1", primary: relayId == 0 },
-							{ addr: "wss://relay.lax1dude.net/", comment: "lax1dude relay #2", primary: relayId == 1 },
-							{ addr: "wss://relay.shhnowisnottheti.me/", comment: "ayunami relay #1", primary: relayId == 2 }
-						]
-					};
-					
-					// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-					
-					var q = window.location.search;
-					if((typeof q === "string") && q[0] === "?" && (typeof window.URLSearchParams !== "undefined")) {
-						q = new window.URLSearchParams(q);
-						var s = q.get("server");
-						if(s) window.eaglercraftXOpts.joinServer = s;
-					}
-					
-					fetch("120.epw", { cache: "no-store" })
-    .then(r => r.arrayBuffer())
-    .then(buf => {
-        const v = new DataView(buf);
-        console.log("EPW URL:", new URL("120.epw", location.href).href);
-        console.log("Downloaded bytes:", buf.byteLength);
-        console.log("Declared bytes:", v.getUint32(8, true));
-        console.log(
-            "Magic:",
-            new TextDecoder().decode(new Uint8Array(buf, 0, 8))
-        );
-    })
-    .catch(err => console.error("EPW TEST ERROR:", err));
-
-main();
-					
-				}
-			});
-		</script>
-	</head>
-	<body style="margin:0px;width:100%;height:100%;overflow:hidden;background-color:black;" id="game_frame"></body>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#9500ff">
+    <meta name="description" content="Play Minecraft 1.20.6 in your browser.">
+    <title>Minecraft 1.20.6 — Alex Mods</title>
+    <script src="assets/access-guard.js"></script>
+    <script src="assets/theme.js"></script>
+    <link rel="stylesheet" href="assets/minecraft.css">
+    <script src="bootstrap.js?v=20260824-5430efd6" defer></script>
+    <script src="assets/minecraft.js" defer></script>
+</head>
+<body>
+    <header class="game-toolbar">
+        <a class="back-link" href="/scientific-calculator"><span aria-hidden="true">←</span> GAME CATALOG</a>
+        <div class="game-title">
+            <span class="game-mark" aria-hidden="true">▦</span>
+            <span><strong>Minecraft</strong><small>VERSION 1.20.6</small></span>
+        </div>
+        <div class="toolbar-actions">
+            <span class="build-status"><i></i> BROWSER BUILD</span>
+            <button id="fullscreenButton" class="fullscreen-button" type="button" aria-label="Enter fullscreen">⛶ <span>Fullscreen</span></button>
+        </div>
+    </header>
+    <main class="game-stage" id="gameStage">
+        <div id="game_frame" class="game-frame" aria-label="Minecraft game"></div>
+    </main>
+</body>
 </html>
