@@ -7,7 +7,11 @@ const protectedPaths = new Set([
     "/game.html"
 ]);
 
-if (protectedPaths.has(window.location.pathname) && sessionStorage.getItem("arcadeUnlocked") !== "1") {
+function enforceStashAccess() {
+    if (!protectedPaths.has(window.location.pathname) || sessionStorage.getItem("arcadeUnlocked") === "1") return;
     document.documentElement.style.visibility = "hidden";
     window.location.replace("/calculator");
 }
+
+enforceStashAccess();
+window.addEventListener("pageshow", enforceStashAccess);

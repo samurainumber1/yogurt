@@ -77,7 +77,7 @@ function createGameCard(game, index) {
     const meta = document.createElement("div");
     meta.className = "card-meta";
     const metaType = document.createElement("span");
-    metaType.textContent = game.maps ? "CITY COLLECTION" : "IN THE ARCADE";
+    metaType.textContent = game.maps ? "CITY COLLECTION" : "IN THE GAME STASH";
     const metaCategory = document.createElement("span");
     metaCategory.textContent = game.category;
     meta.append(metaType, metaCategory);

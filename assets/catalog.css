@@ -8,6 +8,7 @@
     --text: #f5f7fb;
     --accent: #9500ff;
     --accent-rgb: 149, 0, 255;
+    --accent-gradient: linear-gradient(135deg, #9500ff, #5b00d6);
     --accent-strong: color-mix(in srgb, var(--accent), #000 18%);
     font-family: "DM Sans", "Segoe UI", sans-serif;
 }
@@ -52,7 +53,7 @@ button { color: inherit; }
     place-items: center;
     border-radius: 11px;
     color: #fff;
-    background: var(--accent);
+    background: var(--accent-gradient);
     font-family: "Space Grotesk", sans-serif;
     font-size: 20px;
     font-weight: 700;
@@ -107,7 +108,7 @@ button { color: inherit; }
     font: 600 clamp(48px, 6vw, 76px)/.99 "Space Grotesk", sans-serif;
     letter-spacing: -.075em;
 }
-.hero h1 span { color: var(--accent); }
+.hero h1 span { color: var(--accent); background: var(--accent-gradient); background-clip: text; -webkit-text-fill-color: transparent; }
 .hero-description { max-width: 440px; margin: 21px 0 24px; color: #9ba6b7; font-size: 15px; line-height: 1.7; }
 .hero-link { display: inline-flex; align-items: center; gap: 9px; color: var(--text); font-size: 13px; font-weight: 600; }
 .hero-link span { color: var(--accent); transition: transform .18s ease; }

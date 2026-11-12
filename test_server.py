@@ -30,20 +30,37 @@ def test_calculator_is_the_only_default_page(client):
     assert b"assets/catalog.js" not in response.data
     assert b"id=\"themeTrigger\"" in response.data
     assert b"id=\"unlockTransition\"" in response.data
-    assert b"Entering the arcade" in response.data
+    assert b"Opening the game stash" in response.data
     calculator_js = (Path(app.root_path) / "assets" / "calculator.js").read_text(encoding="utf-8")
     assert '"6942024421"' in calculator_js
+    assert 'sessionStorage.removeItem("arcadeUnlocked")' in calculator_js
     assert b"scientific-calculator" not in response.data
-    swatches = re.findall(rb'data-theme="([^"]+)" data-rgb="[^"]+" data-tooltip="([^"]+)"', response.data)
+    swatches = re.findall(rb'data-theme="([^"]+)" data-tooltip="([^"]+)"', response.data)
     assert swatches == [
-        (b"#9500ff", b"Default"),
-        (b"#ff3b4f", b"Red"),
-        (b"#ff8a00", b"Orange"),
-        (b"#ffd43b", b"Yellow"),
-        (b"#00c781", b"Green"),
-        (b"#1687ff", b"Blue"),
-        (b"#7136f2", b"Purple"),
+        (b"default", b"Default"),
+        (b"red", b"Red"),
+        (b"orange", b"Orange"),
+        (b"yellow", b"Yellow"),
+        (b"lime", b"Lime"),
+        (b"green", b"Green"),
+        (b"mint", b"Mint"),
+        (b"cyan", b"Cyan"),
+        (b"blue", b"Blue"),
+        (b"ice", b"Ice"),
+        (b"indigo", b"Indigo"),
+        (b"purple", b"Purple"),
+        (b"violet", b"Violet"),
+        (b"pink", b"Pink"),
+        (b"sunset", b"Sunset"),
+        (b"fire", b"Fire"),
+        (b"aurora", b"Aurora"),
+        (b"candy", b"Candy"),
+        (b"galaxy", b"Galaxy"),
     ]
+    assert response.data.count(b"linear-gradient(") >= len(swatches)
+    theme_js = (Path(app.root_path) / "assets" / "theme.js").read_text(encoding="utf-8")
+    theme_ids = re.findall(r"^    (\w+): \{ accent:", theme_js, re.MULTILINE)
+    assert [theme.decode() for theme, _ in swatches] == theme_ids
 
 
 def test_catalog_and_minecraft_use_gated_routes(client):
@@ -56,9 +73,13 @@ def test_catalog_and_minecraft_use_gated_routes(client):
     assert b"assets/presence.js" in catalog.data
     assert b"ALEX MODS was locked by an Administrator." in catalog.data
     assert b'href="/graph-calculator"' in catalog.data
+    assert b'href="/calculator"' in catalog.data
     assert minecraft.status_code == 200
     assert b"assets/access-guard.js" in minecraft.data
     assert b'href="/scientific-calculator"' in minecraft.data
+    assert b'href="/calculator"' in minecraft.data
+    access_guard = (Path(app.root_path) / "assets" / "access-guard.js").read_text(encoding="utf-8")
+    assert 'window.addEventListener("pageshow", enforceStashAccess)' in access_guard
     assert client.get("/index.html").headers["Location"] == "/scientific-calculator"
     assert client.get("/game.html").headers["Location"] == "/graph-calculator"
     assert client.get("/admin.py").status_code == 404

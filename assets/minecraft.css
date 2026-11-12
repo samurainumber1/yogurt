@@ -6,6 +6,7 @@
     --muted: #8894a4;
     --accent: #9500ff;
     --accent-rgb: 149, 0, 255;
+    --accent-gradient: linear-gradient(135deg, #9500ff, #5b00d6);
     font-family: "Segoe UI", system-ui, sans-serif;
 }
 
@@ -30,11 +31,13 @@ button { font: inherit; }
 .back-link:hover { color: var(--accent); }
 .back-link span { margin-right: 5px; color: var(--accent); font-size: 15px; }
 .game-title { display: flex; align-items: center; gap: 9px; }
-.game-mark { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid rgba(var(--accent-rgb), .2); border-radius: 9px; color: var(--accent); background: rgba(var(--accent-rgb), .07); }
+.game-mark { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.15); border-radius: 9px; color: #fff; background: var(--accent-gradient); box-shadow: 0 0 18px rgba(var(--accent-rgb), .2); }
 .game-title > span:last-child { display: grid; gap: 2px; }
 .game-title strong { font: 600 12px "Segoe UI", sans-serif; }
 .game-title small { color: var(--muted); font-size: 8px; font-weight: 700; letter-spacing: .12em; }
 .toolbar-actions { display: flex; justify-content: flex-end; align-items: center; gap: 9px; }
+.calculator-link { min-height: 32px; padding: 0 10px; display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; color: #cad3dc; background: rgba(255,255,255,.035); font-size: 11px; transition: color .16s ease, border-color .16s ease, background .16s ease; }
+.calculator-link:hover { border-color: rgba(var(--accent-rgb), .35); color: #fff; background: var(--accent-gradient); }
 .build-status { display: inline-flex; align-items: center; gap: 6px; color: #92a098; font-size: 8px; font-weight: 700; letter-spacing: .1em; }
 .build-status i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px rgba(var(--accent-rgb), .5); }
 .fullscreen-button { min-height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; color: #cad3dc; background: rgba(255,255,255,.035); cursor: pointer; font-size: 11px; transition: color .16s ease, border-color .16s ease, background .16s ease; }
@@ -51,13 +54,15 @@ button { font: inherit; }
     body { grid-template-rows: 53px minmax(0, 1fr); }
     .game-toolbar { grid-template-columns: auto 1fr auto; gap: 7px; padding-inline: 9px; }
     .back-link { font-size: 9px; }
+    .back-link span { display: none; }
     .game-title { justify-self: center; gap: 6px; }
     .game-mark { width: 26px; height: 26px; font-size: 12px; }
     .game-title strong { font-size: 10px; }
     .game-title small { font-size: 7px; }
     .toolbar-actions { gap: 0; }
     .build-status { display: none; }
-    .fullscreen-button { min-height: 30px; padding-inline: 8px; font-size: 10px; }
+    .calculator-link { min-height: 30px; padding-inline: 7px; font-size: 9px; }
+    .fullscreen-button { min-height: 30px; padding-inline: 7px; font-size: 9px; }
     .game-stage { padding: 6px; }
     .game-frame { border-radius: 7px; }
 }

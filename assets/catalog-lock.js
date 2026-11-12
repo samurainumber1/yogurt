@@ -29,7 +29,7 @@ function showCatalogUnlock() {
 
     lockIcon.textContent = "🔓";
     lockTitle.textContent = "ALEX MODS is unlocked.";
-    lockMessage.textContent = "Returning you to the arcade...";
+    lockMessage.textContent = "Returning you to the game stash...";
     lockScreen.classList.add("is-unlocking");
     catalogLocked = false;
     unlockTimers = [
@@ -52,7 +52,7 @@ async function refreshCatalogLock() {
         if (status.locked) showCatalogLock();
         else showCatalogUnlock();
     } catch (error) {
-        console.warn("Could not check the arcade lock status.", error);
+        console.warn("Could not check the game stash lock status.", error);
     } finally {
         lockRequestPending = false;
         document.documentElement.classList.remove("catalog-lock-pending");

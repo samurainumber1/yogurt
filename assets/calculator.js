@@ -8,6 +8,7 @@ const angleModeButton = document.querySelector("#angleMode");
 const themePicker = document.querySelector("#themePalette");
 const themeTrigger = document.querySelector("#themeTrigger");
 const themeColor = document.querySelector('meta[name="theme-color"]');
+sessionStorage.removeItem("arcadeUnlocked");
 let expression = "";
 let angleMode = "DEG";
 let justCalculated = false;
@@ -48,20 +49,20 @@ function recordUnlockKey(value) {
     return false;
 }
 
-function setTheme(color, rgb) {
-    document.documentElement.style.setProperty("--accent", color);
-    document.documentElement.style.setProperty("--accent-rgb", rgb);
-    themeColor.setAttribute("content", color);
-    localStorage.setItem("calculatorTheme", color);
+function setTheme(themeId) {
+    const preset = window.themePresets[themeId];
+    if (!preset) return;
+    document.documentElement.style.setProperty("--accent", preset.accent);
+    document.documentElement.style.setProperty("--accent-rgb", preset.rgb);
+    document.documentElement.style.setProperty("--accent-gradient", preset.gradient);
+    themeColor.setAttribute("content", preset.accent);
+    localStorage.setItem("calculatorTheme", themeId);
     themePicker.querySelectorAll(".theme-swatch").forEach(swatch => {
-        swatch.setAttribute("aria-pressed", String(swatch.dataset.theme === color));
+        swatch.setAttribute("aria-pressed", String(swatch.dataset.theme === themeId));
     });
 }
 
-setTheme(
-    getComputedStyle(document.documentElement).getPropertyValue("--accent").trim(),
-    getComputedStyle(document.documentElement).getPropertyValue("--accent-rgb").trim()
-);
+setTheme(localStorage.getItem("calculatorTheme") || "default");
 
 function toggleThemePicker(open) {
     const shouldOpen = open ?? themePicker.hidden;
@@ -74,7 +75,7 @@ themeTrigger.addEventListener("click", () => toggleThemePicker());
 themePicker.addEventListener("click", event => {
     const swatch = event.target.closest(".theme-swatch");
     if (!swatch) return;
-    setTheme(swatch.dataset.theme, swatch.dataset.rgb);
+    setTheme(swatch.dataset.theme);
     toggleThemePicker(false);
     themeTrigger.focus();
 });
