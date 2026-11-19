@@ -223,7 +223,9 @@ def test_encrypted_youtube_uses_same_origin_catalog_api_and_official_embed(clien
     response = client.get("/games/ALEX%20MODS%20-%20Encrypted%20YouTube.html")
     assert response.status_code == 200
     assert b"ALEX MODS" in response.data
-    assert b"youtube-nocookie.com/embed/" in response.data
+    assert b"youtube.com/iframe_api" in response.data
+    assert b"alexYoutubeVolume" in response.data
+    assert b"alexYoutubeMuted" in response.data
     assert b"/api/youtube/search" in response.data
     assert b"/api/youtube/suggestions" in response.data
     assert b"/api/youtube/thumbnail/" in response.data
