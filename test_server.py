@@ -233,6 +233,9 @@ def test_encrypted_youtube_uses_same_origin_catalog_api_and_official_embed(clien
     assert b"/api/youtube/channel/" in response.data
     assert b"scroll-snap-type:y mandatory" in response.data
     assert b"data-view=\"shorts\"" in response.data
+    assert b"body.shorts-mode{height:100dvh;min-height:0;overflow:hidden;}" in response.data
+    assert b"body.shorts-mode .shorts-feed{display:flex;flex:1" in response.data
+    assert b"viewport-fit=cover" in response.data
     assert b"Catalog data is served through ALEX MODS" in response.data
     assert b"assets/canonical-host.js" in response.data
     assert b"assets/canonical-host.js" in (
