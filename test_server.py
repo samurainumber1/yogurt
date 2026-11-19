@@ -159,6 +159,7 @@ def test_game_assets_are_served(client):
     assert client.get("/assets/minecraft.js").status_code == 200
     assert client.get("/assets/theme.js").status_code == 200
     assert client.get("/games/ALEX%20MODS%20-%20Space%20Waves.html").status_code == 200
+    assert client.get("/games/game.txt").status_code == 200
     space_waves = client.get("/games/ALEX%20MODS%20-%20Space%20Waves.html").data
     assert b"<iframe" not in space_waves
     assert b"101games.io" not in space_waves
@@ -172,6 +173,8 @@ def test_game_assets_are_served(client):
         assert response.status_code == 200
     catalog = (Path(app.root_path) / "assets" / "catalog.js").read_text(encoding="utf-8")
     assert catalog.startswith('\"use strict\";\n\nconst games = [\n    { title: "Space Waves"')
+    assert 'icon: "👾"' in catalog
+    assert 'description: "Guide a triangle through a neon course.' in catalog
     assert '{ title: "Drift Hunters"' in catalog
     catalog_page = client.get("/scientific-calculator")
     assert b"<strong>Space Waves</strong>" in catalog_page.data

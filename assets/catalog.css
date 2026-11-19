@@ -173,14 +173,18 @@ button { color: inherit; }
 .hero-feature .feature-road {
     height: 150px;
     bottom: -112px;
-    background: repeating-linear-gradient(118deg, rgba(103,239,255,.15) 0 14px, rgba(94,89,255,.22) 15px 29px);
+    background:
+        repeating-linear-gradient(0deg, transparent 0 24px, rgba(125,245,255,.22) 25px 27px),
+        repeating-linear-gradient(118deg, rgba(103,239,255,.12) 0 14px, rgba(94,89,255,.18) 15px 29px);
     border-top: 2px solid rgba(125,245,255,.78);
     transform: rotate(-7deg);
 }
 .hero-feature .feature-car {
     right: 23%;
     bottom: 40px;
-    font-size: 72px;
+    color: #67efff;
+    font-size: 64px;
+    line-height: 1;
     filter: drop-shadow(0 0 18px rgba(104,239,255,.78));
     transform: none;
 }

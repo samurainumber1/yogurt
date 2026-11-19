@@ -1,7 +1,7 @@
 "use strict";
 
 const games = [
-    { title: "Space Waves", path: "games/ALEX MODS - Space Waves.html", icon: "🌊", category: "Arcade", art: "space", description: "Ride the pulse and weave through an intense neon obstacle course." },
+    { title: "Space Waves", path: "games/ALEX MODS - Space Waves.html", icon: "👾", category: "Arcade", art: "space", description: "Guide a triangle through a neon course. Release to dive down; hold to climb up." },
     { title: "Drift Hunters", path: "games/⭐ALEX MODS - Drift Hunters.html", icon: "🏎️", category: "Racing", art: "racing", description: "Tune your ride and master the art of the drift." },
     { title: "Drift Simulator", path: "games/⭐ALEX MODS - Drift Hunters [2].html", icon: "🏁", category: "Racing", art: "racing-alt", description: "Slide through the corners and chase a cleaner line." },
     { title: "Slow Roads", path: "games/ALEX MODS - Slowroads.io.html", icon: "🛣️", category: "Racing", art: "racing", description: "Take a quiet drive through an endless open road." },
