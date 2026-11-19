@@ -219,6 +219,31 @@ def test_game_assets_are_served(client):
     assert client.head("/120.epw").status_code == 200
 
 
+def test_encrypted_youtube_uses_same_origin_catalog_api_and_official_embed(client):
+    response = client.get("/games/ALEX%20MODS%20-%20Encrypted%20YouTube.html")
+    assert response.status_code == 200
+    assert b"ALEX MODS" in response.data
+    assert b"youtube-nocookie.com/embed/" in response.data
+    assert b"/api/youtube/search" in response.data
+    assert b"/api/youtube/suggestions" in response.data
+    assert b"/api/youtube/thumbnail/" in response.data
+    assert b"Catalog data is served through ALEX MODS" in response.data
+    assert b"assets/canonical-host.js" in response.data
+    assert b"assets/canonical-host.js" in (
+        Path(app.root_path) / "games" / "ALEX MODS - Encrypted YouTube.html"
+    ).read_bytes()
+
+
+def test_youtube_api_validates_inputs_and_reports_missing_server_key(client, monkeypatch):
+    monkeypatch.delenv("YOUTUBE_API_KEY", raising=False)
+    assert client.get("/api/youtube/search?q=x").status_code == 400
+    assert client.get("/api/youtube/search?q=music").status_code == 503
+    assert client.get("/api/youtube/video/not-a-valid-id").status_code == 400
+    assert client.get("/api/youtube/video/abcdefghijk").status_code == 503
+    assert client.get("/api/youtube/suggestions?q=a").json == {"items": []}
+    assert client.get("/api/youtube/thumbnail/not-a-valid-id").status_code == 400
+
+
 def test_slow_roads_runs_from_local_assets(client):
     page = client.get("/?localSlowRoads=1")
     conditional_page = client.get(
@@ -260,7 +285,7 @@ def test_catalog_game_and_city_paths_are_served(client):
     map_paths = re.findall(r'\["[^"]+", "([^"]+\.html)"\]', source)
     paths = game_paths + [f"games/Subway Surfers/{path}" for path in map_paths]
 
-    assert len(game_paths) == 24
+    assert len(game_paths) == 25
     assert len(map_paths) == 8
     for path in paths:
         response = client.head("/" + quote(path, safe="/"))
@@ -276,6 +301,11 @@ def test_routes_are_static_only():
         "/calculator.html",
         "/scientific-calculator",
         "/graph-calculator",
+        "/games/ALEX MODS - Encrypted YouTube.html",
+        "/api/youtube/search",
+        "/api/youtube/video/<video_id>",
+        "/api/youtube/suggestions",
+        "/api/youtube/thumbnail/<video_id>",
         "/admin/login",
         "/admin",
         "/admin/panel",

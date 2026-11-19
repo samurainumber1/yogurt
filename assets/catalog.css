@@ -277,6 +277,7 @@ button { color: inherit; }
 .art-action { --art-a: #62513c; --art-b: #24201c; }
 .art-fruit { --art-a: #4e663f; --art-b: #1b291e; }
 .art-rhythm { --art-a: #4f4a8d; --art-b: #171a39; }
+.art-video { --art-a: #74384b; --art-b: #211722; }
 .art-escape { --art-a: #59503d; --art-b: #242019; }
 .art-blocks { --art-a: #557a57; --art-b: #202b25; }
 .art-moto { --art-a: #455e51; --art-b: #17231f; }
