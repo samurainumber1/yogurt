@@ -227,6 +227,10 @@ def test_encrypted_youtube_uses_same_origin_catalog_api_and_official_embed(clien
     assert b"/api/youtube/search" in response.data
     assert b"/api/youtube/suggestions" in response.data
     assert b"/api/youtube/thumbnail/" in response.data
+    assert b"/api/youtube/shorts" in response.data
+    assert b"/api/youtube/channel/" in response.data
+    assert b"scroll-snap-type:y mandatory" in response.data
+    assert b"data-view=\"shorts\"" in response.data
     assert b"Catalog data is served through ALEX MODS" in response.data
     assert b"assets/canonical-host.js" in response.data
     assert b"assets/canonical-host.js" in (
@@ -240,6 +244,9 @@ def test_youtube_api_validates_inputs_and_reports_missing_server_key(client, mon
     assert client.get("/api/youtube/search?q=music").status_code == 503
     assert client.get("/api/youtube/video/not-a-valid-id").status_code == 400
     assert client.get("/api/youtube/video/abcdefghijk").status_code == 503
+    assert client.get("/api/youtube/shorts").status_code == 503
+    assert client.get("/api/youtube/channel/not-a-channel").status_code == 400
+    assert client.get("/api/youtube/channel/not-a-channel/avatar").status_code == 400
     assert client.get("/api/youtube/suggestions?q=a").json == {"items": []}
     assert client.get("/api/youtube/thumbnail/not-a-valid-id").status_code == 400
 
@@ -303,6 +310,9 @@ def test_routes_are_static_only():
         "/graph-calculator",
         "/games/ALEX MODS - Encrypted YouTube.html",
         "/api/youtube/search",
+        "/api/youtube/shorts",
+        "/api/youtube/channel/<channel_id>",
+        "/api/youtube/channel/<channel_id>/avatar",
         "/api/youtube/video/<video_id>",
         "/api/youtube/suggestions",
         "/api/youtube/thumbnail/<video_id>",

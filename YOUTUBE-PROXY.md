@@ -13,5 +13,6 @@ The current deployment can set the same environment variable in its service conf
 ## Network behavior
 
 - Search, search suggestions, video metadata, and thumbnails are requested by the browser from the same-origin `/api/youtube/*` Flask routes. Flask calls the official YouTube Data API v3 for metadata and relays thumbnails from the fixed `i.ytimg.com` host. The backend accepts video IDs and search terms, never caller-supplied URLs.
+- The Shorts shelf uses Data API video search with the `#shorts` term, since Data API v3 does not expose a dedicated Shorts feed. Channel pages use official channel metadata and channel-scoped search. Channel avatars are proxied only from the API-provided `yt3.ggpht.com` host, with redirects checked.
 - Video playback uses YouTube's official `youtube-nocookie.com` embedded player. The browser must connect to YouTube's player and video delivery services for playback; those media requests are not proxied. Playback remains subject to YouTube availability, regional restrictions, and the video's embedding permissions.
 - The site does not request YouTube sign-in credentials, bypass access controls, or extract media streams.

@@ -44,6 +44,7 @@ app = Flask(__name__, static_folder=None)
 
 YOUTUBE_API_ROOT = "https://www.googleapis.com/youtube/v3/"
 YOUTUBE_VIDEO_ID = re.compile(r"^[A-Za-z0-9_-]{11}$")
+YOUTUBE_CHANNEL_ID = re.compile(r"^UC[A-Za-z0-9_-]{22}$")
 YOUTUBE_CACHE = OrderedDict()
 YOUTUBE_CACHE_TTL = 300
 
@@ -109,10 +110,101 @@ def youtube_search():
         "id": item.get("id", {}).get("videoId", ""),
         "title": item.get("snippet", {}).get("title", ""),
         "channel": item.get("snippet", {}).get("channelTitle", ""),
+        "channelId": item.get("snippet", {}).get("channelId", ""),
         "publishedAt": item.get("snippet", {}).get("publishedAt", ""),
         "description": item.get("snippet", {}).get("description", ""),
     } for item in data.get("items", []) if YOUTUBE_VIDEO_ID.fullmatch(item.get("id", {}).get("videoId", ""))]
     return {"items": items}
+
+
+@app.get("/api/youtube/shorts")
+def youtube_shorts():
+    query = request.args.get("q", "").strip()
+    if len(query) > 100:
+        return youtube_error("Search must be no longer than 100 characters.", 400)
+    try:
+        limit = max(1, min(int(request.args.get("limit", "20")), 24))
+    except ValueError:
+        return youtube_error("Invalid result limit.", 400)
+    # YouTube Data API has no dedicated Shorts feed. This uses its supported video search.
+    phrase = f"{query} #shorts".strip() or "#shorts"
+    data, error = youtube_api("search", {
+        "part": "snippet", "type": "video", "q": phrase,
+        "maxResults": limit, "safeSearch": "moderate",
+    })
+    if error:
+        return youtube_error(*error)
+    items = [{
+        "id": item.get("id", {}).get("videoId", ""),
+        "title": item.get("snippet", {}).get("title", ""),
+        "channel": item.get("snippet", {}).get("channelTitle", ""),
+        "channelId": item.get("snippet", {}).get("channelId", ""),
+        "publishedAt": item.get("snippet", {}).get("publishedAt", ""),
+    } for item in data.get("items", []) if YOUTUBE_VIDEO_ID.fullmatch(item.get("id", {}).get("videoId", ""))]
+    return {"items": items}
+
+
+@app.get("/api/youtube/channel/<channel_id>")
+def youtube_channel(channel_id):
+    if not YOUTUBE_CHANNEL_ID.fullmatch(channel_id):
+        return youtube_error("Invalid channel ID.", 400)
+    data, error = youtube_api("channels", {"part": "snippet,statistics", "id": channel_id})
+    if error:
+        return youtube_error(*error)
+    if not data.get("items"):
+        return youtube_error("This channel could not be found.", 404)
+    channel = data["items"][0]
+    snippet = channel.get("snippet", {})
+    stats = channel.get("statistics", {})
+    videos, video_error = youtube_api("search", {
+        "part": "snippet", "type": "video", "channelId": channel_id,
+        "order": "date", "maxResults": 24,
+    })
+    if video_error:
+        return youtube_error(*video_error)
+    items = [{
+        "id": item.get("id", {}).get("videoId", ""),
+        "title": item.get("snippet", {}).get("title", ""),
+        "channel": item.get("snippet", {}).get("channelTitle", ""),
+        "channelId": channel_id,
+        "publishedAt": item.get("snippet", {}).get("publishedAt", ""),
+    } for item in videos.get("items", []) if YOUTUBE_VIDEO_ID.fullmatch(item.get("id", {}).get("videoId", ""))]
+    return {
+        "id": channel_id, "title": snippet.get("title", ""),
+        "description": snippet.get("description", ""),
+        "subscriberCount": stats.get("subscriberCount"),
+        "videoCount": stats.get("videoCount"),
+        "avatar": f"/api/youtube/channel/{channel_id}/avatar",
+        "items": items,
+    }
+
+
+@app.get("/api/youtube/channel/<channel_id>/avatar")
+def youtube_channel_avatar(channel_id):
+    if not YOUTUBE_CHANNEL_ID.fullmatch(channel_id):
+        abort(400)
+    data, error = youtube_api("channels", {"part": "snippet", "id": channel_id})
+    if error:
+        return youtube_error(*error)
+    try:
+        url = data["items"][0]["snippet"]["thumbnails"]["high"]["url"]
+        parsed = urllib.parse.urlparse(url)
+        if parsed.scheme != "https" or parsed.hostname != "yt3.ggpht.com":
+            abort(502)
+        req = urllib.request.Request(url, headers={"User-Agent": "AlexModsYouTube/1.0"})
+        with urllib.request.urlopen(req, timeout=5) as upstream:
+            if urllib.parse.urlparse(upstream.geturl()).hostname != "yt3.ggpht.com":
+                abort(502)
+            content_type = upstream.headers.get_content_type()
+            if content_type not in {"image/jpeg", "image/png", "image/webp"}:
+                abort(404)
+            image_data = upstream.read(1_000_000)
+    except (KeyError, IndexError, urllib.error.URLError, TimeoutError, OSError):
+        abort(404)
+    response = app.response_class(image_data, mimetype=content_type)
+    response.headers["Cache-Control"] = "public, max-age=86400"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    return response
 
 
 @app.get("/api/youtube/video/<video_id>")
