@@ -30,6 +30,19 @@ def test_wrong_host_shows_canonical_link_and_preserves_requested_path():
     assert b"setTimeout(() => continueLink.click(), 7000)" in response.data
 
 
+def test_static_host_guard_is_served_and_included_in_site_pages(client):
+    guard = client.get("/assets/canonical-host.js")
+
+    assert guard.status_code == 200
+    assert b"samurainumber1.github.io" in guard.data
+    assert b'const projectPrefix = "/yogurt"' in guard.data
+    assert b"continueLink.click(), 7000" in guard.data
+    assert b"assets/canonical-host.js" in (Path(app.root_path) / "index.html").read_bytes()
+    assert b"assets/canonical-host.js" in (
+        Path(app.root_path) / "games" / "ALEX MODS - Space Waves.html"
+    ).read_bytes()
+
+
 def test_root_opens_calculator(client):
     response = client.get("/")
 
