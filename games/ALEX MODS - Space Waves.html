@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Space Waves 3D</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: #090d24;
+        }
+        #unity-container,
+        #unity-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        #unity-canvas {
+            background: #090d24;
+            touch-action: none;
+        }
+        #loading-cover {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            color: white;
+            background: #090d24;
+            font: 600 18px Arial, sans-serif;
+        }
+        #progress {
+            width: min(320px, 70vw);
+            height: 8px;
+            margin-top: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, .55);
+            border-radius: 999px;
+        }
+        #progress-bar {
+            width: 0;
+            height: 100%;
+            background: #67efff;
+        }
+        #loading-content {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="unity-container">
+        <canvas id="unity-canvas" tabindex="-1"></canvas>
+    </div>
+    <div id="loading-cover">
+        <div id="loading-content">
+            <div>Loading Space Waves 3D</div>
+            <div id="progress"><div id="progress-bar"></div></div>
+        </div>
+    </div>
+    <script>
+        const canvas = document.querySelector("#unity-canvas");
+        const loadingCover = document.querySelector("#loading-cover");
+        const progressBar = document.querySelector("#progress-bar");
+        const buildUrl = "Space Waves/Build";
+        const loaderUrl = `${buildUrl}/space-waves-3d.loader.js`;
+        const config = {
+            dataUrl: `${buildUrl}/space-waves-3d.data`,
+            frameworkUrl: `${buildUrl}/space-waves-3d.framework.js`,
+            codeUrl: `${buildUrl}/space-waves-3d.wasm`,
+            streamingAssetsUrl: "Space Waves/StreamingAssets",
+            companyName: "GreenLight",
+            productName: "Space Waves 3D",
+            productVersion: "1.0.1"
+        };
+
+        const loader = document.createElement("script");
+        loader.src = loaderUrl;
+        loader.onload = () => {
+            createUnityInstance(canvas, config, progress => {
+                progressBar.style.width = `${Math.max(0, Math.min(100, progress * 100))}%`;
+            }).then(() => {
+                loadingCover.remove();
+                canvas.focus();
+            }).catch(error => {
+                loadingCover.textContent = `Unable to start Space Waves 3D: ${error}`;
+            });
+        };
+        loader.onerror = () => {
+            loadingCover.textContent = "Unable to load the Space Waves 3D game files.";
+        };
+        document.body.appendChild(loader);
+    </script>
+</body>
+</html>

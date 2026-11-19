@@ -158,6 +158,24 @@ def test_presence_counts_are_anonymous_and_bucketed(client):
 def test_game_assets_are_served(client):
     assert client.get("/assets/minecraft.js").status_code == 200
     assert client.get("/assets/theme.js").status_code == 200
+    assert client.get("/games/ALEX%20MODS%20-%20Space%20Waves.html").status_code == 200
+    space_waves = client.get("/games/ALEX%20MODS%20-%20Space%20Waves.html").data
+    assert b"<iframe" not in space_waves
+    assert b"101games.io" not in space_waves
+    for build_file in (
+        "space-waves-3d.loader.js",
+        "space-waves-3d.data",
+        "space-waves-3d.framework.js",
+        "space-waves-3d.wasm",
+    ):
+        response = client.get(f"/games/Space%20Waves/Build/{build_file}")
+        assert response.status_code == 200
+    catalog = (Path(app.root_path) / "assets" / "catalog.js").read_text(encoding="utf-8")
+    assert catalog.startswith('\"use strict\";\n\nconst games = [\n    { title: "Space Waves"')
+    assert '{ title: "Drift Hunters"' in catalog
+    catalog_page = client.get("/scientific-calculator")
+    assert b"<strong>Space Waves</strong>" in catalog_page.data
+    assert b"<strong>Drift Hunters</strong>" not in catalog_page.data
     slowroads = client.get("/games/ALEX%20MODS%20-%20Slowroads.io.html")
     assert slowroads.status_code == 200
     assert b'href="/?localSlowRoads=1"' in slowroads.data
@@ -211,7 +229,7 @@ def test_catalog_game_and_city_paths_are_served(client):
     map_paths = re.findall(r'\["[^"]+", "([^"]+\.html)"\]', source)
     paths = game_paths + [f"games/Subway Surfers/{path}" for path in map_paths]
 
-    assert len(game_paths) == 23
+    assert len(game_paths) == 24
     assert len(map_paths) == 8
     for path in paths:
         response = client.head("/" + quote(path, safe="/"))
