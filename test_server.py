@@ -12,7 +12,22 @@ from server import app
 def client():
     app.config["TESTING"] = True
     with app.test_client() as test_client:
+        test_client.environ_base["HTTP_HOST"] = "yogurt-ws0r.onrender.com"
         yield test_client
+
+
+def test_wrong_host_shows_canonical_link_and_preserves_requested_path():
+    with app.test_client() as test_client:
+        response = test_client.get(
+            "/scientific-calculator?from=wrong-link",
+            headers={"Host": "not-the-site.example"},
+        )
+
+    assert response.status_code == 200
+    assert b"You\xe2\x80\x99re on the wrong link" in response.data
+    assert b"https://yogurt-ws0r.onrender.com/scientific-calculator?from=wrong-link" in response.data
+    assert b"Go to the correct link" in response.data
+    assert b"setTimeout(() => continueLink.click(), 7000)" in response.data
 
 
 def test_root_opens_calculator(client):
