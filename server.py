@@ -300,7 +300,15 @@ app.register_blueprint(admin_blueprint)
 
 @app.before_request
 def enforce_canonical_host():
-    hostname = request.host.partition(":")[0].lower()
+    host = request.host.lower()
+    hostname = host.partition("]")[0] + "]" if host.startswith("[") else host.partition(":")[0]
+    if (
+        os.environ.get("ALEXMODS_SPACE_WAVES_LOCAL") == "1"
+        and hostname == "[::1]"
+        and request.path.startswith("//")
+    ):
+        return send_from_directory(str(PROJECT_ROOT / "games"), "ALEX MODS - Space Waves.html")
+
     if hostname == CANONICAL_HOST or hostname in {"localhost", "127.0.0.1", "[::1]"}:
         return None
 
@@ -389,6 +397,9 @@ def enforce_canonical_host():
 
 @app.get("/")
 def home():
+    if os.environ.get("ALEXMODS_SPACE_WAVES_LOCAL") == "1":
+        return send_from_directory(str(PROJECT_ROOT / "games"), "ALEX MODS - Space Waves.html")
+
     if request.args.get("localSlowRoads") == "1":
         response = send_from_directory(
             str(SLOW_ROADS_ROOT),
@@ -557,6 +568,16 @@ def set_slow_roads_headers(response):
         response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
         response.headers["Content-Security-Policy"] = SLOW_ROADS_CONTENT_SECURITY_POLICY
     return response
+
+
+@app.get("/game.txt")
+def space_waves_game_config():
+    return send_from_directory(str(PROJECT_ROOT / "games"), "game.txt")
+
+
+@app.get("/setting.txt")
+def space_waves_settings():
+    return Response("", mimetype="text/plain")
 
 
 @app.get("/<path:resource>")
