@@ -301,9 +301,7 @@ app.register_blueprint(admin_blueprint)
 @app.before_request
 def enforce_canonical_host():
     hostname = request.host.partition(":")[0].lower()
-    if hostname == CANONICAL_HOST or (
-        app.testing and hostname in {"localhost", "127.0.0.1"}
-    ):
+    if hostname == CANONICAL_HOST or hostname in {"localhost", "127.0.0.1", "[::1]"}:
         return None
 
     requested_path = request.full_path
