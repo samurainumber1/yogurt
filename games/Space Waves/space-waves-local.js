@@ -8,7 +8,7 @@
     const buildUrl = "/games/Space%20Waves/VerifiedBuild";
 
     // Keep the publisher's ad bridge API available to Unity without loading
-    // the remote ad SDK. Report ads as unavailable so its scene can continue.
+    // the remote SDK. Treat each requested ad as completed immediately.
     window.gameInstance = null;
     const notifyUnity = (method) => {
         if (!window.gameInstance) return;
@@ -21,8 +21,8 @@
     window.loadAds = () => {};
     window.loadInterstitialAd = () => {};
     window.loadRewardedAd = () => {};
-    window.showInterstitialAd = () => notifyUnity("OnInterstitialAdShowError");
-    window.showRewardedAd = () => notifyUnity("OnRewardedAdShowError");
+    window.showInterstitialAd = () => notifyUnity("OnInterstitialAdClose");
+    window.showRewardedAd = () => notifyUnity("OnReward");
 
     // Unity's ad bridge calls this after an ad closes or fails to open.
     window.setFocus = () => {
