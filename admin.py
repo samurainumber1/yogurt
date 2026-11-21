@@ -1,5 +1,6 @@
 import hashlib
 import hmac
+import json
 import secrets
 import sqlite3
 import time
@@ -65,6 +66,15 @@ def _initialize_database():
                 VALUES ('global_announcement', '');
             INSERT OR IGNORE INTO site_settings (name, value)
                 VALUES ('global_announcement_id', '');
+            INSERT OR IGNORE INTO site_settings (name, value)
+                VALUES ('global_poll', '{}');
+            CREATE TABLE IF NOT EXISTS poll_votes (
+                poll_id TEXT NOT NULL,
+                voter_id TEXT NOT NULL,
+                option_index INTEGER NOT NULL CHECK (option_index IN (0, 1)),
+                created_at REAL NOT NULL,
+                PRIMARY KEY (poll_id, voter_id)
+            );
             """
         )
 
@@ -244,6 +254,91 @@ def announcement_status():
     return jsonify(message=settings.get("global_announcement", ""), id=settings.get("global_announcement_id", ""))
 
 
+def _poll_snapshot(connection, voter_id=""):
+    row = connection.execute(
+        "SELECT value FROM site_settings WHERE name = 'global_poll'"
+    ).fetchone()
+    try:
+        poll = json.loads(row["value"] if row else "{}")
+    except (TypeError, ValueError):
+        poll = {}
+    poll_id = poll.get("id", "") if isinstance(poll, dict) else ""
+    if not poll_id:
+        return {"active": False, "id": "", "question": "", "options": [], "counts": [0, 0], "total": 0, "myVote": None}
+    counts = [0, 0]
+    rows = connection.execute(
+        "SELECT option_index, COUNT(*) AS votes FROM poll_votes WHERE poll_id = ? GROUP BY option_index",
+        (poll_id,),
+    ).fetchall()
+    for count_row in rows:
+        counts[count_row["option_index"]] = count_row["votes"]
+    vote = None
+    if voter_id:
+        vote_row = connection.execute(
+            "SELECT option_index FROM poll_votes WHERE poll_id = ? AND voter_id = ?",
+            (poll_id, voter_id),
+        ).fetchone()
+        if vote_row:
+            vote = vote_row["option_index"]
+    return {
+        "active": True,
+        "id": poll_id,
+        "question": poll.get("question", ""),
+        "options": poll.get("options", []),
+        "counts": counts,
+        "total": sum(counts),
+        "myVote": vote,
+    }
+
+
+@admin.get("/api/poll")
+def poll_status():
+    voter_id = request.args.get("voterId", "")
+    if voter_id:
+        try:
+            if len(voter_id) != 36 or len(voter_id.replace("-", "")) != 32:
+                raise ValueError
+            int(voter_id.replace("-", ""), 16)
+        except ValueError:
+            voter_id = ""
+    with _connect() as connection:
+        poll = _poll_snapshot(connection, voter_id)
+    return jsonify(poll)
+
+
+@admin.post("/api/poll/vote")
+def submit_poll_vote():
+    payload = request.get_json(silent=True) or {}
+    poll_id = payload.get("pollId")
+    voter_id = payload.get("voterId")
+    option_index = payload.get("optionIndex")
+    if not isinstance(poll_id, str) or len(poll_id) > 64:
+        return jsonify(error="A valid poll is required."), 400
+    if not isinstance(voter_id, str) or len(voter_id) != 36:
+        return jsonify(error="A valid voter ID is required."), 400
+    try:
+        if len(voter_id.replace("-", "")) != 32:
+            raise ValueError
+        int(voter_id.replace("-", ""), 16)
+    except ValueError:
+        return jsonify(error="A valid voter ID is required."), 400
+    if isinstance(option_index, bool) or option_index not in (0, 1):
+        return jsonify(error="Choose one of the poll options."), 400
+    with _connect() as connection:
+        poll = _poll_snapshot(connection)
+        if not poll["active"] or poll["id"] != poll_id:
+            return jsonify(error="This poll has ended or changed."), 409
+        try:
+            connection.execute(
+                "INSERT INTO poll_votes (poll_id, voter_id, option_index, created_at) VALUES (?, ?, ?, ?)",
+                (poll_id, voter_id, option_index, time.time()),
+            )
+        except sqlite3.IntegrityError:
+            return jsonify(error="You have already voted in this poll.", poll=_poll_snapshot(connection, voter_id)), 409
+        poll = _poll_snapshot(connection, voter_id)
+    return jsonify(poll)
+
+
 @admin.post("/api/presence")
 def record_presence():
     payload = request.get_json(silent=True) or {}
@@ -372,3 +467,39 @@ def set_announcement():
             (announcement_id,),
         )
     return jsonify(message=message, id=announcement_id)
+
+
+@admin.post("/api/admin/poll")
+@_admin_required
+def set_global_poll():
+    csrf_error = _require_csrf_token()
+    if csrf_error:
+        return csrf_error
+    payload = request.get_json(silent=True) or {}
+    question = payload.get("question")
+    options = payload.get("options")
+    if not isinstance(question, str):
+        return jsonify(error="The poll question must be text."), 400
+    question = question.strip()
+    if not question:
+        with _connect() as connection:
+            connection.execute("UPDATE site_settings SET value = '{}' WHERE name = 'global_poll'")
+            connection.execute("DELETE FROM poll_votes")
+        return jsonify(active=False)
+    if len(question) > 180:
+        return jsonify(error="Poll questions must be 180 characters or fewer."), 400
+    if not isinstance(options, list) or len(options) != 2 or any(not isinstance(option, str) for option in options):
+        return jsonify(error="Provide exactly two poll options."), 400
+    options = [option.strip() for option in options]
+    if any(not option for option in options):
+        return jsonify(error="Both poll options are required."), 400
+    if any(len(option) > 80 for option in options):
+        return jsonify(error="Poll options must be 80 characters or fewer."), 400
+    poll = {"id": secrets.token_urlsafe(12), "question": question, "options": options}
+    with _connect() as connection:
+        connection.execute(
+            "UPDATE site_settings SET value = ? WHERE name = 'global_poll'",
+            (json.dumps(poll, ensure_ascii=False),),
+        )
+        connection.execute("DELETE FROM poll_votes WHERE poll_id != ?", (poll["id"],))
+    return jsonify(active=True, **poll)

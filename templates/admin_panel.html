@@ -82,6 +82,28 @@
                 </div>
                 <p class="metric-caption" id="announcementStatus" role="status">No announcement sent.</p>
             </section>
+
+            <section class="chart-card announcement-card" aria-labelledby="pollTitle">
+                <div class="chart-heading">
+                    <div><h2 id="pollTitle">Global poll</h2><p>Post a question with two choices. Visitors can vote once per poll from their browser.</p></div>
+                </div>
+                <label class="announcement-label" for="pollQuestion">Question</label>
+                <input class="poll-input" id="pollQuestion" maxlength="180" placeholder="Which game should we add next?">
+                <div class="poll-option-fields">
+                    <div><label class="announcement-label" for="pollOptionOne">Option 1</label><input class="poll-input" id="pollOptionOne" maxlength="80" placeholder="Option one"></div>
+                    <div><label class="announcement-label" for="pollOptionTwo">Option 2</label><input class="poll-input" id="pollOptionTwo" maxlength="80" placeholder="Option two"></div>
+                </div>
+                <div class="announcement-buttons poll-actions">
+                    <button class="lock-button" id="pollSend" type="button">Start poll</button>
+                    <button class="logout-button" id="pollClear" type="button">End poll</button>
+                </div>
+                <p class="metric-caption" id="pollStatus" role="status">No active poll.</p>
+                <div class="poll-results" id="pollResults" hidden>
+                    <p class="poll-vote-total" id="pollVoteTotal">0 votes</p>
+                    <div class="poll-result-row"><div><span id="pollResultLabel0"></span><strong id="pollResultCount0">0</strong></div><div class="poll-result-track"><span id="pollResultBar0"></span></div></div>
+                    <div class="poll-result-row"><div><span id="pollResultLabel1"></span><strong id="pollResultCount1">0</strong></div><div class="poll-result-track"><span id="pollResultBar1"></span></div></div>
+                </div>
+            </section>
         </section>
     </main>
 </body>

@@ -15,6 +15,12 @@ const announcementWarning = document.querySelector("#announcementWarning");
 const announcementSend = document.querySelector("#announcementSend");
 const announcementClear = document.querySelector("#announcementClear");
 const announcementStatus = document.querySelector("#announcementStatus");
+const pollQuestion = document.querySelector("#pollQuestion");
+const pollOptionInputs = [document.querySelector("#pollOptionOne"), document.querySelector("#pollOptionTwo")];
+const pollSend = document.querySelector("#pollSend");
+const pollClear = document.querySelector("#pollClear");
+const pollStatus = document.querySelector("#pollStatus");
+const pollResults = document.querySelector("#pollResults");
 let latestMetrics = null;
 
 function updateAnnouncementPreview() {
@@ -69,11 +75,74 @@ async function loadAnnouncement() {
     }
 }
 
+function renderPoll(poll) {
+    pollResults.hidden = !poll.active;
+    if (!poll.active) {
+        pollStatus.textContent = "No active poll.";
+        return;
+    }
+    if (document.activeElement !== pollQuestion && !pollQuestion.value) pollQuestion.value = poll.question;
+    poll.options.forEach((option, index) => {
+        if (document.activeElement !== pollOptionInputs[index] && !pollOptionInputs[index].value) pollOptionInputs[index].value = option;
+        document.querySelector(`#pollResultLabel${index}`).textContent = option;
+        const count = poll.counts[index] || 0;
+        document.querySelector(`#pollResultCount${index}`).textContent = `${count} · ${poll.total ? Math.round(count * 100 / poll.total) : 0}%`;
+        document.querySelector(`#pollResultBar${index}`).style.width = `${poll.total ? count * 100 / poll.total : 0}%`;
+    });
+    pollStatus.textContent = `Poll is live · ${poll.total} ${poll.total === 1 ? "vote" : "votes"}. Results update automatically.`;
+    document.querySelector("#pollVoteTotal").textContent = `${poll.total} ${poll.total === 1 ? "vote" : "votes"}`;
+}
+
+async function refreshPoll() {
+    try {
+        const response = await fetch("/api/poll", { cache: "no-store", credentials: "same-origin" });
+        if (response.ok) renderPoll(await response.json());
+    } catch (_) {
+        pollStatus.textContent = "Could not refresh poll results.";
+    }
+}
+
+async function savePoll(question) {
+    pollSend.disabled = true;
+    pollClear.disabled = true;
+    try {
+        const response = await fetch("/api/admin/poll", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken },
+            body: JSON.stringify({ question, options: pollOptionInputs.map(input => input.value) }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || `Poll update failed (${response.status}).`);
+        if (data.active) {
+            pollQuestion.value = data.question;
+            data.options.forEach((option, index) => { pollOptionInputs[index].value = option; });
+            pollStatus.textContent = "Poll is live · waiting for votes.";
+            await refreshPoll();
+        } else {
+            pollQuestion.value = "";
+            pollOptionInputs.forEach(input => { input.value = ""; });
+            renderPoll(data);
+            pollStatus.textContent = "Poll ended.";
+        }
+    } catch (error) {
+        pollStatus.textContent = error.message || "Could not update poll.";
+        console.error(error);
+    } finally {
+        pollSend.disabled = false;
+        pollClear.disabled = false;
+    }
+}
+
 announcementInput.addEventListener("input", updateAnnouncementPreview);
 announcementSend.addEventListener("click", () => saveAnnouncement(announcementInput.value));
 announcementClear.addEventListener("click", () => saveAnnouncement(""));
 updateAnnouncementPreview();
 loadAnnouncement();
+pollSend.addEventListener("click", () => savePoll(pollQuestion.value));
+pollClear.addEventListener("click", () => savePoll(""));
+refreshPoll();
+window.setInterval(refreshPoll, 3000);
 
 function drawTrafficChart(samples, peak) {
     const bounds = chart.getBoundingClientRect();
