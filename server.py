@@ -499,6 +499,11 @@ def minecraft_launcher():
     return send_from_directory(str(PROJECT_ROOT), "game.html")
 
 
+@app.get("/space-waves")
+def space_waves_page():
+    return send_from_directory(str(PROJECT_ROOT / "games"), "ALEX MODS - Space Waves.html")
+
+
 @app.get("/games/ALEX MODS - Encrypted YouTube.html")
 def encrypted_youtube():
     return send_from_directory(str(PROJECT_ROOT / "games"), "ALEX MODS - Encrypted YouTube.html")
@@ -557,6 +562,19 @@ def slow_roads_manifest():
 
 @app.after_request
 def set_slow_roads_headers(response):
+    is_local_space_waves = (
+        os.environ.get("ALEXMODS_SPACE_WAVES_LOCAL") == "1"
+        and request.path in {"/", "//"}
+    )
+    is_space_waves_page = request.path in {
+        "/space-waves", "/games/ALEX MODS - Space Waves.html",
+    }
+    if is_local_space_waves or is_space_waves_page:
+        response.headers["Permissions-Policy"] = (
+            "camera=(), microphone=(), geolocation=(), local-network-access=(), "
+            "usb=(), serial=(), hid=(), bluetooth=()"
+        )
+
     is_slow_roads_document = request.path == "/" and request.args.get("localSlowRoads") == "1"
     is_slow_roads_asset = request.path.startswith(("/_app/", "/fonts/", "/img/")) or request.path in {
         "/alea.min.js", "/apple-touch-icon.png", "/favicon.svg", "/icon.svg",
