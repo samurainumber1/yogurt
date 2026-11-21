@@ -121,14 +121,26 @@ def youtube_search():
     })
     if error:
         return youtube_error(*error)
-    items = [{
-        "id": item.get("id", {}).get("videoId", ""),
-        "title": item.get("snippet", {}).get("title", ""),
-        "channel": item.get("snippet", {}).get("channelTitle", ""),
-        "channelId": item.get("snippet", {}).get("channelId", ""),
-        "publishedAt": item.get("snippet", {}).get("publishedAt", ""),
-        "description": item.get("snippet", {}).get("description", ""),
-    } for item in data.get("items", []) if YOUTUBE_VIDEO_ID.fullmatch(item.get("id", {}).get("videoId", ""))]
+    items = []
+    items_data = data.get("items") if isinstance(data, dict) else None
+    for item in items_data or []:
+        if not isinstance(item, dict):
+            continue
+        video_id_data = item.get("id")
+        snippet = item.get("snippet")
+        if not isinstance(video_id_data, dict) or not isinstance(snippet, dict):
+            continue
+        video_id = video_id_data.get("videoId", "")
+        if not isinstance(video_id, str) or not YOUTUBE_VIDEO_ID.fullmatch(video_id):
+            continue
+        items.append({
+            "id": video_id,
+            "title": snippet.get("title", ""),
+            "channel": snippet.get("channelTitle", ""),
+            "channelId": snippet.get("channelId", ""),
+            "publishedAt": snippet.get("publishedAt", ""),
+            "description": snippet.get("description", ""),
+        })
     return {"items": items}
 
 
@@ -149,13 +161,22 @@ def youtube_shorts():
     })
     if error:
         return youtube_error(*error)
-    items = [{
-        "id": item.get("id", {}).get("videoId", ""),
-        "title": item.get("snippet", {}).get("title", ""),
-        "channel": item.get("snippet", {}).get("channelTitle", ""),
-        "channelId": item.get("snippet", {}).get("channelId", ""),
-        "publishedAt": item.get("snippet", {}).get("publishedAt", ""),
-    } for item in data.get("items", []) if YOUTUBE_VIDEO_ID.fullmatch(item.get("id", {}).get("videoId", ""))]
+    items = []
+    for item in data.get("items", []) or []:
+        if not isinstance(item, dict):
+            continue
+        video_id_data = item.get("id")
+        video_id = video_id_data.get("videoId", "") if isinstance(video_id_data, dict) else ""
+        if not YOUTUBE_VIDEO_ID.fullmatch(video_id):
+            continue
+        snippet = item.get("snippet") or {}
+        items.append({
+            "id": video_id,
+            "title": snippet.get("title", ""),
+            "channel": snippet.get("channelTitle", ""),
+            "channelId": snippet.get("channelId", ""),
+            "publishedAt": snippet.get("publishedAt", ""),
+        })
     return {"items": items}
 
 
@@ -166,7 +187,7 @@ def youtube_channel(channel_id):
     data, error = youtube_api("channels", {"part": "snippet,statistics", "id": channel_id})
     if error:
         return youtube_error(*error)
-    if not data.get("items"):
+    if not data or not data.get("items"):
         return youtube_error("This channel could not be found.", 404)
     channel = data["items"][0]
     snippet = channel.get("snippet", {})
@@ -317,13 +338,6 @@ app.register_blueprint(admin_blueprint)
 def enforce_canonical_host():
     host = request.host.lower()
     hostname = host.partition("]")[0] + "]" if host.startswith("[") else host.partition(":")[0]
-    if (
-        os.environ.get("ALEXMODS_SPACE_WAVES_LOCAL") == "1"
-        and hostname == "[::1]"
-        and request.path.startswith("//")
-    ):
-        return send_from_directory(str(PROJECT_ROOT / "games"), "ALEX MODS - Space Waves.html")
-
     if hostname == CANONICAL_HOST or hostname in {"localhost", "127.0.0.1", "[::1]"}:
         return None
 
@@ -410,12 +424,7 @@ def enforce_canonical_host():
     )
 
 
-@app.get("/")
-def home():
-    if os.environ.get("ALEXMODS_SPACE_WAVES_LOCAL") == "1":
-        return send_from_directory(str(PROJECT_ROOT / "games"), "ALEX MODS - Space Waves.html")
-
-    if request.args.get("localSlowRoads") == "1":
+def _slow_roads_document():
         response = send_from_directory(
             str(SLOW_ROADS_ROOT),
             "index.html",
@@ -436,7 +445,7 @@ def home():
         document = document.replace(b'\t\t<meta property="twitter:url" content="https://slowroads.io/">\n', b"")
         response.set_data(document)
         offline_guard = b"""<script>
-(() => {
+    (() => {
     function disableExternalLinks(root) {
         root.querySelectorAll("a[href]").forEach(link => {
             let destination;
@@ -479,8 +488,8 @@ def home():
         if (event.target.closest("a[aria-disabled='true']")) event.preventDefault();
     }, true);
     window.open = () => null;
-})();
-</script>"""
+    })();
+    </script>"""
         document = response.get_data()
         if b"</head>" not in document:
             raise RuntimeError("Could not find the closing head tag in the local Slow Roads page.")
@@ -495,6 +504,10 @@ def home():
         response.headers["Cache-Control"] = "no-store"
         response.headers.pop("Last-Modified", None)
         return response
+
+
+@app.get("/")
+def home():
     return redirect("/calculator")
 
 
@@ -525,44 +538,48 @@ def encrypted_youtube():
 
 
 @app.get("/slowroads")
-@app.get("/slowroads/")
 def slow_roads_redirect():
-    return redirect("/?localSlowRoads=1")
+    return redirect("/slowroads/", code=308)
 
 
-@app.get("/_app/<path:resource>")
+@app.get("/slowroads/")
+def slow_roads_page():
+    return _slow_roads_document()
+
+
+@app.get("/slowroads/_app/<path:resource>")
 def slow_roads_app_file(resource):
     return send_from_directory(str(SLOW_ROADS_ROOT / "_app"), resource)
 
 
-@app.get("/alea.min.js")
+@app.get("/slowroads/alea.min.js")
 def slow_roads_alea():
     return send_from_directory(str(SLOW_ROADS_ROOT), "alea.min.js")
 
 
-@app.get("/service-worker.js")
+@app.get("/slowroads/service-worker.js")
 def slow_roads_service_worker():
-    # The upstream worker caches "/" and purges other caches on this shared origin.
+    # Keep the upstream worker disabled; its cache logic targets the site root.
     return Response("", mimetype="application/javascript")
 
 
-@app.get("/favicon.svg")
-@app.get("/icon.svg")
+@app.get("/slowroads/favicon.svg")
+@app.get("/slowroads/icon.svg")
 def slow_roads_favicon():
     return send_from_directory(str(SLOW_ROADS_ROOT), "favicon.svg")
 
 
-@app.get("/apple-touch-icon.png")
+@app.get("/slowroads/apple-touch-icon.png")
 def slow_roads_apple_touch_icon():
     return send_from_directory(str(SLOW_ROADS_ROOT), "apple-touch-icon.png")
 
 
-@app.get("/fonts/<path:resource>")
+@app.get("/slowroads/fonts/<path:resource>")
 def slow_roads_font(resource):
     return send_from_directory(str(SLOW_ROADS_ROOT / "fonts"), resource)
 
 
-@app.get("/img/<path:resource>")
+@app.get("/slowroads/img/<path:resource>")
 def slow_roads_image(resource):
     if resource in SLOW_ROADS_OMITTED_VIDEOS:
         app.logger.warning("Slow Roads preview video omitted from local mirror: %s", resource)
@@ -570,21 +587,17 @@ def slow_roads_image(resource):
     return send_from_directory(str(SLOW_ROADS_ROOT / "img"), resource)
 
 
-@app.get("/manifest.json")
+@app.get("/slowroads/manifest.json")
 def slow_roads_manifest():
     return send_from_directory(str(SLOW_ROADS_ROOT), "manifest.json")
 
 
 @app.after_request
 def set_slow_roads_headers(response):
-    is_local_space_waves = (
-        os.environ.get("ALEXMODS_SPACE_WAVES_LOCAL") == "1"
-        and request.path in {"/", "//"}
-    )
     is_space_waves_page = request.path in {
         "/space-waves", "/games/ALEX MODS - Space Waves.html",
     }
-    if is_local_space_waves or is_space_waves_page:
+    if is_space_waves_page:
         response.headers["Permissions-Policy"] = (
             "camera=(), microphone=(), geolocation=(), local-network-access=(), "
             "usb=(), serial=(), hid=(), bluetooth=()"
@@ -592,10 +605,11 @@ def set_slow_roads_headers(response):
     if is_space_waves_page:
         response.headers["Content-Security-Policy"] = SPACE_WAVES_CONTENT_SECURITY_POLICY
 
-    is_slow_roads_document = request.path == "/" and request.args.get("localSlowRoads") == "1"
-    is_slow_roads_asset = request.path.startswith(("/_app/", "/fonts/", "/img/")) or request.path in {
-        "/alea.min.js", "/apple-touch-icon.png", "/favicon.svg", "/icon.svg",
-        "/manifest.json", "/service-worker.js",
+    is_slow_roads_document = request.path in {"/slowroads", "/slowroads/"}
+    is_slow_roads_asset = request.path.startswith(("/slowroads/_app/", "/slowroads/fonts/", "/slowroads/img/")) or request.path in {
+        "/slowroads/alea.min.js", "/slowroads/apple-touch-icon.png",
+        "/slowroads/favicon.svg", "/slowroads/icon.svg",
+        "/slowroads/manifest.json", "/slowroads/service-worker.js",
     }
     if is_slow_roads_document or is_slow_roads_asset:
         response.headers["Cross-Origin-Embedder-Policy"] = "require-corp"

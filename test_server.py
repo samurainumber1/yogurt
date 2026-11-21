@@ -209,7 +209,7 @@ def test_game_assets_are_served(client):
     assert b"<strong>Drift Hunters</strong>" not in catalog_page.data
     slowroads = client.get("/games/ALEX%20MODS%20-%20Slowroads.io.html")
     assert slowroads.status_code == 200
-    assert b'href="/?localSlowRoads=1"' in slowroads.data
+    assert b'href="/slowroads/"' in slowroads.data
     assert b"Play Slow Roads" in slowroads.data
     assert b"<iframe" not in slowroads.data
     catalog = (Path(app.root_path) / "assets" / "catalog.js").read_text(encoding="utf-8")
@@ -257,16 +257,17 @@ def test_youtube_api_validates_inputs_and_reports_missing_server_key(client, mon
 
 
 def test_slow_roads_runs_from_local_assets(client):
-    page = client.get("/?localSlowRoads=1")
+    page = client.get("/slowroads/")
     conditional_page = client.get(
-        "/?localSlowRoads=1",
+        "/slowroads/",
         headers={"If-Modified-Since": "Wed, 21 Oct 2015 07:28:00 GMT"},
     )
-    javascript = client.get("/_app/immutable/entry/start.4593a708.js")
-    font = client.get("/fonts/Sono.ttf")
-    image = client.get("/img/icon_steam.svg")
-    manifest = client.get("/manifest.json")
-    service_worker = client.get("/service-worker.js")
+    javascript = client.get("/slowroads/_app/immutable/entry/start.4593a708.js")
+    game_assets = client.get("/slowroads/_app/immutable/nodes/3.da2ad8c8.js")
+    font = client.get("/slowroads/fonts/Sono.ttf")
+    image = client.get("/slowroads/img/icon_steam.svg")
+    manifest = client.get("/slowroads/manifest.json")
+    service_worker = client.get("/slowroads/service-worker.js")
 
     assert page.status_code == 200
     assert conditional_page.status_code == 200
@@ -280,15 +281,19 @@ def test_slow_roads_runs_from_local_assets(client):
     assert "navigate-to 'self'" in page.headers["Content-Security-Policy"]
     assert javascript.status_code == 200
     assert "connect-src 'self' data: blob:" in javascript.headers["Content-Security-Policy"]
+    assert game_assets.status_code == 200
+    assert b"/slowroads/img/" in game_assets.data
     assert font.status_code == 200
     assert image.status_code == 200
     assert manifest.status_code == 200
     assert service_worker.status_code == 200
     assert service_worker.data == b""
-    assert client.get("/img/letterbox-general.mp4").status_code == 204
+    assert client.get("/slowroads/img/letterbox-general.mp4").status_code == 204
     assert page.headers["Cross-Origin-Embedder-Policy"] == "require-corp"
-    assert client.get("/slowroads").headers["Location"] == "/?localSlowRoads=1"
-    assert client.get("/slowroads/").headers["Location"] == "/?localSlowRoads=1"
+    assert b'href="/slowroads/manifest.json"' in page.data
+    assert client.get("/slowroads").headers["Location"] == "/slowroads/"
+    assert client.get("/manifest.json").status_code == 404
+    assert client.get("/service-worker.js").status_code == 404
 
 
 def test_catalog_game_and_city_paths_are_served(client):
@@ -332,14 +337,14 @@ def test_routes_are_static_only():
         "/api/admin/catalog-lock",
         "/slowroads",
         "/slowroads/",
-        "/_app/<path:resource>",
-        "/alea.min.js",
-        "/service-worker.js",
-        "/favicon.svg",
-        "/icon.svg",
-        "/apple-touch-icon.png",
-        "/fonts/<path:resource>",
-        "/img/<path:resource>",
-        "/manifest.json",
+        "/slowroads/_app/<path:resource>",
+        "/slowroads/alea.min.js",
+        "/slowroads/service-worker.js",
+        "/slowroads/favicon.svg",
+        "/slowroads/icon.svg",
+        "/slowroads/apple-touch-icon.png",
+        "/slowroads/fonts/<path:resource>",
+        "/slowroads/img/<path:resource>",
+        "/slowroads/manifest.json",
         "/<path:resource>",
     }
