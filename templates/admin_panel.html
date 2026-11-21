@@ -61,6 +61,27 @@
                 </div>
                 <a class="logout-button" href="/scientific-calculator">Return to catalog</a>
             </div>
+
+            <section class="chart-card announcement-card" aria-labelledby="announcementTitle">
+                <div class="chart-heading">
+                    <div><h2 id="announcementTitle">Global announcement</h2><p>Show a message in a pill across the site, including game pages. Leave it blank to clear.</p></div>
+                </div>
+                <label class="announcement-label" for="announcementInput">Message</label>
+                <textarea id="announcementInput" maxlength="500" rows="3" placeholder="Announcement from the Owner of Alex Mods: Hi"></textarea>
+                <div class="announcement-preview-wrap">
+                    <span class="metric-caption">Preview at phone width</span>
+                    <div class="global-announcement global-announcement-preview" id="announcementPreview" aria-hidden="true"></div>
+                </div>
+                <div class="announcement-footer">
+                    <p class="metric-caption" id="announcementLength">0 / 500 characters</p>
+                    <p class="announcement-warning" id="announcementWarning" role="status" hidden></p>
+                    <div class="announcement-buttons">
+                        <button class="lock-button" id="announcementSend" type="button">Send announcement</button>
+                        <button class="logout-button" id="announcementClear" type="button">Clear</button>
+                    </div>
+                </div>
+                <p class="metric-caption" id="announcementStatus" role="status">No announcement sent.</p>
+            </section>
         </section>
     </main>
 </body>

@@ -61,6 +61,10 @@ def _initialize_database():
             );
             INSERT OR IGNORE INTO site_settings (name, value)
                 VALUES ('catalog_locked', '0');
+            INSERT OR IGNORE INTO site_settings (name, value)
+                VALUES ('global_announcement', '');
+            INSERT OR IGNORE INTO site_settings (name, value)
+                VALUES ('global_announcement_id', '');
             """
         )
 
@@ -230,6 +234,16 @@ def catalog_lock_status():
     return jsonify(locked=locked)
 
 
+@admin.get("/api/announcement")
+def announcement_status():
+    with _connect() as connection:
+        rows = connection.execute(
+            "SELECT name, value FROM site_settings WHERE name IN ('global_announcement', 'global_announcement_id')"
+        ).fetchall()
+    settings = {row["name"]: row["value"] for row in rows}
+    return jsonify(message=settings.get("global_announcement", ""), id=settings.get("global_announcement_id", ""))
+
+
 @admin.post("/api/presence")
 def record_presence():
     payload = request.get_json(silent=True) or {}
@@ -332,3 +346,29 @@ def set_catalog_lock():
             ("1" if locked else "0",),
         )
     return jsonify(locked=locked)
+
+
+@admin.post("/api/admin/announcement")
+@_admin_required
+def set_announcement():
+    csrf_error = _require_csrf_token()
+    if csrf_error:
+        return csrf_error
+    payload = request.get_json(silent=True) or {}
+    message = payload.get("message")
+    if not isinstance(message, str):
+        return jsonify(error="The announcement must be text."), 400
+    message = message.strip()
+    if len(message) > 500:
+        return jsonify(error="Announcements must be 500 characters or fewer."), 400
+    announcement_id = secrets.token_urlsafe(12) if message else ""
+    with _connect() as connection:
+        connection.execute(
+            "UPDATE site_settings SET value = ? WHERE name = 'global_announcement'",
+            (message,),
+        )
+        connection.execute(
+            "UPDATE site_settings SET value = ? WHERE name = 'global_announcement_id'",
+            (announcement_id,),
+        )
+    return jsonify(message=message, id=announcement_id)

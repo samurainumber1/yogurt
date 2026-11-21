@@ -76,7 +76,31 @@ const games = [
     { title: "Parking Fury 2", path: "games/reviewed/parkingfury2.html", icon: "\u{1F698}", category: "Racing", art: "racing-alt", description: "Take on trickier parking spots and carefully line up each turn." },
     { title: "Parking Fury 3", path: "games/reviewed/parkingfury3.html", icon: "\u{1F699}", category: "Racing", art: "crash", description: "Navigate busy lots and park each car without a bump." },
     { title: "Pico's School", path: "games/reviewed/picosschool.html", icon: "\u{1F3AE}", category: "Adventure", art: "action", description: "Explore the school and make your way through a story-driven adventure." },
-    { title: "Poor Bunny", path: "games/reviewed/poorbunny.html", icon: "\u{1F430}", category: "Arcade", art: "road", description: "Hop around the arena, collect carrots and dodge the traps." }
+    { title: "Poor Bunny", path: "games/reviewed/poorbunny.html", icon: "\u{1F430}", category: "Arcade", art: "road", description: "Hop around the arena, collect carrots and dodge the traps." },
+    { title: "Slope 3", path: "games/reviewed/slope3.html", icon: "\u{1F7E2}", category: "Arcade", art: "neon", description: "Race a ball down a glowing track and stay clear of the gaps." },
+    { title: "Slow Roads", path: "games/reviewed/slowroads.html", icon: "\u{1F6E3}", category: "Racing", art: "racing", description: "Take a relaxed drive through open roads and changing scenery." },
+    { title: "Snowball.io", path: "games/reviewed/snowballio.html", icon: "\u{2744}\u{FE0F}", category: "Arcade", art: "action", description: "Roll snowballs, knock rivals away and stay on the icy arena." },
+    { title: "Stick Merge", path: "games/reviewed/stickmerge.html", icon: "\u{1F3AF}", category: "Arcade", art: "action", description: "Merge weapons and take aim at stick figure targets." },
+    { title: "SUPERHOT", path: "games/reviewed/superhot.html", icon: "\u{1F525}", category: "Adventure", art: "neon", description: "Move carefully through a stylish shooter where time follows your actions." },
+    { title: "Table Tennis World Tour", path: "games/reviewed/tabletennisworldtour.html", icon: "\u{1F3D3}", category: "Sports", art: "court", description: "Serve, rally and compete in a fast table tennis tournament." },
+    { title: "Temple Run 2", path: "games/reviewed/templerun2.html", icon: "\u{1F3C3}", category: "Arcade", art: "escape", description: "Sprint through the temple, dodge hazards and collect treasure." },
+    { title: "Territorial.io", path: "games/reviewed/territorialio.html", icon: "\u{1F5FA}\u{FE0F}", category: "Strategy", art: "city", description: "Expand your territory and outmaneuver rival nations." },
+    { title: "The Impossible Quiz", path: "games/reviewed/theimpossiblequiz.html", icon: "\u{2753}", category: "Puzzle", art: "tiles", description: "Answer a series of strange questions with unexpected solutions." },
+    { title: "The Impossible Quiz 2", path: "games/reviewed/theimpossiblequiz2.html", icon: "\u{2753}", category: "Puzzle", art: "tiles", description: "Take on another round of tricky questions and absurd surprises." },
+    { title: "There Is No Game", path: "games/reviewed/thereisnog.html", icon: "\u{1F3AD}", category: "Puzzle", art: "neon", description: "Explore a playful puzzle adventure that insists there is no game." },
+    { title: "They Are Coming", path: "games/reviewed/theyarecoming.html", icon: "\u{1F9DF}", category: "Action", art: "horror", description: "Hold your ground against waves of approaching enemies." },
+    { title: "Tomb of the Mask", path: "games/reviewed/tombofthemask.html", icon: "\u{1F3FA}", category: "Arcade", art: "neon", description: "Dash through maze-like tombs, grab coins and avoid deadly traps." },
+    { title: "Trap the Cat", path: "games/reviewed/trapthecat.html", icon: "\u{1F431}", category: "Puzzle", art: "tiles", description: "Place barriers strategically to keep the clever cat from escaping." },
+    { title: "Tunnel Rush", path: "games/reviewed/tunnelrush.html", icon: "\u{1F300}", category: "Arcade", art: "neon", description: "Dodge obstacles as you speed through a shifting neon tunnel." },
+    { title: "UNDERTALE", path: "games/reviewed/UNDERTALE.html", icon: "\u{1F47E}", category: "Adventure", art: "sci-fi", description: "Explore an underground world and choose how you face its monsters." },
+    { title: "Unicycle Hero", path: "games/reviewed/unicyclehero.html", icon: "\u{1F6B4}", category: "Sports", art: "court", description: "Balance your unicycle through a series of unusual sports challenges." },
+    { title: "Vex 3", path: "games/reviewed/vexx3m.html", icon: "\u{1F3C3}", category: "Arcade", art: "action", description: "Run, jump and slide through a platform course full of hazards." },
+    { title: "We Become What We Behold", path: "games/reviewed/webecomewhatwebehold.html", icon: "\u{1F4F8}", category: "Adventure", art: "sci-fi", description: "Capture moments in a short game about media and society." },
+    { title: "Wordle Unlimited", path: "games/reviewed/wordleunlimited.html", icon: "\u{1F524}", category: "Puzzle", art: "tiles", description: "Guess the hidden word using color clues and as many rounds as you like." },
+    { title: "World's Hardest Game", path: "games/reviewed/worldshardestgame.html", icon: "\u{1F3AF}", category: "Puzzle", art: "tiles", description: "Guide your square through tight hazards with precise timing." },
+    { title: "World's Hardest Game 2", path: "games/reviewed/worldshardestgame2.html", icon: "\u{1F3AF}", category: "Puzzle", art: "tiles", description: "Take on a tougher set of precision challenges and moving hazards." },
+    { title: "World's Hardest Game 3", path: "games/reviewed/worldshardestgame3.html", icon: "\u{1F3AF}", category: "Puzzle", art: "tiles", description: "Test your timing through another demanding obstacle course." },
+    { title: "Zombie Rush", path: "games/reviewed/zombierush.html", icon: "\u{1F9DF}", category: "Action", art: "horror", description: "Survive the rush and keep moving through waves of zombies." }
 ];
 
 const subwayMaps = [

@@ -8,7 +8,72 @@ const lockStatus = document.querySelector("#catalogLockStatus");
 const chart = document.querySelector("#trafficChart");
 const context = chart.getContext("2d");
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+const announcementInput = document.querySelector("#announcementInput");
+const announcementPreview = document.querySelector("#announcementPreview");
+const announcementLength = document.querySelector("#announcementLength");
+const announcementWarning = document.querySelector("#announcementWarning");
+const announcementSend = document.querySelector("#announcementSend");
+const announcementClear = document.querySelector("#announcementClear");
+const announcementStatus = document.querySelector("#announcementStatus");
 let latestMetrics = null;
+
+function updateAnnouncementPreview() {
+    const message = announcementInput.value.trim();
+    announcementPreview.textContent = message || "Your announcement preview will appear here";
+    announcementLength.textContent = `${announcementInput.value.length} / 500 characters`;
+    const width = Math.min(340, Math.max(180, window.innerWidth - 56));
+    const fontSize = message ? Math.max(8, Math.min(15, width * 2.5 / Math.max(1, message.length * 0.54))) : 15;
+    announcementPreview.style.fontSize = `${fontSize}px`;
+    const isLong = Boolean(message) && fontSize <= 11;
+    announcementWarning.hidden = !isLong;
+    announcementWarning.textContent = isLong
+        ? "Long message: it will use very small text on phone screens to fit the pill. Shorten it for easier reading."
+        : "";
+}
+
+async function saveAnnouncement(message) {
+    announcementSend.disabled = true;
+    announcementClear.disabled = true;
+    try {
+        const response = await fetch("/api/admin/announcement", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken },
+            body: JSON.stringify({ message }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || `Announcement update failed (${response.status}).`);
+        announcementInput.value = data.message;
+        updateAnnouncementPreview();
+        announcementStatus.textContent = data.message ? "Announcement sent across the site." : "Announcement cleared.";
+    } catch (error) {
+        announcementStatus.textContent = error.message || "Could not update announcement.";
+        console.error(error);
+    } finally {
+        announcementSend.disabled = false;
+        announcementClear.disabled = false;
+    }
+}
+
+async function loadAnnouncement() {
+    try {
+        const response = await fetch("/api/announcement", { cache: "no-store", credentials: "same-origin" });
+        if (!response.ok) return;
+        const data = await response.json();
+        if (announcementInput.value) return;
+        announcementInput.value = data.message || "";
+        updateAnnouncementPreview();
+        announcementStatus.textContent = data.message ? "This announcement is currently live." : "No announcement sent.";
+    } catch (_) {
+        announcementStatus.textContent = "Could not load the current announcement.";
+    }
+}
+
+announcementInput.addEventListener("input", updateAnnouncementPreview);
+announcementSend.addEventListener("click", () => saveAnnouncement(announcementInput.value));
+announcementClear.addEventListener("click", () => saveAnnouncement(""));
+updateAnnouncementPreview();
+loadAnnouncement();
 
 function drawTrafficChart(samples, peak) {
     const bounds = chart.getBoundingClientRect();

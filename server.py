@@ -643,6 +643,29 @@ def set_slow_roads_headers(response):
         response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
         response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
         response.headers["Content-Security-Policy"] = SLOW_ROADS_CONTENT_SECURITY_POLICY
+    if (
+        response.status_code == 200
+        and response.mimetype == "text/html"
+        and not response.is_streamed
+        and response.calculate_content_length() is not None
+    ):
+        page = response.get_data()
+        additions = (
+            b'<link rel="stylesheet" href="/assets/global-announcement.css">'
+            b'<script defer src="/assets/global-announcement.js"></script>'
+        )
+        lowered = page.lower()
+        head_end = lowered.find(b"</head>")
+        if head_end >= 0:
+            page = page[:head_end] + additions + page[head_end:]
+            response.set_data(page)
+            response.headers.pop("ETag", None)
+        else:
+            body_end = lowered.rfind(b"</body>")
+            insert_at = body_end if body_end >= 0 else len(page)
+            page = page[:insert_at] + additions + page[insert_at:]
+            response.set_data(page)
+            response.headers.pop("ETag", None)
     return response
 
 

@@ -58,6 +58,18 @@ h1 { margin: 0; font-size: clamp(30px, 5vw, 42px); letter-spacing: -.045em; }
 .login-button { margin-top: 5px; border: 0; color: #062114; background: var(--admin-green); }
 .login-error { padding: 11px 13px; border: 1px solid rgba(255,92,106,.28); border-radius: 10px; color: #ffabb2; background: rgba(177,29,48,.12); font-size: 13px; }
 .login-footnote { margin: 19px 0 0; color: var(--admin-muted); font-size: 11px; line-height: 1.6; }
+.announcement-card { margin-top: 22px; }
+.announcement-label { display: block; margin: 0 0 8px; color: #c4d2ca; font-size: 12px; font-weight: 700; }
+#announcementInput { box-sizing: border-box; width: 100%; min-height: 88px; padding: 12px 14px; border: 1px solid var(--admin-line); border-radius: 11px; outline: none; color: #fff; background: #0a1115; font: inherit; resize: vertical; }
+#announcementInput:focus { border-color: rgba(53,229,142,.7); box-shadow: 0 0 0 3px rgba(53,229,142,.1); }
+.announcement-preview-wrap { display: grid; justify-items: center; gap: 10px; margin: 18px auto; }
+.global-announcement { box-sizing: border-box; display: flex; justify-content: center; align-items: center; width: fit-content; max-width: calc(100vw - 24px); min-height: 42px; margin-inline: auto; padding: 10px 18px; overflow: hidden; border: 1px solid rgba(93,255,184,.45); border-radius: 999px; color: #effff6; background: linear-gradient(135deg, rgba(15,42,34,.97), rgba(12,25,34,.97)); box-shadow: 0 12px 40px rgba(0,0,0,.36), 0 0 26px rgba(53,229,142,.16); font: 700 16px/1.2 system-ui, sans-serif; letter-spacing: .01em; text-align: center; white-space: nowrap; }
+.global-announcement-preview { width: min(340px, calc(100vw - 56px)); min-height: 38px; padding: 8px 12px; font-size: 15px; }
+.announcement-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 18px; }
+.announcement-footer > p { margin: 0; }
+.announcement-warning { flex: 1; color: #ffd889; font-size: 12px; }
+.announcement-buttons { display: flex; gap: 8px; margin-left: auto; }
+.announcement-buttons button:disabled { opacity: .55; cursor: wait; }
 
 @media (max-width: 640px) {
     .admin-shell { width: min(100% - 28px, 1040px); padding-top: 24px; }
