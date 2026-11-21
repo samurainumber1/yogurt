@@ -5,6 +5,24 @@
     const label = document.querySelector("#loading-label");
     const error = document.querySelector("#load-error");
     const buildUrl = "/games/Space%20Waves/VerifiedBuild";
+
+    // Keep the publisher's ad bridge API available to Unity without loading
+    // the remote ad SDK. Report ads as unavailable so its scene can continue.
+    window.gameInstance = null;
+    const notifyUnity = (method) => {
+        if (!window.gameInstance) return;
+        try {
+            window.gameInstance.SendMessage("MSStartSDK", method);
+        } catch (reason) {
+            console.warn(`Local ad stub could not send ${method}:`, reason);
+        }
+    };
+    window.loadAds = () => {};
+    window.loadInterstitialAd = () => {};
+    window.loadRewardedAd = () => {};
+    window.showInterstitialAd = () => notifyUnity("OnInterstitialAdShowError");
+    window.showRewardedAd = () => notifyUnity("OnRewardedAdShowError");
+
     const config = {
         dataUrl: `${buildUrl}/game.data.unityweb`,
         frameworkUrl: `${buildUrl}/framework.js.unityweb`,
@@ -45,7 +63,8 @@
     loader.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
             progressBar.style.width = `${Math.max(0, Math.min(100, progress * 100))}%`;
-        }).then(() => {
+        }).then((instance) => {
+            window.gameInstance = instance;
             cover.remove();
             canvas.focus();
         }).catch((reason) => {
