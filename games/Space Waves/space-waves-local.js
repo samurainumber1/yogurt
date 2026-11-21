@@ -107,7 +107,7 @@
             .then(() => notifyUnity(unityCallback));
         return adSequence;
     };
-    window.showInterstitialAd = () => completeAd("OnInterstitialAdClose");
+    window.showInterstitialAd = () => notifyUnity("OnInterstitialAdClose");
     window.showRewardedAd = () => completeAd("OnReward");
 
     // Unity's ad bridge calls this after an ad closes or fails to open.
