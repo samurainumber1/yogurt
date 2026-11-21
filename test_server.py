@@ -11,6 +11,7 @@ from server import app
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
+    app.config["ADMIN_PASSWORD"] = "test-only-admin-password"
     with app.test_client() as test_client:
         test_client.environ_base["HTTP_HOST"] = "yogurt-ws0r.onrender.com"
         yield test_client
@@ -131,7 +132,7 @@ def test_admin_login_dashboard_and_catalog_lock(client):
 
     login = client.post(
         "/admin/login",
-        data={"csrf_token": csrf_token, "password": "admin44"},
+        data={"csrf_token": csrf_token, "password": "test-only-admin-password"},
     )
     assert login.status_code == 302
     assert login.headers["Location"] == "/admin/panel"

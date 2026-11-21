@@ -325,11 +325,38 @@ def _load_secret_key():
     return secret_path.read_text(encoding="utf-8").strip()
 
 
+def _load_local_secrets():
+    """Load private developer secrets from an ignored file, creating a strong local password."""
+    secret_path = Path(app.instance_path) / "secrets.json"
+    secret_path.parent.mkdir(parents=True, exist_ok=True)
+    if not secret_path.exists():
+        # Production credentials belong in the hosting provider's secret environment variables.
+        if os.environ.get("RENDER"):
+            return {}
+        initial_secrets = {"admin_password": secrets.token_urlsafe(32)}
+        try:
+            with secret_path.open("x", encoding="utf-8") as secret_file:
+                json.dump(initial_secrets, secret_file, indent=2)
+                secret_file.write("\n")
+        except FileExistsError:
+            pass
+    try:
+        with secret_path.open(encoding="utf-8") as secret_file:
+            local_secrets = json.load(secret_file)
+    except (OSError, json.JSONDecodeError) as error:
+        raise RuntimeError(f"Could not read private secrets file at {secret_path}") from error
+    if not isinstance(local_secrets, dict):
+        raise RuntimeError(f"Private secrets file must contain a JSON object: {secret_path}")
+    return local_secrets
+
+
+LOCAL_SECRETS = _load_local_secrets()
 app.secret_key = _load_secret_key()
 app.config.update(
-    ADMIN_PASSWORD=os.environ.get("ADMIN_PASSWORD", "admin44"),
+    ADMIN_PASSWORD=os.environ.get("ADMIN_PASSWORD", LOCAL_SECRETS.get("admin_password", "")),
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=bool(os.environ.get("RENDER")) or os.environ.get("SESSION_COOKIE_SECURE", "").lower() == "true",
 )
 app.register_blueprint(admin_blueprint)
 

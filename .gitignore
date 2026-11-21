@@ -1,4 +1,5 @@
 /instance/flask-secret.key
+/instance/secrets.json
 /instance/site-state.sqlite3
 /instance/site-state.sqlite3-shm
 /instance/site-state.sqlite3-wal

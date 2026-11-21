@@ -46,7 +46,10 @@
                 <p class="eyebrow"><span class="status-dot"></span> YOUR NEXT FAVORITE IS HERE</p>
                 <h1>ALEX MODS<br><span>GAME STASH</span></h1>
                 <p class="hero-description">A hand-picked collection for a quick round or a longer run. Pick a game and jump straight in.</p>
-                <a class="hero-link" href="#library">Explore the library <span aria-hidden="true">↓</span></a>
+                <div class="hero-actions">
+                    <a class="hero-link" href="#library">Explore the library <span aria-hidden="true">↓</span></a>
+                    <button class="feedback-open" id="openFeedback" type="button">Give feedback <span aria-hidden="true">↗</span></button>
+                </div>
             </div>
             <aside class="hero-feature" aria-label="Featured game">
                 <div class="feature-art" aria-hidden="true">
@@ -134,5 +137,37 @@
         </div>
         <p class="player-note">Some games may take a little while to load. Your progress is saved by the game when supported.</p>
     </section>
+
+    <dialog class="feedback-dialog" id="feedbackDialog" aria-labelledby="feedbackTitle" aria-describedby="feedbackIntro">
+        <div class="feedback-panel">
+            <div class="dialog-heading">
+                <div>
+                    <p class="eyebrow eyebrow-muted">HELP SHAPE THE STASH</p>
+                    <h2 id="feedbackTitle">Give feedback</h2>
+                </div>
+                <button class="icon-button" id="closeFeedback" type="button" aria-label="Close feedback">×</button>
+            </div>
+            <p class="feedback-intro" id="feedbackIntro">Suggest a new game, pitch a site feature, or tell us about a glitch.</p>
+
+            <label class="feedback-label" for="feedbackTopic">What is it about?</label>
+            <select class="feedback-control" id="feedbackTopic">
+                <option>Suggest a new game</option>
+                <option>Suggest a site feature</option>
+                <option>Report a glitch</option>
+                <option>Other / custom</option>
+            </select>
+
+            <label class="feedback-label" for="feedbackDraft">Your suggestion</label>
+            <textarea class="feedback-control feedback-draft" id="feedbackDraft" maxlength="1000" placeholder="Write your idea or describe the glitch…"></textarea>
+
+            <div class="feedback-destination" id="feedbackDestinationPlaceholder" aria-live="polite">
+                <span class="feedback-destination-kicker">FEEDBACK PORTAL PLACEHOLDER</span>
+                <strong>Sending isn’t connected yet</strong>
+                <p>Nothing you write here is sent or saved.</p>
+            </div>
+            <!-- FUTURE: connect the disabled send control to the chosen feedback destination. -->
+            <button class="feedback-send" id="sendFeedback" type="button" disabled>Send feedback · coming soon</button>
+        </div>
+    </dialog>
 </body>
 </html>

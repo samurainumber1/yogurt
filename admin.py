@@ -192,7 +192,7 @@ def admin_login():
 
                 supplied = request.form.get("password", "")
                 expected = current_app.config["ADMIN_PASSWORD"]
-                if hmac.compare_digest(supplied.encode("utf-8"), expected.encode("utf-8")):
+                if expected and hmac.compare_digest(supplied.encode("utf-8"), expected.encode("utf-8")):
                     connection.execute(
                         "DELETE FROM login_attempts WHERE address_hash = ?",
                         (_address_hash(),),
@@ -201,7 +201,7 @@ def admin_login():
                     session["admin_authenticated"] = True
                     session["csrf_token"] = secrets.token_urlsafe(32)
                     return redirect(url_for("admin.admin_panel"))
-            error = "Incorrect password."
+            error = "Admin sign-in is not configured." if not current_app.config["ADMIN_PASSWORD"] else "Incorrect password."
 
     return render_template("admin_login.html", csrf_token=csrf_token, error=error)
 

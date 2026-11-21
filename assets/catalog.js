@@ -48,6 +48,7 @@ const gameViewer = document.querySelector("#gameViewer");
 const gameFrame = document.querySelector("#gameFrame");
 const playerStage = document.querySelector("#playerStage");
 const mapDialog = document.querySelector("#mapDialog");
+const feedbackDialog = document.querySelector("#feedbackDialog");
 let activeCategory = "All";
 let lastFocusedElement = null;
 
@@ -179,6 +180,11 @@ document.querySelector("#categoryList").addEventListener("click", event => {
 });
 
 document.querySelector("#featuredPlay").addEventListener("click", () => openGame(games[0]));
+document.querySelector("#openFeedback").addEventListener("click", () => feedbackDialog.showModal());
+document.querySelector("#closeFeedback").addEventListener("click", () => feedbackDialog.close());
+feedbackDialog.addEventListener("click", event => {
+    if (event.target === feedbackDialog) feedbackDialog.close();
+});
 gameSearch.addEventListener("input", renderGames);
 document.querySelector("#backToLibrary").addEventListener("click", closeGame);
 document.querySelector("#closeGame").addEventListener("click", closeGame);
