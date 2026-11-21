@@ -40,6 +40,21 @@ SLOW_ROADS_CONTENT_SECURITY_POLICY = (
     "form-action 'none'; "
     "navigate-to 'self'"
 )
+SPACE_WAVES_CONTENT_SECURITY_POLICY = (
+    "default-src 'none'; "
+    "script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval' blob:; "
+    "style-src 'self' 'unsafe-inline'; "
+    "img-src 'self' data: blob:; "
+    "connect-src 'self' data: blob:; "
+    "worker-src 'self' blob:; "
+    "font-src 'self' data:; "
+    "media-src 'self' data: blob:; "
+    "object-src 'none'; "
+    "frame-src 'none'; "
+    "manifest-src 'none'; "
+    "base-uri 'self'; "
+    "form-action 'none'"
+)
 app = Flask(__name__, static_folder=None)
 
 YOUTUBE_API_ROOT = "https://www.googleapis.com/youtube/v3/"
@@ -574,6 +589,8 @@ def set_slow_roads_headers(response):
             "camera=(), microphone=(), geolocation=(), local-network-access=(), "
             "usb=(), serial=(), hid=(), bluetooth=()"
         )
+    if is_space_waves_page:
+        response.headers["Content-Security-Policy"] = SPACE_WAVES_CONTENT_SECURITY_POLICY
 
     is_slow_roads_document = request.path == "/" and request.args.get("localSlowRoads") == "1"
     is_slow_roads_asset = request.path.startswith(("/_app/", "/fonts/", "/img/")) or request.path in {
