@@ -4,6 +4,7 @@
     const progressBar = document.querySelector("#progress-bar");
     const label = document.querySelector("#loading-label");
     const error = document.querySelector("#load-error");
+    const container = document.querySelector("#unity-container");
     const buildUrl = "/games/Space%20Waves/VerifiedBuild";
 
     // Keep the publisher's ad bridge API available to Unity without loading
@@ -22,6 +23,22 @@
     window.loadRewardedAd = () => {};
     window.showInterstitialAd = () => notifyUnity("OnInterstitialAdShowError");
     window.showRewardedAd = () => notifyUnity("OnRewardedAdShowError");
+
+    // Unity's ad bridge calls this after an ad closes or fails to open.
+    window.setFocus = () => {
+        container.focus({ preventScroll: true });
+        window.focus();
+        canvas.focus({ preventScroll: true });
+    };
+    window.resizeCanvas = () => {
+        const pixelRatio = window.devicePixelRatio || 1;
+        const width = Math.round(canvas.clientWidth * pixelRatio);
+        const height = Math.round(canvas.clientHeight * pixelRatio);
+        if (width > 0 && height > 0 && (canvas.width !== width || canvas.height !== height)) {
+            canvas.width = width;
+            canvas.height = height;
+        }
+    };
 
     const config = {
         dataUrl: `${buildUrl}/game.data.unityweb`,
@@ -65,7 +82,9 @@
             progressBar.style.width = `${Math.max(0, Math.min(100, progress * 100))}%`;
         }).then((instance) => {
             window.gameInstance = instance;
+            window.resizeCanvas();
             cover.remove();
+            window.setFocus();
             canvas.focus();
         }).catch((reason) => {
             label.textContent = "Space Waves could not start";
@@ -76,5 +95,11 @@
         label.textContent = "Space Waves could not load";
         error.textContent = "The local Unity loader file could not be downloaded.";
     };
+    container.addEventListener("pointerdown", window.setFocus);
+    container.addEventListener("touchstart", window.setFocus, { passive: true });
+    window.addEventListener("resize", () => {
+        window.setFocus();
+        window.resizeCanvas();
+    });
     document.head.appendChild(loader);
 })();
