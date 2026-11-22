@@ -7,7 +7,6 @@
 })();</script>
     <script>(() => {
         if (sessionStorage.getItem("arcadeUnlocked") !== "1") return;
-        sessionStorage.removeItem("arcadeUnlocked");
         const started = Number(sessionStorage.getItem("arcadeEntryStartedAt")) || Date.now();
         sessionStorage.removeItem("arcadeEntryStartedAt");
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
