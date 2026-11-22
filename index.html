@@ -4,6 +4,9 @@
 <script>(() => {
     const assetRoot = window.location.hostname.toLowerCase() === "samurainumber1.github.io" ? "/yogurt/" : "/";
     document.write('<script src="' + assetRoot + 'assets/canonical-host.js"><' + '/script>');
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.documentElement.classList.add("catalog-intro");
+    }
 })();</script>
     <script>(() => {
         if (sessionStorage.getItem("arcadeUnlocked") !== "1") return;
@@ -65,7 +68,10 @@
         <section class="hero shell">
             <div class="hero-copy">
                 <p class="eyebrow"><span class="status-dot"></span> YOUR NEXT FAVORITE IS HERE</p>
-                <h1>ALEX MODS<br><span>GAME STASH</span></h1>
+                <h1>
+                    <span class="hero-title-line hero-title-primary"><span class="hero-title-word">ALEX</span> <span class="hero-title-word">MODS</span></span><br>
+                    <span class="hero-title-line hero-title-accent"><span class="hero-title-word">GAME</span> <span class="hero-title-word">STASH</span><span class="hero-title-sheen" aria-hidden="true">GAME STASH</span></span>
+                </h1>
                 <p class="hero-description">A hand-picked collection for a quick round or a longer run. Pick a game and jump straight in.</p>
                 <div class="hero-actions">
                     <a class="hero-link" href="#library">Explore the library <span aria-hidden="true">↓</span></a>

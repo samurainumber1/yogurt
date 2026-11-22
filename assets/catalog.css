@@ -108,7 +108,24 @@ button { color: inherit; }
     font: 600 clamp(48px, 6vw, 76px)/.99 "Space Grotesk", sans-serif;
     letter-spacing: -.075em;
 }
-.hero h1 span { color: var(--accent); background: var(--accent-gradient); background-clip: text; -webkit-text-fill-color: transparent; }
+.hero h1 > .hero-title-accent { position: relative; }
+.hero-title-accent .hero-title-word { color: var(--accent); background: var(--accent-gradient); background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-title-line { display: inline-block; }
+.hero-title-word { display: inline-block; }
+.hero-title-sheen {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    color: transparent;
+    background: linear-gradient(105deg, transparent 24%, rgba(255,255,255,.86) 38%, rgba(255,255,255,1) 47%, rgba(206,246,255,.9) 54%, transparent 70%);
+    background-size: 240% 100%;
+    background-position: 100% 0;
+    background-clip: text;
+    filter: drop-shadow(0 0 11px rgba(226,247,255,.9));
+    -webkit-text-fill-color: transparent;
+    white-space: nowrap;
+    pointer-events: none;
+}
 .hero-description { max-width: 440px; margin: 21px 0 24px; color: #9ba6b7; font-size: 15px; line-height: 1.7; }
 .hero-link { display: inline-flex; align-items: center; gap: 9px; color: var(--text); font-size: 13px; font-weight: 600; }
 .hero-link span { color: var(--accent); transition: transform .18s ease; }
@@ -1058,6 +1075,111 @@ body {
     .catalog-arrival .site-header, .catalog-arrival .hero-copy, .catalog-arrival .hero-feature,
     .catalog-arrival .library-heading, .catalog-arrival .library-tools { animation: none !important; }
     .catalog-arrival .arrival-cinema { visibility: hidden; }
+}
+
+/* Let the catalog assemble from its cards on the first visit. */
+.catalog-intro .site-header { animation: intro-header 1.1s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .hero-copy { animation: intro-copy 1.5s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .hero-copy > .eyebrow { animation: intro-panel .9s .12s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .hero-title-word { animation: intro-word 1.05s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .hero-title-primary .hero-title-word:first-child { --word-entry-x: -34px; animation-delay: .2s; }
+.catalog-intro .hero-title-primary .hero-title-word:last-of-type { --word-entry-x: 30px; animation-delay: .4s; }
+.catalog-intro .hero-title-accent .hero-title-word:first-child { --word-entry-x: -28px; animation-delay: .6s; }
+.catalog-intro .hero-title-accent .hero-title-word:nth-child(2) { --word-entry-x: 36px; animation-delay: .8s; }
+.catalog-intro .hero-title-sheen { animation: title-sweep 1.05s 2s both cubic-bezier(.2, .75, .2, 1); }
+.catalog-intro .hero-description { animation: intro-copy-line 1.05s 1.1s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .hero-actions { animation: intro-copy-line 1.05s 1.3s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .hero-feature { animation: intro-feature 1.5s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .feature-sun { animation: feature-sun-land 1.2s .4s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .feature-road { animation: feature-road-land 1.2s .25s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .feature-car { animation: feature-car-land 1.05s .65s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .library-heading { animation: intro-panel .9s .32s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .recent-section { animation: intro-panel .9s .42s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .library-tools { animation: intro-panel .9s .52s both cubic-bezier(.16, 1, .3, 1); }
+.catalog-intro .game-card {
+    animation: intro-card 1.12s both cubic-bezier(.18, .8, .22, 1);
+    animation-delay: calc(620ms + var(--card-delay, 0ms)) !important;
+}
+.catalog-intro .game-card .art-index { animation: intro-card-detail .65s both cubic-bezier(.16, 1, .3, 1); animation-delay: calc(780ms + var(--card-delay, 0ms)); }
+.catalog-intro .game-card .art-icon { animation: intro-card-detail .72s both cubic-bezier(.16, 1, .3, 1); animation-delay: calc(860ms + var(--card-delay, 0ms)); }
+.catalog-intro .game-card .art-category { animation: intro-card-detail .65s both cubic-bezier(.16, 1, .3, 1); animation-delay: calc(930ms + var(--card-delay, 0ms)); }
+.catalog-intro .game-card .card-meta { animation: intro-card-detail .65s both cubic-bezier(.16, 1, .3, 1); animation-delay: calc(1s + var(--card-delay, 0ms)); }
+.catalog-intro .game-card .card-body h3 { animation: intro-card-detail .65s both cubic-bezier(.16, 1, .3, 1); animation-delay: calc(1.08s + var(--card-delay, 0ms)); }
+.catalog-intro .game-card .card-body p { animation: intro-card-detail .65s both cubic-bezier(.16, 1, .3, 1); animation-delay: calc(1.16s + var(--card-delay, 0ms)); }
+.catalog-intro .game-card .play-button { animation: intro-card-detail .65s both cubic-bezier(.16, 1, .3, 1); animation-delay: calc(1.24s + var(--card-delay, 0ms)); }
+.catalog-intro .site-footer { animation: intro-panel .9s .8s both cubic-bezier(.16, 1, .3, 1); }
+@keyframes intro-header {
+    from { opacity: 0; transform: translateY(-34px); filter: blur(7px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes intro-copy {
+    from { opacity: 0; transform: translate3d(-52px, 34px, 0) scale(.94); filter: blur(12px); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
+}
+@keyframes intro-feature {
+    from { opacity: 0; transform: perspective(1100px) translate3d(82px, 65px, -150px) rotateX(12deg) rotateY(-24deg) scale(.76); filter: blur(12px); }
+    to { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateY(0) scale(1); }
+}
+@keyframes intro-word {
+    0% { opacity: 0; transform: perspective(700px) translate3d(var(--word-entry-x, 0), 52px, -35px) rotateX(-34deg) scale(.82); filter: blur(9px); }
+    72% { opacity: 1; transform: perspective(700px) translate3d(0, -4px, 0) rotateX(3deg) scale(1.035); filter: blur(0); }
+    100% { opacity: 1; transform: perspective(700px) translate3d(0, 0, 0) rotateX(0) scale(1); filter: blur(0); }
+}
+@keyframes intro-copy-line {
+    from { opacity: 0; transform: translate3d(-22px, 18px, 0); filter: blur(4px); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
+}
+@keyframes title-sweep {
+    0% { opacity: 0; background-position: 100% 0; }
+    14% { opacity: .9; }
+    82% { opacity: .8; background-position: 0 0; }
+    100% { opacity: 0; background-position: 0 0; }
+}
+@keyframes feature-sun-land {
+    from { opacity: 0; transform: scale(.2) rotate(-75deg); filter: blur(8px); }
+    to { opacity: 1; transform: scale(1) rotate(0); filter: blur(0); }
+}
+@keyframes feature-road-land {
+    from { transform: translateY(72px) rotate(-7deg); filter: brightness(2); }
+    to { transform: translateY(0) rotate(-7deg); filter: brightness(1); }
+}
+@keyframes feature-car-land {
+    from { opacity: 0; transform: translate3d(0, 35px, 60px) rotate(-14deg) scale(.55); filter: blur(5px) drop-shadow(0 0 35px rgba(104,239,255,.95)); }
+    to { opacity: 1; transform: translate3d(0, 0, 0) rotate(0) scale(1); filter: blur(0) drop-shadow(0 0 18px rgba(104,239,255,.78)); }
+}
+@keyframes intro-panel {
+    from { opacity: 0; transform: translateY(30px) scale(.97); filter: blur(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes intro-card {
+    0% {
+        opacity: 0;
+        transform: perspective(1100px) translate3d(var(--card-drift, 0), 86px, -120px) rotateX(16deg) rotateY(var(--card-tilt, 0deg)) scale(.76);
+        filter: blur(10px) saturate(.55);
+    }
+    68% {
+        opacity: 1;
+        transform: perspective(1100px) translate3d(0, -8px, 0) rotateX(-2deg) rotateY(0) scale(1.035);
+        filter: blur(0) saturate(1.15);
+    }
+    100% {
+        opacity: 1;
+        transform: perspective(1100px) translate3d(0, 0, 0) rotateX(0) rotateY(0) scale(1);
+        filter: blur(0) saturate(1);
+    }
+}
+@keyframes intro-card-detail {
+    from { opacity: 0; transform: translate3d(0, 15px, 0) scale(.96); filter: blur(4px); }
+    to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .catalog-intro .site-header, .catalog-intro .hero-copy, .catalog-intro .hero-copy > *,
+    .catalog-intro .hero-title-word, .catalog-intro .hero-title-sheen, .catalog-intro .hero-feature,
+    .catalog-intro .hero-feature > *, .catalog-intro .library-heading, .catalog-intro .recent-section,
+    .catalog-intro .library-tools, .catalog-intro .game-card, .catalog-intro .game-card *,
+    .catalog-intro .site-footer {
+        animation: none !important;
+    }
 }
 
 /* New backdrop: deep space blue with a moving, pointer-following aurora. */

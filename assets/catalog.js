@@ -199,6 +199,9 @@ function createGameCard(game, index, isRecent = false) {
     const card = document.createElement("article");
     card.className = "game-card";
     card.style.animationDelay = `${Math.min(index, 20) * 22}ms`;
+    card.style.setProperty("--card-delay", `${Math.min(index, 34) * 32}ms`);
+    card.style.setProperty("--card-tilt", `${(index % 3 - 1) * 7}deg`);
+    card.style.setProperty("--card-drift", `${(index % 3 - 1) * 38}px`);
 
     const art = document.createElement("div");
     art.className = `game-art art-${game.art}`;
@@ -408,6 +411,9 @@ document.addEventListener("keydown", event => {
 document.querySelector("#gameCount").textContent = String(games.length);
 renderGames();
 renderRecents();
+if (document.documentElement.classList.contains("catalog-intro")) {
+    window.setTimeout(() => document.documentElement.classList.remove("catalog-intro"), 3300);
+}
 
 async function applyEditableGameNames() {
     try {
