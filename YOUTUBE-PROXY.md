@@ -1,6 +1,7 @@
 # ALEX MODS YouTube frontend
 
 The frontend is served at `/games/ALEX%20MODS%20-%20Encrypted%20YouTube.html` by the existing Flask app.
+The YouTube page route and API handlers are defined in `youtube.py` and registered by `server.py`.
 
 ## Start it
 

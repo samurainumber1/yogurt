@@ -79,15 +79,25 @@
                 </div>
             </div>
             <aside class="hero-feature" aria-label="Featured game">
-                <div class="feature-art" aria-hidden="true">
-                    <span class="feature-sun"></span>
-                    <span class="feature-road"></span>
-                    <span class="feature-car">▲</span>
-                    <span class="feature-label">FEATURED GAME</span>
-                </div>
-                <div class="feature-caption">
-                    <div><span class="feature-kicker">FEATURED PICK</span><strong>Space Waves</strong></div>
-                    <button class="feature-arrow" id="featuredPlay" type="button" aria-label="Play Space Waves">↗</button>
+                <div class="feature-stack" id="featuredStack">
+                    <div class="feature-card-next" aria-hidden="true"></div>
+                    <span class="feature-next-badge" aria-hidden="true">UP NEXT <strong id="featuredNextTitle">3D Flight Simulator</strong></span>
+                    <div class="feature-card-current" id="featuredCurrentCard">
+                        <div class="feature-art" aria-hidden="true">
+                            <img class="feature-screenshot" id="featuredScreenshot" src="screenshots/Spacewaves.png" alt="">
+                            <span class="feature-label">FEATURED GAME</span>
+                        </div>
+                        <div class="feature-caption">
+                            <div><span class="feature-kicker">FEATURED PICK</span><strong id="featuredTitle">Space Waves</strong></div>
+                            <button class="feature-arrow" id="featuredPlay" type="button" aria-label="Play Space Waves">↗</button>
+                        </div>
+                        <div class="feature-countdown-label" aria-hidden="true">
+                            <span>NEXT PICK IN</span><strong id="featuredCountdown">10s</strong>
+                        </div>
+                        <div class="feature-countdown" id="featuredProgress" role="progressbar" aria-label="Time until next featured game" aria-valuemin="0" aria-valuemax="10" aria-valuenow="10">
+                            <span></span>
+                        </div>
+                    </div>
                 </div>
             </aside>
             <div class="hero-glow" aria-hidden="true"></div>

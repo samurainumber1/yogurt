@@ -181,6 +181,18 @@ button { color: inherit; }
         radial-gradient(circle at 58% 68%, rgba(96,216,255,.18), transparent 22%),
         linear-gradient(145deg, #101a45 0%, #202c78 48%, #090d24 100%);
 }
+.feature-screenshot {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+    transition: opacity .28s ease, transform .65s cubic-bezier(.2, .75, .2, 1);
+}
+.feature-label { z-index: 1; }
+.feature-caption { transition: opacity .22s ease, transform .22s ease; }
 .hero-feature .feature-sun {
     width: 92px;
     height: 92px;
@@ -1246,4 +1258,129 @@ body::after {
 @keyframes star-parallax { from { opacity: .38; } to { opacity: .7; } }
 @media (prefers-reduced-motion: reduce) {
     body::before, body::after { animation: none; }
+}
+
+.hero-feature {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    perspective: 1300px;
+}
+.hero-feature:hover {
+    transform: translateY(-3px);
+    border-color: transparent;
+    box-shadow: none;
+}
+.feature-stack {
+    position: relative;
+    isolation: isolate;
+    width: calc(100% - 12px);
+    margin: 8px 12px 14px 0;
+}
+.feature-card-next {
+    position: absolute;
+    z-index: 0;
+    inset: 14px -10px -12px 16px;
+    border: 1px solid rgba(154,198,255,.3);
+    border-radius: 22px;
+    background:
+        radial-gradient(ellipse at 82% 18%, rgba(116,161,255,.2), transparent 52%),
+        linear-gradient(145deg, #1a2747, #101629 72%);
+    box-shadow: 0 20px 55px rgba(0,0,0,.32);
+    transform: rotate(2deg);
+    transform-origin: 70% 20%;
+    pointer-events: none;
+}
+.feature-next-badge {
+    position: absolute;
+    z-index: 3;
+    top: -5px;
+    right: 12px;
+    max-width: calc(100% - 24px);
+    padding: 7px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(157,202,255,.25);
+    border-radius: 999px;
+    color: #a9bad5;
+    background: rgba(11,17,34,.94);
+    box-shadow: 0 8px 22px rgba(0,0,0,.24);
+    font: 700 8px "Space Grotesk", sans-serif;
+    letter-spacing: .12em;
+    white-space: nowrap;
+    pointer-events: none;
+}
+.feature-next-badge strong {
+    overflow: hidden;
+    color: #edf4ff;
+    font-size: 9px;
+    letter-spacing: 0;
+    text-overflow: ellipsis;
+}
+.feature-card-current {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    border: 1px solid rgba(175,205,255,.25);
+    border-radius: 20px;
+    background: linear-gradient(145deg, #111b35, #0b1020 70%);
+    box-shadow: 0 30px 75px rgba(0,0,0,.46), 0 0 34px rgba(var(--accent-rgb),.14);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+.feature-countdown-label {
+    min-height: 28px;
+    padding: 5px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #9eacc2;
+    background: rgba(7,12,25,.52);
+    font: 700 8px "Space Grotesk", sans-serif;
+    letter-spacing: .13em;
+}
+.feature-countdown-label strong {
+    color: #eef5ff;
+    font-size: 9px;
+    letter-spacing: .06em;
+    font-variant-numeric: tabular-nums;
+}
+.feature-countdown {
+    height: 4px;
+    overflow: hidden;
+    background: rgba(158,190,255,.14);
+}
+.feature-countdown span {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: linear-gradient(90deg, #60d9ff, var(--accent), #d98bff);
+    box-shadow: 0 0 14px rgba(96,217,255,.7);
+    transform: scaleX(0);
+    transform-origin: left center;
+    will-change: transform;
+}
+.hero-feature.is-flipping .feature-card-current {
+    animation: featured-card-flip .9s cubic-bezier(.2,.8,.2,1) both;
+}
+.hero-feature.is-flipping .feature-card-next {
+    animation: featured-card-rise .9s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes featured-card-flip {
+    0% { transform: rotateY(0) scale(1); filter: brightness(1); }
+    44% { transform: rotateY(-82deg) scale(.97); filter: brightness(.75); }
+    50% { transform: rotateY(-90deg) scale(.97); filter: brightness(.65); }
+    56% { transform: rotateY(-82deg) scale(.97); filter: brightness(.78); }
+    100% { transform: rotateY(0) scale(1); filter: brightness(1); }
+}
+@keyframes featured-card-rise {
+    0%, 100% { transform: rotate(2deg) translate(0,0); }
+    50% { transform: rotate(0) translate(-5px,-5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hero-feature.is-flipping .feature-card-current,
+    .hero-feature.is-flipping .feature-card-next { animation: none; }
 }

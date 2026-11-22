@@ -104,6 +104,19 @@ const games = [
     { title: "Zombie Rush", path: "games/reviewed/zombierush.html", icon: "\u{1F9DF}", category: "Action", art: "horror", description: "Survive the rush and keep moving through waves of zombies." }
 ];
 
+function getFeaturedGame(title) {
+    const game = games.find(candidate => candidate.title === title);
+    if (!game) throw new Error(`Featured game "${title}" is missing from the catalog.`);
+    return game;
+}
+
+const featuredPicks = [
+    { game: getFeaturedGame("Space Waves"), screenshot: "screenshots/Spacewaves.png" },
+    { game: getFeaturedGame("3D Flight Simulator"), screenshot: "screenshots/3dFlightSim.png" },
+    { game: getFeaturedGame("Slope"), screenshot: "screenshots/Slope.png" },
+    { game: getFeaturedGame("Paper.io 2"), screenshot: "screenshots/Paperio2.png" }
+];
+
 const subwayMaps = [
     ["Barcelona", "ALEXMODS - Subway Surfers - Barcelona.html"],
     ["Beijing", "ALEXMODS - Subway Surfers - Beijing.html"],
@@ -129,8 +142,97 @@ const recentSection = document.querySelector("#recentSection");
 const RECENTS_KEY = "alexmods-game-recents";
 const themePicker = document.querySelector("#themePalette");
 const themeTrigger = document.querySelector("#themeTrigger");
+const heroFeature = document.querySelector(".hero-feature");
+const featuredScreenshot = document.querySelector("#featuredScreenshot");
+const featuredTitle = document.querySelector("#featuredTitle");
+const featuredNextTitle = document.querySelector("#featuredNextTitle");
+const featuredPlay = document.querySelector("#featuredPlay");
+const featuredCountdown = document.querySelector("#featuredCountdown");
+const featuredProgress = document.querySelector("#featuredProgress");
+const featuredProgressFill = featuredProgress.querySelector("span");
+const FEATURED_ROTATION_MS = 10000;
+const FEATURED_FLIP_MS = 900;
 let activeCategory = "All";
 let lastFocusedElement = null;
+let featuredIndex = 0;
+let featuredRemainingMs = FEATURED_ROTATION_MS;
+let featuredLastTick = performance.now();
+let featuredTransitioning = false;
+
+function preloadFeaturedScreenshot(index) {
+    const image = new Image();
+    image.src = featuredPicks[index].screenshot;
+}
+
+preloadFeaturedScreenshot((featuredIndex + 1) % featuredPicks.length);
+
+function updateFeaturedPick(index) {
+    const pick = featuredPicks[index];
+    featuredScreenshot.src = pick.screenshot;
+    featuredTitle.textContent = pick.game.title;
+    featuredPlay.setAttribute("aria-label", `Play ${pick.game.title}`);
+    featuredIndex = index;
+    const nextIndex = (index + 1) % featuredPicks.length;
+    featuredNextTitle.textContent = featuredPicks[nextIndex].game.title;
+    preloadFeaturedScreenshot(nextIndex);
+}
+
+function updateFeaturedCountdown() {
+    const elapsed = 1 - featuredRemainingMs / FEATURED_ROTATION_MS;
+    featuredProgressFill.style.transform = `scaleX(${Math.max(0, Math.min(1, elapsed))})`;
+    const seconds = Math.ceil(featuredRemainingMs / 1000);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const label = featuredTransitioning ? "FLIPPING" : reducedMotion ? "PAUSED" : `${seconds}s`;
+    const value = featuredTransitioning ? "0" : String(seconds);
+    const valueText = featuredTransitioning
+        ? "Changing featured game"
+        : reducedMotion
+            ? "Automatic rotation paused because reduced motion is enabled"
+            : `Next pick in ${seconds} seconds`;
+    if (featuredCountdown.textContent !== label) featuredCountdown.textContent = label;
+    if (featuredProgress.getAttribute("aria-valuenow") !== value) {
+        featuredProgress.setAttribute("aria-valuenow", value);
+    }
+    if (featuredProgress.getAttribute("aria-valuetext") !== valueText) {
+        featuredProgress.setAttribute("aria-valuetext", valueText);
+    }
+}
+
+function isFeaturedPaused() {
+    return document.visibilityState !== "visible"
+        || !gameViewer.hidden
+        || heroFeature.matches(":hover")
+        || heroFeature.contains(document.activeElement)
+        || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function flipFeaturedPick() {
+    if (featuredTransitioning) return;
+    featuredTransitioning = true;
+    featuredRemainingMs = 0;
+    updateFeaturedCountdown();
+    heroFeature.classList.add("is-flipping");
+    window.setTimeout(() => {
+        updateFeaturedPick((featuredIndex + 1) % featuredPicks.length);
+    }, FEATURED_FLIP_MS / 2);
+    window.setTimeout(() => {
+        heroFeature.classList.remove("is-flipping");
+        featuredTransitioning = false;
+        featuredRemainingMs = FEATURED_ROTATION_MS;
+        featuredLastTick = performance.now();
+        updateFeaturedCountdown();
+    }, FEATURED_FLIP_MS);
+}
+
+function updateFeaturedClock() {
+    const now = performance.now();
+    if (!isFeaturedPaused() && !featuredTransitioning) {
+        featuredRemainingMs = Math.max(0, featuredRemainingMs - (now - featuredLastTick));
+    }
+    featuredLastTick = now;
+    updateFeaturedCountdown();
+    if (featuredRemainingMs === 0 && !featuredTransitioning) flipFeaturedPick();
+}
 
 function applyCatalogTheme(themeId) {
     const preset = window.themePresets[themeId];
@@ -369,7 +471,8 @@ document.querySelector("#categoryList").addEventListener("click", event => {
     renderGames();
 });
 
-document.querySelector("#featuredPlay").addEventListener("click", () => openGame(games[0]));
+featuredPlay.addEventListener("click", () => openGame(featuredPicks[featuredIndex].game));
+window.setInterval(updateFeaturedClock, 50);
 document.querySelector("#openFeedback").addEventListener("click", () => feedbackDialog.showModal());
 document.querySelector("#closeFeedback").addEventListener("click", () => feedbackDialog.close());
 feedbackDialog.addEventListener("click", event => {
