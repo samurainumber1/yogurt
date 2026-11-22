@@ -5,6 +5,17 @@
     const assetRoot = window.location.hostname.toLowerCase() === "samurainumber1.github.io" ? "/yogurt/" : "/";
     document.write('<script src="' + assetRoot + 'assets/canonical-host.js"><' + '/script>');
 })();</script>
+    <script>(() => {
+        if (sessionStorage.getItem("arcadeUnlocked") !== "1") return;
+        sessionStorage.removeItem("arcadeUnlocked");
+        const started = Number(sessionStorage.getItem("arcadeEntryStartedAt")) || Date.now();
+        sessionStorage.removeItem("arcadeEntryStartedAt");
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const remaining = Math.max(500, 5000 - (Date.now() - started));
+        document.documentElement.classList.add("catalog-arrival");
+        document.documentElement.style.setProperty("--arrival-duration", `${remaining}ms`);
+        window.setTimeout(() => document.documentElement.classList.remove("catalog-arrival"), remaining);
+    })();</script>
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,6 +25,7 @@
     <script>document.documentElement.classList.add("catalog-lock-pending");</script>
     <script src="assets/access-guard.js"></script>
     <script src="assets/theme.js"></script>
+    <script src="assets/ambient.js" defer></script>
     <script src="assets/presence.js" defer></script>
     <script src="assets/catalog-lock.js" defer></script>
     <link rel="stylesheet" href="assets/catalog-lock.css">
@@ -21,6 +33,7 @@
     <script src="assets/catalog.js" defer></script>
 </head>
 <body>
+    <div class="arrival-cinema" aria-hidden="true"><span></span><i></i><b></b></div>
     <section class="catalog-lock-screen" id="catalogLockScreen" aria-live="assertive" aria-atomic="true" hidden>
         <div class="catalog-lock-card">
             <span class="catalog-lock-icon" id="catalogLockIcon" aria-hidden="true">🔒</span>

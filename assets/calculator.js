@@ -25,9 +25,36 @@ function unlockCatalog() {
     if (unlockStarted) return;
     unlockStarted = true;
     sessionStorage.setItem("arcadeUnlocked", "1");
-    document.querySelector("#unlockTransition").setAttribute("aria-hidden", "false");
+    sessionStorage.setItem("arcadeEntryStartedAt", String(Date.now()));
+    const transition = document.querySelector("#unlockTransition");
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reducedMotion) {
+        const display = document.querySelector("#current");
+        display.textContent = "2323";
+        const bounds = display.getBoundingClientRect();
+        const zoom = document.createElement("span");
+        zoom.className = "unlock-zoom-value";
+        zoom.textContent = "2323";
+        zoom.style.left = `${bounds.left}px`;
+        zoom.style.top = `${bounds.top}px`;
+        zoom.style.width = `${bounds.width}px`;
+        zoom.style.height = `${bounds.height}px`;
+        zoom.style.fontSize = getComputedStyle(display).fontSize;
+        transition.append(zoom);
+        transition.classList.add("is-zooming");
+        const dx = innerWidth / 2 - (bounds.left + bounds.width / 2);
+        const dy = innerHeight / 2 - (bounds.top + bounds.height / 2);
+        zoom.animate([
+            { offset: 0, transform: "translate3d(0, 0, 0) scale(1)", opacity: 1, filter: "blur(0)" },
+            { offset: .16, transform: "translate3d(0, 0, 0) scale(1.12)", opacity: 1, filter: "blur(0)" },
+            { offset: .43, transform: `translate3d(${dx * .35}px, ${dy * .35}px, 0) scale(2.2)`, opacity: 1, filter: "blur(0)" },
+            { offset: .76, transform: `translate3d(${dx}px, ${dy}px, 0) scale(9)`, opacity: .95, filter: "blur(1px)" },
+            { offset: 1, transform: `translate3d(${dx}px, ${dy}px, 0) scale(34)`, opacity: 0, filter: "blur(10px)" }
+        ], { duration: 3050, easing: "cubic-bezier(.58,0,.92,.42)", fill: "forwards" });
+    }
+    transition.setAttribute("aria-hidden", "false");
     document.body.classList.add("is-unlocking");
-    const transitionTime = matchMedia("(prefers-reduced-motion: reduce)").matches ? 180 : 720;
+    const transitionTime = reducedMotion ? 220 : 3300;
     window.setTimeout(() => window.location.assign("/scientific-calculator"), transitionTime);
 }
 
