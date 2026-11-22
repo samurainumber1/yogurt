@@ -143,6 +143,7 @@ const RECENTS_KEY = "alexmods-game-recents";
 const themePicker = document.querySelector("#themePalette");
 const themeTrigger = document.querySelector("#themeTrigger");
 const heroFeature = document.querySelector(".hero-feature");
+const randomGameButton = document.querySelector("#randomGame");
 const featuredScreenshot = document.querySelector("#featuredScreenshot");
 const featuredTitle = document.querySelector("#featuredTitle");
 const featuredNextTitle = document.querySelector("#featuredNextTitle");
@@ -154,6 +155,7 @@ const FEATURED_ROTATION_MS = 10000;
 const FEATURED_FLIP_MS = 900;
 let activeCategory = "All";
 let lastFocusedElement = null;
+let lastRandomGame = null;
 let featuredIndex = 0;
 let featuredRemainingMs = FEATURED_ROTATION_MS;
 let featuredLastTick = performance.now();
@@ -451,6 +453,26 @@ function openGame(game) {
     document.querySelector("#closeGame").focus();
 }
 
+function playRandomGame() {
+    const candidates = games.filter(game => game !== lastRandomGame);
+    const selectedGame = candidates[Math.floor(Math.random() * candidates.length)];
+    lastRandomGame = selectedGame;
+    if (!selectedGame.maps) {
+        openGame(selectedGame);
+        return;
+    }
+
+    const [city, file] = subwayMaps[Math.floor(Math.random() * subwayMaps.length)];
+    openGame({
+        title: editableGameNames[file] || `Subway Surfers: ${city}`,
+        path: `games/Subway Surfers/${file}`,
+        icon: "🚇",
+        category: "Arcade",
+        art: "subway",
+        description: "Jump back into this game."
+    });
+}
+
 function closeGame() {
     gameFrame.src = "about:blank";
     gameViewer.hidden = true;
@@ -472,6 +494,7 @@ document.querySelector("#categoryList").addEventListener("click", event => {
 });
 
 featuredPlay.addEventListener("click", () => openGame(featuredPicks[featuredIndex].game));
+randomGameButton.addEventListener("click", playRandomGame);
 window.setInterval(updateFeaturedClock, 50);
 document.querySelector("#openFeedback").addEventListener("click", () => feedbackDialog.showModal());
 document.querySelector("#closeFeedback").addEventListener("click", () => feedbackDialog.close());
