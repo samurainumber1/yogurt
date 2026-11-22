@@ -1,5 +1,6 @@
 "use strict";
 
+let editableGameNames = {};
 const games = [
     { title: "Space Waves", path: "games/ALEX MODS - Space Waves.html", icon: "👾", category: "Arcade", art: "space", description: "Guide a triangle through a neon course. Release to dive down; hold to climb up." },
     { title: "Encrypted YouTube", path: "games/ALEX MODS - Encrypted YouTube.html", icon: "📺", category: "Arcade", art: "video", description: "Search and watch YouTube videos in the Alex Mods video stash." },
@@ -126,8 +127,73 @@ const feedbackDialog = document.querySelector("#feedbackDialog");
 const recentGrid = document.querySelector("#recentGrid");
 const recentSection = document.querySelector("#recentSection");
 const RECENTS_KEY = "alexmods-game-recents";
+const themePicker = document.querySelector("#themePalette");
+const themeTrigger = document.querySelector("#themeTrigger");
 let activeCategory = "All";
 let lastFocusedElement = null;
+
+function applyCatalogTheme(themeId) {
+    const preset = window.themePresets[themeId];
+    if (!preset) return;
+    document.documentElement.style.setProperty("--accent", preset.accent);
+    document.documentElement.style.setProperty("--accent-rgb", preset.rgb);
+    document.documentElement.style.setProperty("--accent-gradient", preset.gradient);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", preset.accent);
+    localStorage.setItem("calculatorTheme", themeId);
+    themePicker.querySelectorAll(".theme-swatch").forEach(swatch => {
+        swatch.setAttribute("aria-pressed", String(swatch.dataset.theme === themeId));
+    });
+}
+
+if (themePicker && themeTrigger && window.themePresets) {
+    Object.entries(window.themePresets).forEach(([themeId, preset]) => {
+        const label = themeId[0].toUpperCase() + themeId.slice(1);
+        const swatch = document.createElement("button");
+        swatch.type = "button";
+        swatch.className = "theme-swatch";
+        swatch.dataset.theme = themeId;
+        swatch.dataset.tooltip = label;
+        swatch.setAttribute("aria-label", `${label} gradient theme`);
+        swatch.setAttribute("aria-pressed", "false");
+        swatch.style.setProperty("--swatch", preset.gradient);
+        swatch.style.setProperty("--swatch-rgb", preset.rgb);
+        const check = document.createElement("span");
+        check.className = "theme-check";
+        check.setAttribute("aria-hidden", "true");
+        check.textContent = "✓";
+        swatch.append(check);
+        themePicker.append(swatch);
+    });
+
+    const savedTheme = localStorage.getItem("calculatorTheme");
+    const activeTheme = window.themePresets[savedTheme] ? savedTheme : "default";
+    themePicker.querySelector(`[data-theme="${activeTheme}"]`)?.setAttribute("aria-pressed", "true");
+
+    function toggleThemePicker(open) {
+        const shouldOpen = open ?? themePicker.hidden;
+        themePicker.hidden = !shouldOpen;
+        themeTrigger.setAttribute("aria-expanded", String(shouldOpen));
+        if (shouldOpen) themePicker.querySelector('[aria-pressed="true"]')?.focus();
+    }
+
+    themeTrigger.addEventListener("click", () => toggleThemePicker());
+    themePicker.addEventListener("click", event => {
+        const swatch = event.target.closest(".theme-swatch");
+        if (!swatch) return;
+        applyCatalogTheme(swatch.dataset.theme);
+        toggleThemePicker(false);
+        themeTrigger.focus();
+    });
+    document.addEventListener("click", event => {
+        if (!event.target.closest(".theme-picker")) toggleThemePicker(false);
+    });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !themePicker.hidden) {
+            toggleThemePicker(false);
+            themeTrigger.focus();
+        }
+    });
+}
 
 function createGameCard(game, index, isRecent = false) {
     const card = document.createElement("article");
@@ -248,7 +314,7 @@ function openMapPicker(trigger) {
         button.innerHTML = `<span><strong>${city}</strong><small>MAP ${String(index + 1).padStart(2, "0")}</small></span><span aria-hidden="true">↗</span>`;
         button.addEventListener("click", () => {
             closeMapPicker();
-            openGame({ title: `Subway Surfers: ${city}`, path: `games/Subway Surfers/${file}` });
+            openGame({ title: editableGameNames[file] || `Subway Surfers: ${city}`, path: `games/Subway Surfers/${file}` });
         });
         return button;
     }));
@@ -342,3 +408,24 @@ document.addEventListener("keydown", event => {
 document.querySelector("#gameCount").textContent = String(games.length);
 renderGames();
 renderRecents();
+
+async function applyEditableGameNames() {
+    try {
+        const response = await fetch("/assets/game-names.json", { cache: "no-cache" });
+        if (!response.ok) return;
+        editableGameNames = await response.json();
+        games.forEach(game => {
+            if (!game.path) return;
+            const filename = game.path.slice(game.path.lastIndexOf("/") + 1);
+            if (typeof editableGameNames[filename] === "string" && editableGameNames[filename].trim()) {
+                game.title = editableGameNames[filename].trim();
+            }
+        });
+        renderGames();
+        renderRecents();
+    } catch (error) {
+        console.warn("Could not load editable game display names:", error);
+    }
+}
+
+applyEditableGameNames();

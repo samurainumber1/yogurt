@@ -795,6 +795,41 @@ body {
     .player-note { font-size: 7px; }
 }
 
+/* Shared calculator theme picker */
+.theme-picker { position: relative; }
+.theme-trigger { min-height: 40px; padding: 0 11px; display: flex; align-items: center; gap: 9px; border: 1px solid var(--line); border-radius: 11px; color: #c3ccd5; background: linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.025)); cursor: pointer; font-size: 9px; font-weight: 700; letter-spacing: .12em; transition: border-color .18s ease, background .18s ease, transform .18s ease; }
+.theme-trigger:hover, .theme-trigger[aria-expanded="true"] { transform: translateY(-1px); border-color: rgba(var(--accent-rgb), .45); background: rgba(var(--accent-rgb), .08); }
+.theme-trigger:focus-visible, .theme-swatch:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.theme-trigger-swatches { display: flex; align-items: center; padding-left: 2px; }
+.theme-trigger-swatches i { width: 12px; height: 12px; margin-left: -3px; border: 2px solid #161923; border-radius: 50%; background: var(--swatch); }
+.theme-trigger-swatches i:nth-child(1) { --swatch: linear-gradient(135deg, #9500ff, #5b00d6); }
+.theme-trigger-swatches i:nth-child(2) { --swatch: linear-gradient(135deg, #ff3b4f, #a60038); }
+.theme-trigger-swatches i:nth-child(3) { --swatch: linear-gradient(135deg, #37c8ff, #2456ff); }
+.theme-trigger-arrow { margin-left: 1px; color: var(--accent); font-size: 13px; transition: transform .18s ease; }
+.theme-trigger[aria-expanded="true"] .theme-trigger-arrow { transform: rotate(180deg); }
+.theme-palette { position: absolute; z-index: 20; top: calc(100% + 12px); right: 0; width: 276px; padding: 14px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; border: 1px solid rgba(224,235,255,.12); border-radius: 16px; background: linear-gradient(145deg, rgba(30,36,49,.98), rgba(15,19,28,.98)); box-shadow: 0 18px 48px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.06); backdrop-filter: blur(18px); animation: palette-in .16s ease-out; }
+.theme-palette[hidden] { display: none; }
+.theme-swatch { position: relative; width: 38px; height: 38px; justify-self: center; display: grid; place-items: center; border: 2px solid rgba(255,255,255,.16); border-radius: 12px; background: var(--swatch); box-shadow: inset 0 1px 2px rgba(255,255,255,.22), 0 3px 8px rgba(0,0,0,.28); cursor: pointer; transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease; }
+.theme-swatch:hover, .theme-swatch:focus-visible { z-index: 2; transform: scale(1.17); border-color: #fff; box-shadow: 0 0 0 4px rgba(var(--swatch-rgb), .2), 0 5px 14px rgba(0,0,0,.4); }
+.theme-swatch[aria-pressed="true"] { border-color: #fff; box-shadow: 0 0 0 3px rgba(var(--swatch-rgb), .26), inset 0 1px 2px rgba(255,255,255,.25); }
+.theme-check { color: #fff; font-size: 14px; font-weight: 800; opacity: 0; text-shadow: 0 1px 4px rgba(0,0,0,.65); }
+.theme-swatch[aria-pressed="true"] .theme-check { opacity: 1; }
+.theme-swatch::after { position: absolute; left: 50%; bottom: calc(100% + 10px); padding: 5px 8px; border: 1px solid rgba(255,255,255,.1); border-radius: 6px; color: #f5f7fb; background: #080b11; box-shadow: 0 5px 14px rgba(0,0,0,.35); content: attr(data-tooltip); font-size: 10px; font-weight: 600; letter-spacing: 0; line-height: 1; opacity: 0; pointer-events: none; transform: translate(-50%, 4px); transition: opacity .13s ease, transform .13s ease; white-space: nowrap; }
+.theme-swatch:hover::after, .theme-swatch:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+@keyframes palette-in { from { opacity: 0; transform: translateY(-5px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 620px) {
+    .theme-trigger { min-height: 36px; padding-inline: 9px; gap: 7px; }
+    .theme-palette { width: min(276px, calc(100vw - 24px)); padding: 11px; gap: 8px; }
+}
+@media (max-width: 480px) {
+    .site-header { flex-wrap: wrap; gap: 8px; padding-block: 9px; }
+    .header-actions { width: 100%; justify-content: flex-end; gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .theme-trigger, .theme-trigger-arrow, .theme-swatch { transition: none; }
+    .theme-palette { animation: none; }
+}
+
 /* Recently played strip */
 .recent-section {
     margin: 0 0 32px;
