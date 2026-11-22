@@ -7,7 +7,8 @@
 })();</script>
     <script>(() => {
         if (sessionStorage.getItem("arcadeUnlocked") !== "1") return;
-        const started = Number(sessionStorage.getItem("arcadeEntryStartedAt")) || Date.now();
+        const started = Number(sessionStorage.getItem("arcadeEntryStartedAt"));
+        if (!started) return;
         sessionStorage.removeItem("arcadeEntryStartedAt");
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
         const remaining = Math.max(500, 5000 - (Date.now() - started));

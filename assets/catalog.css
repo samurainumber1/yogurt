@@ -523,7 +523,7 @@ body {
 :where(a, button, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .site-footer { margin-top: 8px; border-color: rgba(224,235,255,.11); }
 
-@keyframes feature-pulse { from { transform: scale(.96); filter: saturate(.92); } to { transform: scale(1.04); filter: saturate(1.2); } }
+@keyframes feature-pulse { from { transform: scale(.96); } to { transform: scale(1.04); } }
 
 @media (max-width: 900px) {
     .hero { min-height: 430px; padding: 38px; }
@@ -679,12 +679,7 @@ body {
 .library-tools { animation-delay: .18s; }
 .site-footer { animation-delay: .3s; }
 .catalog-arrival body { overflow-x: hidden; }
-.catalog-arrival .site-header, .catalog-arrival .hero, .catalog-arrival .library { animation: catalog-arrive 1.25s both cubic-bezier(.16,1,.3,1); }
-.catalog-arrival .site-header { animation-delay: .18s; }
-.catalog-arrival .hero { animation-delay: .28s; }
-.catalog-arrival .library { animation-delay: .4s; }
 @keyframes catalog-rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes catalog-arrive { 0% { opacity: 0; filter: blur(12px); transform: scale(1.07) translateY(20px); } 60% { opacity: 1; filter: blur(0); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 
 @media (prefers-reduced-motion: reduce) {
     .hero, .library-heading, .library-tools, .site-footer, .catalog-arrival .site-header, .catalog-arrival .hero, .catalog-arrival .library { animation: none; }
@@ -1009,7 +1004,6 @@ body {
 /* The far side of the portal: reveal the catalog in cinematic layers. */
 .catalog-arrival body {
     overflow-x: hidden;
-    animation: stash-world-land var(--arrival-duration, 1700ms) both cubic-bezier(.16,1,.3,1);
 }
 .arrival-cinema {
     position: fixed;
@@ -1036,7 +1030,7 @@ body {
     transform: translate(-50%,-50%) scale(.1);
 }
 .arrival-cinema i {
-    position: absolute; inset: -60%; opacity: .6;
+    position: absolute; inset: -12%; opacity: .6;
     background: repeating-conic-gradient(from 0deg at 50% 51%, transparent 0deg 8deg, rgba(133,230,255,.26) 8.2deg 8.7deg, transparent 9deg 17deg);
     mask-image: radial-gradient(ellipse, transparent 0 8%, #000 11% 54%, transparent 74%);
     transform: scale(.35) rotate(0deg);
@@ -1050,19 +1044,84 @@ body {
 .catalog-arrival .hero-feature { animation: landing-feature var(--arrival-duration, 1700ms) both cubic-bezier(.16,1,.3,1); }
 .catalog-arrival .library-heading { animation: landing-library var(--arrival-duration, 1700ms) both cubic-bezier(.16,1,.3,1); }
 .catalog-arrival .library-tools { animation: landing-library var(--arrival-duration, 1700ms) both cubic-bezier(.16,1,.3,1); animation-delay: calc(var(--arrival-duration, 1700ms) * .12); }
-@keyframes stash-world-land { 0%, 48% { filter: brightness(.2) saturate(.5); } 100% { filter: brightness(1) saturate(1); } }
 @keyframes portal-arrival-shroud { 0% { opacity: 1; } 68% { opacity: .95; } 100% { opacity: 0; visibility: hidden; } }
-@keyframes landing-gate { 0% { opacity: 1; transform: translate(-50%,-50%) scale(.08); filter: blur(5px); } 28% { opacity: 1; filter: blur(0); } 100% { opacity: 0; transform: translate(-50%,-50%) scale(20); } }
-@keyframes landing-spin { 0% { opacity: .9; transform: scale(.2) rotate(-35deg); } 100% { opacity: 0; transform: scale(2.8) rotate(235deg); } }
+@keyframes landing-gate { 0% { opacity: 1; transform: translate(-50%,-50%) scale(.08); } 28% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(10); } }
+@keyframes landing-spin { 0% { opacity: .9; transform: scale(.2) rotate(-35deg); } 100% { opacity: 0; transform: scale(1.4) rotate(235deg); } }
 @keyframes landing-flare { 0%, 18% { opacity: .92; } 100% { opacity: 0; } }
-@keyframes landing-header { 0%, 38% { opacity: 0; transform: translateY(-24px); filter: blur(8px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0); } }
-@keyframes landing-copy { 0%, 22% { opacity: 0; transform: translateX(-30px); filter: blur(8px); } 100% { opacity: 1; transform: translateX(0); filter: blur(0); } }
-@keyframes landing-feature { 0%, 38% { opacity: 0; transform: translateX(30px) scale(.92) rotateY(-15deg); filter: blur(10px); } 100% { opacity: 1; transform: translateX(0) scale(1) rotateY(0); filter: blur(0); } }
-@keyframes landing-library { 0%, 45% { opacity: 0; transform: translateY(26px); filter: blur(8px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0); } }
+@keyframes landing-header { 0%, 38% { opacity: 0; transform: translateY(-24px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes landing-copy { 0%, 22% { opacity: 0; transform: translateX(-30px); } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes landing-feature { 0%, 38% { opacity: 0; transform: translateX(30px) scale(.92) rotateY(-15deg); } 100% { opacity: 1; transform: translateX(0) scale(1) rotateY(0); } }
+@keyframes landing-library { 0%, 45% { opacity: 0; transform: translateY(26px); } 100% { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) {
     .catalog-arrival body, .catalog-arrival .arrival-cinema, .catalog-arrival .arrival-cinema span,
     .catalog-arrival .arrival-cinema i, .catalog-arrival .arrival-cinema b,
     .catalog-arrival .site-header, .catalog-arrival .hero-copy, .catalog-arrival .hero-feature,
     .catalog-arrival .library-heading, .catalog-arrival .library-tools { animation: none !important; }
     .catalog-arrival .arrival-cinema { visibility: hidden; }
+}
+
+/* New backdrop: deep space blue with a moving, pointer-following aurora. */
+body {
+    position: relative;
+    isolation: isolate;
+    background: #050711;
+}
+body::before, body::after {
+    position: fixed;
+    z-index: -1;
+    inset: 0;
+    content: "";
+    pointer-events: none;
+}
+body::before {
+    opacity: .92;
+    background:
+        radial-gradient(560px circle at var(--pointer-x, 72vw) var(--pointer-y, 24vh), rgba(var(--accent-rgb), .23), transparent 72%),
+        radial-gradient(ellipse 68rem 32rem at 9% 4%, rgba(22, 83, 177, .36), transparent 70%),
+        radial-gradient(ellipse 58rem 30rem at 93% 29%, rgba(42, 41, 162, .34), transparent 72%),
+        radial-gradient(ellipse 56rem 28rem at 50% 100%, rgba(0, 139, 173, .19), transparent 72%),
+        linear-gradient(140deg, #080e20, #060914 48%, #091020);
+    background-attachment: fixed;
+    animation: aurora-breathe 18s ease-in-out infinite alternate;
+}
+body::after {
+    opacity: .58;
+    background:
+        radial-gradient(circle at 13% 17%, rgba(255,255,255,.75) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 79% 13%, rgba(171,215,255,.7) 0 1px, transparent 1.6px),
+        radial-gradient(circle at 37% 38%, rgba(255,255,255,.55) 0 .8px, transparent 1.4px),
+        radial-gradient(circle at 92% 70%, rgba(153,204,255,.55) 0 1px, transparent 1.7px),
+        radial-gradient(circle at 8% 82%, rgba(255,255,255,.48) 0 .8px, transparent 1.5px),
+        radial-gradient(ellipse at center, transparent 20%, rgba(2,4,11,.46) 100%);
+    background-size: 100% 100%;
+    animation: star-parallax 26s ease-in-out infinite alternate;
+}
+.hero {
+    min-height: 530px;
+    border-color: rgba(156,205,255,.21);
+    background:
+        radial-gradient(ellipse at 83% 20%, rgba(var(--accent-rgb), .22), transparent 29rem),
+        radial-gradient(ellipse at 10% 107%, rgba(19,184,220,.15), transparent 30rem),
+        linear-gradient(125deg, rgba(10,17,37,.96), rgba(12,15,35,.94) 52%, rgba(6,10,24,.97));
+    box-shadow: 0 35px 110px rgba(0,0,0,.4), 0 0 70px rgba(44,122,238,.09), inset 0 1px rgba(255,255,255,.07);
+}
+.hero-feature {
+    border-color: rgba(175,205,255,.25);
+    box-shadow: 0 32px 90px rgba(0,0,0,.52), 0 0 65px rgba(var(--accent-rgb),.18);
+}
+.feature-caption { background: linear-gradient(105deg, rgba(var(--accent-rgb),.14), rgba(9,14,28,.2) 75%); }
+.library-heading { position: relative; }
+.library-heading::after {
+    width: min(43vw, 390px);
+    height: 1px;
+    position: absolute;
+    right: 0;
+    bottom: -15px;
+    background: linear-gradient(90deg, transparent, rgba(111,198,255,.4), rgba(var(--accent-rgb),.42));
+    content: "";
+}
+@keyframes aurora-breathe { from { opacity: .72; } to { opacity: 1; } }
+@keyframes star-parallax { from { opacity: .38; } to { opacity: .7; } }
+@media (prefers-reduced-motion: reduce) {
+    body::before, body::after { animation: none; }
 }

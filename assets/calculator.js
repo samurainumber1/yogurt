@@ -29,9 +29,33 @@ function unlockCatalog() {
     const transition = document.querySelector("#unlockTransition");
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!reducedMotion) {
+        document.querySelector(".calculator-layout").style.animation = "none";
+        const calculator = document.querySelector(".calculator");
+        const calculatorBounds = calculator.getBoundingClientRect();
         const display = document.querySelector("#current");
         display.textContent = "2323";
         const bounds = display.getBoundingClientRect();
+        const centerX = innerWidth / 2 - (calculatorBounds.left + calculatorBounds.width / 2);
+        const centerY = innerHeight / 2 - (calculatorBounds.top + calculatorBounds.height / 2);
+        const numberX = innerWidth / 2 - (bounds.left + bounds.width / 2);
+        const numberY = innerHeight / 2 - (bounds.top + bounds.height / 2);
+        Object.assign(calculator.style, {
+            position: "fixed",
+            left: `${calculatorBounds.left}px`,
+            top: `${calculatorBounds.top}px`,
+            width: `${calculatorBounds.width}px`,
+            margin: "0",
+            zIndex: "70",
+            transformOrigin: "center"
+        });
+        calculator.animate([
+            { offset: 0, transform: "translate3d(0,0,0) scale(1) rotateZ(0deg)", opacity: 1 },
+            { offset: .28, transform: `translate3d(${centerX}px,${centerY}px,0) scale(1.08) rotateZ(0deg)`, opacity: 1 },
+            { offset: .42, transform: `translate3d(${centerX}px,${centerY}px,0) scale(1.08) rotateZ(0deg)`, opacity: 1 },
+            { offset: .72, transform: `translate3d(${centerX}px,${centerY}px,0) scale(.58) rotateZ(540deg)`, opacity: .92 },
+            { offset: 1, transform: `translate3d(${centerX}px,${centerY}px,0) scale(.008) rotateZ(1260deg)`, opacity: 0 }
+        ], { duration: 2750, easing: "cubic-bezier(.16,.72,.22,1)", fill: "forwards" });
+
         const zoom = document.createElement("span");
         zoom.className = "unlock-zoom-value";
         zoom.textContent = "2323";
@@ -42,15 +66,14 @@ function unlockCatalog() {
         zoom.style.fontSize = getComputedStyle(display).fontSize;
         transition.append(zoom);
         transition.classList.add("is-zooming");
-        const dx = innerWidth / 2 - (bounds.left + bounds.width / 2);
-        const dy = innerHeight / 2 - (bounds.top + bounds.height / 2);
         zoom.animate([
-            { offset: 0, transform: "translate3d(0, 0, 0) scale(1)", opacity: 1, filter: "blur(0)" },
-            { offset: .16, transform: "translate3d(0, 0, 0) scale(1.12)", opacity: 1, filter: "blur(0)" },
-            { offset: .43, transform: `translate3d(${dx * .35}px, ${dy * .35}px, 0) scale(2.2)`, opacity: 1, filter: "blur(0)" },
-            { offset: .76, transform: `translate3d(${dx}px, ${dy}px, 0) scale(9)`, opacity: .95, filter: "blur(1px)" },
-            { offset: 1, transform: `translate3d(${dx}px, ${dy}px, 0) scale(34)`, opacity: 0, filter: "blur(10px)" }
-        ], { duration: 3050, easing: "cubic-bezier(.58,0,.92,.42)", fill: "forwards" });
+            { offset: 0, transform: "translate3d(0,0,0) scale(.7) rotateZ(0deg)", opacity: 0 },
+            { offset: .2, transform: `translate3d(${numberX}px,${numberY}px,0) scale(.7) rotateZ(0deg)`, opacity: 0 },
+            { offset: .6, transform: `translate3d(${numberX}px,${numberY}px,0) scale(.7) rotateZ(0deg)`, opacity: 0 },
+            { offset: .69, transform: `translate3d(${numberX}px,${numberY}px,0) scale(1.35) rotateZ(-20deg)`, opacity: 1 },
+            { offset: .84, transform: `translate3d(${numberX}px,${numberY}px,0) scale(6) rotateZ(90deg)`, opacity: 1 },
+            { offset: 1, transform: `translate3d(${numberX}px,${numberY}px,0) scale(18) rotateZ(300deg)`, opacity: 0 }
+        ], { duration: 3000, delay: 160, easing: "cubic-bezier(.16,.72,.2,1)", fill: "forwards" });
     }
     transition.setAttribute("aria-hidden", "false");
     document.body.classList.add("is-unlocking");
