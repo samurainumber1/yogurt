@@ -101,7 +101,17 @@ const games = [
     { title: "World's Hardest Game", path: "games/reviewed/worldshardestgame.html", icon: "\u{1F3AF}", category: "Puzzle", art: "tiles", description: "Guide your square through tight hazards with precise timing." },
     { title: "World's Hardest Game 2", path: "games/reviewed/worldshardestgame2.html", icon: "\u{1F3AF}", category: "Puzzle", art: "tiles", description: "Take on a tougher set of precision challenges and moving hazards." },
     { title: "World's Hardest Game 3", path: "games/reviewed/worldshardestgame3.html", icon: "\u{1F3AF}", category: "Puzzle", art: "tiles", description: "Test your timing through another demanding obstacle course." },
-    { title: "Zombie Rush", path: "games/reviewed/zombierush.html", icon: "\u{1F9DF}", category: "Action", art: "horror", description: "Survive the rush and keep moving through waves of zombies." }
+    { title: "Zombie Rush", path: "games/reviewed/zombierush.html", icon: "\u{1F9DF}", category: "Action", art: "horror", description: "Survive the rush and keep moving through waves of zombies." },
+    { title: "8 Ball Classic", path: "games/reviewed/8-ball-classic.html", icon: "\u{1F3B1}", category: "Sports", art: "court", description: "Line up your shots and sink the eight ball in a classic pool match." },
+    { title: "Ages of Conflict", path: "games/reviewed/ages-of-conflict.html", icon: "\u{1F5FA}\uFE0F", category: "Strategy", art: "city", description: "Shape rival nations and watch their history unfold on the map." },
+    { title: "BitLife", path: "games/reviewed/bitlife.html", icon: "\u{1F9EC}", category: "Adventure", art: "bio", description: "Make life choices and see where your story takes you." },
+    { title: "Crazy Cars", path: "games/reviewed/crazy-cars.html", icon: "\u{1F697}", category: "Racing", art: "crash", description: "Race through wild tracks and keep your car under control." },
+    { title: "Death Chase", path: "games/reviewed/death-chase.html", icon: "\u{1F3CE}\uFE0F", category: "Racing", art: "racing", description: "Race across rough tracks, launch off ramps and avoid the hazards." },
+    { title: "Death Run 3D", path: "games/reviewed/death-run-3D.html", icon: "\u{1F3C3}", category: "Arcade", art: "neon", description: "Dodge obstacles in a fast-paced run through a 3D tunnel." },
+    { title: "Drift Boss", path: "games/reviewed/drift-boss.htm", icon: "\u{1F3CE}\uFE0F", category: "Racing", art: "racing-alt", description: "Time each turn to drift across a narrow, winding track." },
+    { title: "Drift Hunters Pro", path: "games/reviewed/drift-hunters-pro.html", icon: "\u{1F3CE}\uFE0F", category: "Racing", art: "racing", description: "Tune a car and practice your drifts on open tracks." },
+    { title: "State.io", path: "games/reviewed/state-io.html", icon: "\u{1F3F0}", category: "Strategy", art: "city", description: "Send units across the map and capture every state." },
+    { title: "Yohoho.io", path: "games/reviewed/yohoho-io.html", icon: "\u{1F3F4}\u200D\u2620\uFE0F", category: "Arcade", art: "action", description: "Collect treasure and outmaneuver rivals in a pirate arena." }
 ];
 
 function getFeaturedGame(title) {
