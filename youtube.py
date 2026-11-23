@@ -6,13 +6,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from collections import OrderedDict
-from pathlib import Path
-
-from flask import Blueprint, abort, current_app, request, send_from_directory
+from flask import Blueprint, abort, current_app, request
 
 
 youtube = Blueprint("youtube", __name__)
-PROJECT_ROOT = Path(__file__).resolve().parent
 YOUTUBE_API_ROOT = "https://www.googleapis.com/youtube/v3/"
 YOUTUBE_VIDEO_ID = re.compile(r"^[A-Za-z0-9_-]{11}$")
 YOUTUBE_CHANNEL_ID = re.compile(r"^UC[A-Za-z0-9_-]{22}$")
@@ -198,7 +195,6 @@ def youtube_channel_avatar(channel_id):
     response.headers["X-Content-Type-Options"] = "nosniff"
     return response
 
-
 @youtube.get("/api/youtube/video/<video_id>")
 def youtube_video(video_id):
     if not YOUTUBE_VIDEO_ID.fullmatch(video_id):
@@ -261,8 +257,3 @@ def youtube_thumbnail(video_id):
     response.headers["Cache-Control"] = "public, max-age=86400"
     response.headers["X-Content-Type-Options"] = "nosniff"
     return response
-
-
-@youtube.get("/games/ALEX MODS - Encrypted YouTube.html")
-def encrypted_youtube():
-    return send_from_directory(str(PROJECT_ROOT / "games"), "ALEX MODS - Encrypted YouTube.html")

@@ -1,10 +1,14 @@
+import json
+import mimetypes
 import os
 import secrets
-import json
 import time
+from functools import lru_cache
 from html import escape
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
+import boto3
+from botocore.exceptions import BotoCoreError, ClientError
 from flask import Flask, Response, abort, redirect, request, send_from_directory
 
 from admin import admin as admin_blueprint
@@ -12,7 +16,8 @@ from youtube import youtube as youtube_blueprint
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 CANONICAL_HOST = "yogurt-ws0r.onrender.com"
-SLOW_ROADS_ROOT = PROJECT_ROOT / "games" / "Slow Roads"
+R2_ENDPOINT_URL = "https://08325ed3ec32b9235e703950da233f53.r2.cloudflarestorage.com"
+R2_BUCKET_NAME = "alexmods"
 SLOW_ROADS_OMITTED_VIDEOS = {
     "letterbox-general.mp4",
     "letterbox-vehicles.mp4",
@@ -108,6 +113,100 @@ app.register_blueprint(admin_blueprint)
 app.register_blueprint(youtube_blueprint)
 
 
+@lru_cache(maxsize=1)
+def _r2_client():
+    access_key_id = os.environ.get("R2_ACCESS_KEY_ID", "").strip()
+    secret_access_key = os.environ.get("R2_SECRET_ACCESS_KEY", "").strip()
+    if not access_key_id or not secret_access_key:
+        raise RuntimeError("R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY must be configured.")
+    return boto3.client(
+        "s3",
+        endpoint_url=R2_ENDPOINT_URL,
+        region_name="auto",
+        aws_access_key_id=access_key_id,
+        aws_secret_access_key=secret_access_key,
+    )
+
+
+def _serve_r2_object(key):
+    normalized_key = PurePosixPath(key)
+    if (
+        "\\" in key
+        or normalized_key.is_absolute()
+        or not normalized_key.parts
+        or any(part.startswith(".") for part in normalized_key.parts)
+        or any(part in {"", ".", ".."} for part in normalized_key.parts)
+        or normalized_key.parts[0] not in {"games", "screenshots"}
+    ):
+        abort(404)
+
+    try:
+        client = _r2_client()
+        if request.method == "HEAD":
+            metadata = client.head_object(Bucket=R2_BUCKET_NAME, Key=key)
+            body = None
+            status = 200
+        else:
+            request_options = {"Bucket": R2_BUCKET_NAME, "Key": key}
+            range_header = request.headers.get("Range")
+            if range_header:
+                request_options["Range"] = range_header
+            metadata = client.get_object(**request_options)
+            body = metadata["Body"]
+            status = metadata.get("ResponseMetadata", {}).get("HTTPStatusCode", 200)
+    except RuntimeError as error:
+        app.logger.error("R2 game-file service is not configured: %s", error)
+        return Response("Game files are temporarily unavailable.\n", status=503, mimetype="text/plain")
+    except ClientError as error:
+        error_code = error.response.get("Error", {}).get("Code", "")
+        if error_code in {"NoSuchKey", "NoSuchBucket", "404", "NotFound"}:
+            abort(404)
+        app.logger.error("R2 request failed for %s: %s", key, error_code)
+        return Response("Game files are temporarily unavailable.\n", status=502, mimetype="text/plain")
+    except BotoCoreError:
+        app.logger.exception("R2 request failed for %s", key)
+        return Response("Game files are temporarily unavailable.\n", status=502, mimetype="text/plain")
+
+    etag = metadata.get("ETag")
+    if etag and request.if_none_match.contains(etag.strip('"')):
+        if body is not None:
+            body.close()
+        return Response(status=304, headers={"ETag": etag})
+
+    headers = {
+        "Accept-Ranges": "bytes",
+        "Cache-Control": "public, max-age=3600",
+    }
+    if metadata.get("ContentLength") is not None:
+        headers["Content-Length"] = str(metadata["ContentLength"])
+    if etag:
+        headers["ETag"] = etag
+    for metadata_name, header_name in (
+        ("ContentRange", "Content-Range"),
+        ("ContentEncoding", "Content-Encoding"),
+        ("LastModified", "Last-Modified"),
+    ):
+        if metadata.get(metadata_name):
+            value = metadata[metadata_name]
+            headers[header_name] = (
+                value.strftime("%a, %d %b %Y %H:%M:%S GMT")
+                if metadata_name == "LastModified"
+                else value
+            )
+
+    content_type = metadata.get("ContentType") or mimetypes.guess_type(key)[0] or "application/octet-stream"
+    if body is None:
+        return Response(status=status, headers=headers, content_type=content_type)
+
+    def stream_body():
+        try:
+            yield from body.iter_chunks(chunk_size=64 * 1024)
+        finally:
+            body.close()
+
+    return Response(stream_body(), status=status, headers=headers, content_type=content_type)
+
+
 @app.before_request
 def enforce_canonical_host():
     host = request.host.lower()
@@ -199,12 +298,9 @@ def enforce_canonical_host():
 
 
 def _slow_roads_document():
-        response = send_from_directory(
-            str(SLOW_ROADS_ROOT),
-            "index.html",
-            conditional=False,
-            etag=False,
-        )
+        response = _serve_r2_object("games/Slow Roads/index.html")
+        if response.status_code != 200:
+            return response
         response.direct_passthrough = False
         document = response.get_data()
         marker = document.find(b"window.__CF$cv$params")
@@ -295,15 +391,9 @@ def calculator():
 def game_catalog():
     return send_from_directory(str(PROJECT_ROOT), "index.html")
 
-
-@app.get("/graph-calculator")
-def minecraft_launcher():
-    return send_from_directory(str(PROJECT_ROOT), "game.html")
-
-
 @app.get("/space-waves")
 def space_waves_page():
-    return send_from_directory(str(PROJECT_ROOT / "games"), "ALEX MODS - Space Waves.html")
+    return _serve_r2_object("games/ALEX MODS - Space Waves.html")
 
 
 @app.get("/slowroads")
@@ -318,12 +408,12 @@ def slow_roads_page():
 
 @app.get("/slowroads/_app/<path:resource>")
 def slow_roads_app_file(resource):
-    return send_from_directory(str(SLOW_ROADS_ROOT / "_app"), resource)
+    return _serve_r2_object(f"games/Slow Roads/_app/{resource}")
 
 
 @app.get("/slowroads/alea.min.js")
 def slow_roads_alea():
-    return send_from_directory(str(SLOW_ROADS_ROOT), "alea.min.js")
+    return _serve_r2_object("games/Slow Roads/alea.min.js")
 
 
 @app.get("/slowroads/service-worker.js")
@@ -335,17 +425,17 @@ def slow_roads_service_worker():
 @app.get("/slowroads/favicon.svg")
 @app.get("/slowroads/icon.svg")
 def slow_roads_favicon():
-    return send_from_directory(str(SLOW_ROADS_ROOT), "favicon.svg")
+    return _serve_r2_object("games/Slow Roads/favicon.svg")
 
 
 @app.get("/slowroads/apple-touch-icon.png")
 def slow_roads_apple_touch_icon():
-    return send_from_directory(str(SLOW_ROADS_ROOT), "apple-touch-icon.png")
+    return _serve_r2_object("games/Slow Roads/apple-touch-icon.png")
 
 
 @app.get("/slowroads/fonts/<path:resource>")
 def slow_roads_font(resource):
-    return send_from_directory(str(SLOW_ROADS_ROOT / "fonts"), resource)
+    return _serve_r2_object(f"games/Slow Roads/fonts/{resource}")
 
 
 @app.get("/slowroads/img/<path:resource>")
@@ -353,12 +443,12 @@ def slow_roads_image(resource):
     if resource in SLOW_ROADS_OMITTED_VIDEOS:
         app.logger.warning("Slow Roads preview video omitted from local mirror: %s", resource)
         return Response(status=204)
-    return send_from_directory(str(SLOW_ROADS_ROOT / "img"), resource)
+    return _serve_r2_object(f"games/Slow Roads/img/{resource}")
 
 
 @app.get("/slowroads/manifest.json")
 def slow_roads_manifest():
-    return send_from_directory(str(SLOW_ROADS_ROOT), "manifest.json")
+    return _serve_r2_object("games/Slow Roads/manifest.json")
 
 
 @app.after_request
@@ -413,7 +503,7 @@ def set_slow_roads_headers(response):
 
 @app.get("/game.txt")
 def space_waves_game_config():
-    return send_from_directory(str(PROJECT_ROOT / "games"), "game.txt")
+    return _serve_r2_object("games/game.txt")
 
 
 @app.get("/setting.txt")
@@ -432,8 +522,8 @@ def public_file(resource):
         abort(404)
     if resource == "index.html":
         return redirect("/scientific-calculator")
-    if resource == "game.html":
-        return redirect("/graph-calculator")
+    if resource.startswith(("games/", "screenshots/")):
+        return _serve_r2_object(resource)
     return send_from_directory(str(PROJECT_ROOT), resource)
 
 

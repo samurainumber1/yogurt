@@ -2,9 +2,7 @@
 
 const protectedPaths = new Set([
     "/scientific-calculator",
-    "/graph-calculator",
-    "/index.html",
-    "/game.html"
+    "/index.html"
 ]);
 
 function enforceStashAccess() {
