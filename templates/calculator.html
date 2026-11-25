@@ -50,6 +50,7 @@
                         <div class="calculator-controls">
                             <span class="calculator-status"><span>READY</span></span>
                             <button id="angleMode" class="mode-button" type="button" aria-label="Change angle mode">DEG</button>
+                            <button id="expandCalculator" class="expand-button" type="button" aria-expanded="false" aria-controls="advancedKeypad" aria-label="Expand calculator and show more functions">More</button>
                         </div>
                     </div>
                     <div class="display" aria-live="polite" aria-atomic="true">
@@ -91,7 +92,21 @@
                         <button class="key zero-key" type="button" data-append="0">0</button>
                         <button class="key" type="button" data-append=".">.</button>
                     </div>
-                    <p class="keyboard-hint">Enter to calculate · Esc to clear</p>
+                    <div class="advanced-keypad" id="advancedKeypad" hidden>
+                        <button class="key function-key" type="button" data-append="^" aria-label="Power">xʸ</button>
+                        <button class="key function-key" type="button" data-append="÷" aria-label="Fraction division">a/b</button>
+                        <button class="key function-key" type="button" data-append="ANS">Ans</button>
+                        <button class="key function-key" type="button" data-append="e">e</button>
+                        <button class="key function-key" type="button" data-scientific="cbrt" aria-label="Cube root">∛x</button>
+                        <button class="key function-key" type="button" data-scientific="reciprocal" aria-label="Reciprocal">1/x</button>
+                        <button class="key function-key" type="button" data-scientific="factorial" aria-label="Factorial">x!</button>
+                        <button class="key function-key" type="button" data-scientific="absolute" aria-label="Absolute value">|x|</button>
+                        <button class="key function-key" type="button" data-scientific="percent" aria-label="Convert to a percent">%</button>
+                        <button class="key function-key" type="button" data-scientific="tenpower" aria-label="Ten to the power of x">10ˣ</button>
+                        <button class="key function-key" type="button" data-scientific="fraction" aria-label="Convert result to a fraction">Frac</button>
+                        <button class="key function-key" type="button" data-scientific="recurring" aria-label="Show a fraction as a recurring decimal">↻</button>
+                    </div>
+                    <p class="keyboard-hint">Enter to calculate · Esc to clear<br>More mode adds fractions, powers, roots, and recurring decimals.</p>
                 </div>
             </section>
         </section>
@@ -122,9 +137,84 @@
             </div>
         </section>
 
+        <section class="study-guide" aria-labelledby="study-guide-heading">
+            <div class="study-guide-intro">
+                <p class="eyebrow">A FRIENDLY PLACE TO START</p>
+                <h2 id="study-guide-heading">Math questions come in all shapes and sizes.</h2>
+                <p>Sometimes you need a quick percentage before splitting a bill. Other times a worksheet has handed you a quadratic equation and a suspiciously small amount of space to solve it. Either way, start with the question you have and pick the helper that matches.</p>
+                <p>Use the calculator for expressions and common scientific functions, or browse the tools for a more specific job. Enter the values you know, check the result, and take a moment to see whether it makes sense for the problem.</p>
+            </div>
+
+            <div class="topic-grid">
+                <article class="topic-card">
+                    <h3>Quick number checks</h3>
+                    <p>Percentages, ratios, factors, fractions, and probability are easier to work through when you can focus on one step at a time.</p>
+                    <a class="text-link" href="/tools/percentage">Try the percentage calculator <span aria-hidden="true">→</span></a>
+                </article>
+                <article class="topic-card">
+                    <h3>Homework and algebra</h3>
+                    <p>Review averages, powers, and equations. The tools can help you check an answer, spot a sign mistake, or get unstuck on the next step.</p>
+                    <a class="text-link" href="/tools/linear-equation">Try the linear equation solver <span aria-hidden="true">→</span></a>
+                </article>
+                <article class="topic-card">
+                    <h3>Shapes and measurements</h3>
+                    <p>Work out dimensions, compare units, or revisit geometry formulas without having to hunt through a notebook for that one missing rule.</p>
+                    <a class="text-link" href="/tools/pythagorean">Try the right triangle solver <span aria-hidden="true">→</span></a>
+                </article>
+            </div>
+        </section>
+
+        <section class="how-it-works" aria-labelledby="how-it-works-heading">
+            <p class="eyebrow">NO BIG SETUP, NO MATH DRAMA</p>
+            <h2 id="how-it-works-heading">A simple way to get from question to answer</h2>
+            <ol class="steps-grid">
+                <li>
+                    <span class="step-number">1</span>
+                    <h3>Choose a starting point</h3>
+                    <p>Pick a tool by topic, or open the calculator if you already know the expression you want to check.</p>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <h3>Enter what you know</h3>
+                    <p>Fill in the numbers and select units where needed. If a value is missing, choose a tool designed to solve for it.</p>
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <h3>Check that it makes sense</h3>
+                    <p>Compare the result with your estimate, include units in your work, and follow any rounding instructions from class.</p>
+                </li>
+            </ol>
+        </section>
+
+        <section class="faq-section" aria-labelledby="faq-heading">
+            <div class="faq-heading">
+                <p class="eyebrow">A FEW THINGS YOU MIGHT BE WONDERING</p>
+                <h2 id="faq-heading">Frequently asked questions</h2>
+            </div>
+            <div class="faq-grid">
+                <details>
+                    <summary>Are these math tools free to use?</summary>
+                    <p>Yes. The calculator and study tools are free to use in your browser, with no account or download required.</p>
+                </details>
+                <details>
+                    <summary>Can I use these tools for homework?</summary>
+                    <p>They are handy for checking a result and reviewing a calculation. For homework, use them to support your understanding and show the steps your teacher asks for.</p>
+                </details>
+                <details>
+                    <summary>Are the numbers I enter saved?</summary>
+                    <p>Calculations happen in your browser. The site does not submit or save the values you enter; they stay in the page while you are using it.</p>
+                </details>
+                <details>
+                    <summary>Why might my answer look different from my worksheet?</summary>
+                    <p>Some problems require a particular number of decimal places, units, or an exact fraction. Check your class instructions and round only when asked.</p>
+                </details>
+            </div>
+        </section>
+
         <section class="about-section" id="about" aria-labelledby="about-heading">
             <h2 id="about-heading">About Everyday Math</h2>
-            <p>Everyday Math brings together {{ tools|length }} quick helpers for arithmetic, schoolwork, algebra, geometry, statistics, and unit conversions. Each tool works in your browser, needs no account, and is designed to give a useful answer without getting in the way.</p>
+            <p>Everyday Math brings together {{ tools|length }} quick helpers for arithmetic, schoolwork, algebra, geometry, statistics, and unit conversions. It is built for the little moments when you want to check a number, practice a familiar skill, or get a clearer starting point on a problem.</p>
+            <p>There is no sign-up and no software to install. Calculations run in your browser, and the tools are designed to be straightforward on a laptop, tablet, or phone. They are here to make math a little less of a hassle, not to make a simple question feel like a big production.</p>
         </section>
     </main>
     <footer class="site-footer">Free online math tools · Works on desktop and mobile</footer>

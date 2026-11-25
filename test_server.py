@@ -165,6 +165,17 @@ def test_calculator_is_the_only_default_page(client):
     assert b'id="about"' in response.data
     assert b"Open the calculator" in response.data
     assert b"class=\"quick-facts\"" in response.data
+    assert b'id="expandCalculator"' in response.data
+    assert b'id="advancedKeypad" hidden' in response.data
+    assert b'data-append="^"' in response.data
+    assert b'data-scientific="fraction"' in response.data
+    assert b'data-scientific="recurring"' in response.data
+    assert b'data-scientific="cbrt"' in response.data
+    assert b'id="study-guide-heading"' in response.data
+    assert b'id="how-it-works-heading"' in response.data
+    assert b'id="faq-heading"' in response.data
+    assert response.data.count(b"<details>") == 4
+    assert b"Calculations run in your browser" in response.data
     calculator_css = (Path(app.root_path) / "assets" / "calculator.css").read_text(encoding="utf-8")
     assert "color-scheme: light" in calculator_css
     assert "transition:" not in calculator_css
