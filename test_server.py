@@ -2,6 +2,7 @@ import io
 import re
 import uuid
 from datetime import datetime, timezone
+from html import escape
 from pathlib import Path
 from urllib.parse import quote
 
@@ -151,39 +152,41 @@ def test_calculator_is_the_only_default_page(client):
     assert response.status_code == 200
     assert b"assets/calculator.js" in response.data
     assert b"assets/catalog.js" not in response.data
-    assert b"id=\"themeTrigger\"" in response.data
-    assert b"id=\"unlockTransition\"" in response.data
-    assert b"Opening the game stash" in response.data
+    assert b"id=\"themeTrigger\"" not in response.data
+    assert b"id=\"unlockTransition\"" not in response.data
+    assert b"Alex Mods" not in response.data
+    assert len(server.STUDY_TOOLS) == 25
+    assert len(server.STUDY_TOOLS) - 4 == 21
+    assert b'id="toolForm"' not in response.data
+    for slug, tool in server.STUDY_TOOLS.items():
+        assert f'href="/tools/{slug}"'.encode() in response.data
+        assert escape(tool["title"]).encode() in response.data
+    assert b'id="study-tools"' in response.data
+    assert b'id="about"' in response.data
+    assert b"Open the calculator" in response.data
+    assert b"class=\"quick-facts\"" in response.data
+    calculator_css = (Path(app.root_path) / "assets" / "calculator.css").read_text(encoding="utf-8")
+    assert "color-scheme: light" in calculator_css
+    assert "transition:" not in calculator_css
+    assert "animation:" not in calculator_css
     calculator_js = (Path(app.root_path) / "assets" / "calculator.js").read_text(encoding="utf-8")
     assert '"6942024421"' in calculator_js
     assert 'sessionStorage.removeItem("arcadeUnlocked")' in calculator_js
+    assert 'window.location.assign("/scientific-calculator")' in calculator_js
+    assert "setTimeout" not in calculator_js
     assert b"scientific-calculator" not in response.data
-    swatches = re.findall(rb'data-theme="([^"]+)" data-tooltip="([^"]+)"', response.data)
-    assert swatches == [
-        (b"default", b"Default"),
-        (b"red", b"Red"),
-        (b"orange", b"Orange"),
-        (b"yellow", b"Yellow"),
-        (b"lime", b"Lime"),
-        (b"green", b"Green"),
-        (b"mint", b"Mint"),
-        (b"cyan", b"Cyan"),
-        (b"blue", b"Blue"),
-        (b"ice", b"Ice"),
-        (b"indigo", b"Indigo"),
-        (b"purple", b"Purple"),
-        (b"violet", b"Violet"),
-        (b"pink", b"Pink"),
-        (b"sunset", b"Sunset"),
-        (b"fire", b"Fire"),
-        (b"aurora", b"Aurora"),
-        (b"candy", b"Candy"),
-        (b"galaxy", b"Galaxy"),
-    ]
-    assert response.data.count(b"linear-gradient(") >= len(swatches)
-    theme_js = (Path(app.root_path) / "assets" / "theme.js").read_text(encoding="utf-8")
-    theme_ids = re.findall(r"^    (\w+): \{ accent:", theme_js, re.MULTILINE)
-    assert [theme.decode() for theme, _ in swatches] == theme_ids
+
+
+def test_study_tool_pages_open_from_homepage_links(client):
+    for slug, tool in server.STUDY_TOOLS.items():
+        response = client.get(f"/tools/{slug}")
+        assert response.status_code == 200
+        assert escape(tool["title"]).encode() in response.data
+        assert b"assets/study-tools.js" in response.data
+        assert f'data-tool="{tool["kind"]}"'.encode() in response.data
+        assert response.data.count(b'data-field="') == len(tool["fields"])
+
+    assert client.get("/tools/not-a-tool").status_code == 404
 
 
 def test_catalog_is_gated_and_minecraft_1206_is_removed(client):
@@ -473,13 +476,14 @@ def test_catalog_game_and_city_paths_are_served(client):
         assert response.status_code == 200, path
 
 
-def test_routes_are_static_only():
+def test_routes_are_explicit():
     rules = {rule.rule for rule in app.url_map.iter_rules()}
 
     assert rules == {
         "/",
         "/calculator",
         "/calculator.html",
+        "/tools/<tool_slug>",
         "/scientific-calculator",
         "/api/youtube/search",
         "/api/youtube/shorts",

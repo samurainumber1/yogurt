@@ -9,7 +9,7 @@ from pathlib import Path, PurePosixPath
 
 import boto3
 from botocore.exceptions import BotoCoreError, ClientError
-from flask import Flask, Response, abort, redirect, request, send_from_directory
+from flask import Flask, Response, abort, redirect, render_template, request, send_from_directory
 
 from admin import admin as admin_blueprint
 from youtube import youtube as youtube_blueprint
@@ -384,7 +384,154 @@ def home():
 @app.get("/calculator")
 @app.get("/calculator.html")
 def calculator():
-    return send_from_directory(str(PROJECT_ROOT), "calculator.html")
+    return render_template("calculator.html", tools=list(STUDY_TOOLS.values()))
+
+
+def _number_field(name, label, placeholder="Enter a value", step="any"):
+    return {"name": name, "label": label, "type": "number", "placeholder": placeholder, "step": step}
+
+
+def _text_field(name, label, placeholder="Enter values", rows=3):
+    return {"name": name, "label": label, "type": "textarea", "placeholder": placeholder, "rows": rows}
+
+
+def _select_field(name, label, options, default=None):
+    return {"name": name, "label": label, "type": "select", "options": options, "default": default}
+
+
+def _tool(slug, kind, title, description, symbol, category, style, fields):
+    return slug, {
+        "slug": slug,
+        "kind": kind,
+        "title": title,
+        "description": description,
+        "symbol": symbol,
+        "category": category,
+        "style": style,
+        "fields": fields,
+    }
+
+
+LENGTH_OPTIONS = [("mm", "Millimeters (mm)"), ("cm", "Centimeters (cm)"), ("m", "Meters (m)"), ("km", "Kilometers (km)"), ("in", "Inches (in)"), ("ft", "Feet (ft)"), ("yd", "Yards (yd)"), ("mi", "Miles (mi)")]
+TEMPERATURE_OPTIONS = [("c", "Celsius (°C)"), ("f", "Fahrenheit (°F)"), ("k", "Kelvin (K)")]
+MASS_OPTIONS = [("mg", "Milligrams (mg)"), ("g", "Grams (g)"), ("kg", "Kilograms (kg)"), ("oz", "Ounces (oz)"), ("lb", "Pounds (lb)"), ("ton", "US tons")]
+FRACTION_OPERATIONS = [("+", "Add (+)"), ("-", "Subtract (−)"), ("*", "Multiply (×)"), ("/", "Divide (÷)")]
+
+STUDY_TOOLS = dict([
+    _tool("percentage", "percentage", "Percentage calculator", "Find a percentage of a number, compare amounts, or check a discount.", "%", "QUICK MATH", "tool-blue", [
+        _number_field("percent", "Percentage", "e.g. 15"),
+        _number_field("amount", "Number", "e.g. 80"),
+    ]),
+    _tool("grades", "grades", "Grade average", "Average quiz, test, and assignment scores from 0 to 100.", "x̄", "SCHOOL", "tool-teal", [
+        _text_field("scores", "Scores", "e.g. 85, 92, 78"),
+    ]),
+    _tool("fractions", "fractions", "Fraction simplifier", "Reduce a fraction to its simplest form and see the decimal value.", "a⁄b", "FRACTIONS", "tool-purple", [
+        _number_field("numerator", "Numerator", "e.g. 18", "1"),
+        _number_field("denominator", "Denominator", "e.g. 24", "1"),
+    ]),
+    _tool("length", "length", "Length converter", "Convert common metric and imperial measurements.", "↔", "CONVERSIONS", "tool-orange", [
+        _number_field("value", "Value"),
+        _select_field("from", "From", LENGTH_OPTIONS, "m"),
+        _select_field("to", "To", LENGTH_OPTIONS, "ft"),
+    ]),
+    _tool("ratio", "ratio", "Ratio solver", "Solve a missing value in an equivalent proportion a:b = c:x.", "a:b", "RATIOS", "tool-blue", [
+        _number_field("a", "First value (a)"),
+        _number_field("b", "Second value (b)"),
+        _number_field("c", "Third value (c)"),
+    ]),
+    _tool("gcf-lcm", "gcf-lcm", "GCF & LCM finder", "Find the greatest common factor and least common multiple of two integers.", "G", "NUMBER SENSE", "tool-teal", [
+        _number_field("a", "First integer", "e.g. 18", "1"),
+        _number_field("b", "Second integer", "e.g. 24", "1"),
+    ]),
+    _tool("statistics", "statistics", "Mean, median & mode", "Summarize a list of numbers with three common averages.", "x̄", "DATA", "tool-purple", [
+        _text_field("data", "Numbers", "e.g. 4, 7, 7, 10"),
+    ]),
+    _tool("prime-factors", "prime-factors", "Prime & factor checker", "Check whether a whole number is prime and see its prime factorization.", "p", "NUMBER SENSE", "tool-orange", [
+        _number_field("number", "Whole number (2 to 1 trillion)", "e.g. 84", "1"),
+    ]),
+    _tool("powers", "powers", "Powers calculator", "Raise a number to any power and get the result.", "xⁿ", "EXPONENTS", "tool-teal", [
+        _number_field("base", "Base", "e.g. 2"),
+        _number_field("exponent", "Exponent", "e.g. 8"),
+    ]),
+    _tool("linear-equation", "linear-equation", "Linear equation solver", "Solve an equation in the form ax + b = c.", "ax", "ALGEBRA", "tool-purple", [
+        _number_field("a", "Coefficient (a)"),
+        _number_field("b", "Constant (b)"),
+        _number_field("c", "Right side (c)"),
+    ]),
+    _tool("quadratic-equation", "quadratic-equation", "Quadratic equation solver", "Find the real solutions to ax² + bx + c = 0.", "x²", "ALGEBRA", "tool-orange", [
+        _number_field("a", "Coefficient (a)"),
+        _number_field("b", "Coefficient (b)"),
+        _number_field("c", "Constant (c)"),
+    ]),
+    _tool("pythagorean", "pythagorean", "Right triangle solver", "Find the hypotenuse from the lengths of the two shorter sides.", "√", "GEOMETRY", "tool-blue", [
+        _number_field("sideA", "Side a"),
+        _number_field("sideB", "Side b"),
+    ]),
+    _tool("circle", "circle", "Circle calculator", "Calculate a circle’s area and circumference from its radius.", "πr²", "GEOMETRY", "tool-teal", [
+        _number_field("radius", "Radius"),
+    ]),
+    _tool("rectangle", "rectangle", "Rectangle calculator", "Calculate the area, perimeter, and diagonal of a rectangle.", "▱", "GEOMETRY", "tool-purple", [
+        _number_field("length", "Length"),
+        _number_field("width", "Width"),
+    ]),
+    _tool("temperature", "temperature", "Temperature converter", "Convert between Celsius, Fahrenheit, and Kelvin.", "°", "CONVERSIONS", "tool-orange", [
+        _number_field("value", "Temperature"),
+        _select_field("from", "From", TEMPERATURE_OPTIONS, "c"),
+        _select_field("to", "To", TEMPERATURE_OPTIONS, "f"),
+    ]),
+    _tool("mass", "mass", "Mass converter", "Convert metric mass units, ounces, pounds, and US tons.", "kg", "CONVERSIONS", "tool-teal", [
+        _number_field("value", "Value"),
+        _select_field("from", "From", MASS_OPTIONS, "kg"),
+        _select_field("to", "To", MASS_OPTIONS, "lb"),
+    ]),
+    _tool("number-base", "number-base", "Number base converter", "Convert a decimal integer to binary, octal, and hexadecimal.", "2ⁿ", "NUMBER SENSE", "tool-purple", [
+        _number_field("number", "Decimal integer", "e.g. 255", "1"),
+    ]),
+    _tool("roman-numerals", "roman-numerals", "Roman numeral converter", "Convert a whole number from 1 to 3,999 into Roman numerals.", "I", "NUMBER SENSE", "tool-orange", [
+        _number_field("number", "Whole number (1 to 3,999)", "e.g. 2025", "1"),
+    ]),
+    _tool("multiplication-table", "multiplication-table", "Multiplication table", "Build a multiplication table for any number, up to 20 rows.", "×", "SCHOOL", "tool-blue", [
+        _number_field("number", "Number", "e.g. 7"),
+        _number_field("limit", "Number of rows (1 to 20)", "12", "1"),
+    ]),
+    _tool("scientific-notation", "scientific-notation", "Scientific notation converter", "Express a number in scientific notation and standard form.", "10ⁿ", "NUMBER SENSE", "tool-teal", [
+        _number_field("number", "Number", "e.g. 6020000"),
+    ]),
+    _tool("decimal-converter", "decimal-converter", "Decimal, fraction & percent", "Convert a decimal into its simplest fraction and percentage.", "½", "FRACTIONS", "tool-purple", [
+        _number_field("decimal", "Decimal number", "e.g. 0.375"),
+    ]),
+    _tool("fraction-arithmetic", "fraction-arithmetic", "Fraction calculator", "Add, subtract, multiply, or divide two fractions.", "a/b", "FRACTIONS", "tool-orange", [
+        _number_field("numeratorA", "First numerator", "e.g. 1", "1"),
+        _number_field("denominatorA", "First denominator", "e.g. 2", "1"),
+        _select_field("operation", "Operation", FRACTION_OPERATIONS, "+"),
+        _number_field("numeratorB", "Second numerator", "e.g. 1", "1"),
+        _number_field("denominatorB", "Second denominator", "e.g. 3", "1"),
+    ]),
+    _tool("probability", "probability", "Probability calculator", "Find the chance of an event from favorable and total outcomes.", "P", "DATA", "tool-blue", [
+        _number_field("favorable", "Favorable outcomes", "e.g. 1", "1"),
+        _number_field("total", "Total possible outcomes", "e.g. 6", "1"),
+    ]),
+    _tool("slope", "slope", "Slope calculator", "Find the slope between two points on a coordinate plane.", "m", "ALGEBRA", "tool-teal", [
+        _number_field("x1", "x₁"),
+        _number_field("y1", "y₁"),
+        _number_field("x2", "x₂"),
+        _number_field("y2", "y₂"),
+    ]),
+    _tool("coordinate-distance", "coordinate-distance", "Coordinate distance & midpoint", "Find the distance and midpoint between two points.", "↔", "GEOMETRY", "tool-purple", [
+        _number_field("x1", "x₁"),
+        _number_field("y1", "y₁"),
+        _number_field("x2", "x₂"),
+        _number_field("y2", "y₂"),
+    ]),
+])
+
+
+@app.get("/tools/<tool_slug>")
+def study_tool(tool_slug):
+    tool = STUDY_TOOLS.get(tool_slug)
+    if tool is None:
+        abort(404)
+    return render_template("study_tool.html", tool=tool)
 
 
 @app.get("/scientific-calculator")

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta name="google-site-verification" content="hwsjl3wshZ1hCw2h6vWeMnW9TgNsrdwUTYAsCM4W7tk">
+    <script>(() => {
+        const assetRoot = window.location.hostname.toLowerCase() === "samurainumber1.github.io" ? "/yogurt/" : "/";
+        document.write('<script src="' + assetRoot + 'assets/canonical-host.js"><' + '/script>');
+    })();</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f6f7">
+    <meta name="description" content="Explore 25 free browser-based math tools for percentages, algebra, geometry, fractions, data, and unit conversions.">
+    <title>Everyday Math Tools</title>
+    <link rel="stylesheet" href="assets/calculator.css">
+    <script src="assets/calculator.js" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="/calculator">Everyday Math</a>
+        <nav class="site-nav" aria-label="Main navigation">
+            <a href="#calculator">Calculator</a>
+            <a href="#study-tools">Study tools</a>
+            <a href="#about">About</a>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <section class="hero" aria-labelledby="page-title">
+            <div class="hero-copy">
+                <p class="eyebrow">A SIMPLE TOOLKIT FOR EVERYDAY MATH</p>
+                <h1 id="page-title">Math made clear,<br><span>one step at a time.</span></h1>
+                <p>Get a quick answer, check your working, or tackle a school problem with free tools that run right here in your browser.</p>
+                <div class="hero-actions">
+                    <a class="button-link button-link-primary" href="#calculator">Open the calculator</a>
+                    <a class="button-link button-link-secondary" href="#study-tools">Explore study tools</a>
+                </div>
+                <ul class="hero-points" aria-label="About these tools">
+                    <li>{{ tools|length }} useful tools</li>
+                    <li>No account needed</li>
+                    <li>Works on mobile</li>
+                    <li>Values stay in your browser</li>
+                </ul>
+            </div>
+
+            <section class="calculator-section" id="calculator" aria-labelledby="calculator-heading">
+                <h2 id="calculator-heading">Scientific calculator</h2>
+                <div class="calculator" aria-label="Scientific calculator">
+                    <div class="calculator-top">
+                        <span class="calculator-label">Calculator</span>
+                        <div class="calculator-controls">
+                            <span class="calculator-status"><span>READY</span></span>
+                            <button id="angleMode" class="mode-button" type="button" aria-label="Change angle mode">DEG</button>
+                        </div>
+                    </div>
+                    <div class="display" aria-live="polite" aria-atomic="true">
+                        <div class="previous" id="previous" aria-label="Previous calculation"></div>
+                        <div class="current" id="current">0</div>
+                    </div>
+                    <div class="keypad" id="keypad">
+                        <button class="key function-key" type="button" data-scientific="sin">sin</button>
+                        <button class="key function-key" type="button" data-scientific="cos">cos</button>
+                        <button class="key function-key" type="button" data-scientific="tan">tan</button>
+                        <button class="key function-key" type="button" data-scientific="sqrt">√</button>
+                        <button class="key operator-key" type="button" data-append="÷">÷</button>
+
+                        <button class="key function-key" type="button" data-scientific="log">log</button>
+                        <button class="key function-key" type="button" data-scientific="ln">ln</button>
+                        <button class="key function-key" type="button" data-scientific="square">x²</button>
+                        <button class="key function-key" type="button" data-append="π">π</button>
+                        <button class="key operator-key" type="button" data-append="×">×</button>
+
+                        <button class="key" type="button" data-append="7">7</button>
+                        <button class="key" type="button" data-append="8">8</button>
+                        <button class="key" type="button" data-append="9">9</button>
+                        <button class="key function-key" type="button" data-append="(">(</button>
+                        <button class="key operator-key" type="button" data-append="−">−</button>
+
+                        <button class="key" type="button" data-append="4">4</button>
+                        <button class="key" type="button" data-append="5">5</button>
+                        <button class="key" type="button" data-append="6">6</button>
+                        <button class="key function-key" type="button" data-append=")">)</button>
+                        <button class="key operator-key" type="button" data-append="+">+</button>
+
+                        <button class="key" type="button" data-append="1">1</button>
+                        <button class="key" type="button" data-append="2">2</button>
+                        <button class="key" type="button" data-append="3">3</button>
+                        <button class="key clear-key" type="button" data-action="delete" aria-label="Delete last character">DEL</button>
+                        <button class="key equals-key" type="button" data-action="calculate" aria-label="Calculate">=</button>
+
+                        <button class="key clear-key" type="button" data-action="clear">AC</button>
+                        <button class="key zero-key" type="button" data-append="0">0</button>
+                        <button class="key" type="button" data-append=".">.</button>
+                    </div>
+                    <p class="keyboard-hint">Enter to calculate · Esc to clear</p>
+                </div>
+            </section>
+        </section>
+
+        <section class="quick-facts" aria-label="Everyday Math at a glance">
+            <div><strong>{{ tools|length }}</strong><span>useful math tools</span></div>
+            <div><strong>0</strong><span>downloads required</span></div>
+            <div><strong>100%</strong><span>browser-based calculations</span></div>
+        </section>
+
+        <section class="tools-section" id="study-tools" aria-labelledby="tools-heading">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">QUICK HELP FOR CLASS &amp; HOMEWORK</p>
+                    <h2 id="tools-heading">More math tools</h2>
+                </div>
+                <p>Results are calculated in your browser; tool values are not submitted or saved.</p>
+            </div>
+            <div class="tools-grid">
+                {% for tool in tools %}
+                <article class="tool-card {{ tool.style }}">
+                    <div class="tool-card-top"><span class="tool-icon" aria-hidden="true">{{ tool.symbol }}</span><span class="tool-category">{{ tool.category }}</span></div>
+                    <h3>{{ tool.title }}</h3>
+                    <p>{{ tool.description }}</p>
+                    <a class="tool-use" href="/tools/{{ tool.slug }}" aria-label="Use {{ tool.title }}">Use tool <span aria-hidden="true">→</span></a>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="about-section" id="about" aria-labelledby="about-heading">
+            <h2 id="about-heading">About Everyday Math</h2>
+            <p>Everyday Math brings together {{ tools|length }} quick helpers for arithmetic, schoolwork, algebra, geometry, statistics, and unit conversions. Each tool works in your browser, needs no account, and is designed to give a useful answer without getting in the way.</p>
+        </section>
+    </main>
+    <footer class="site-footer">Free online math tools · Works on desktop and mobile</footer>
+</body>
+</html>

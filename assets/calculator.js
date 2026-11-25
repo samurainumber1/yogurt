@@ -5,9 +5,6 @@ const previousDisplay = document.querySelector("#previous");
 const calculatorStatus = document.querySelector(".calculator-status");
 const keypad = document.querySelector("#keypad");
 const angleModeButton = document.querySelector("#angleMode");
-const themePicker = document.querySelector("#themePalette");
-const themeTrigger = document.querySelector("#themeTrigger");
-const themeColor = document.querySelector('meta[name="theme-color"]');
 sessionStorage.removeItem("arcadeUnlocked");
 let expression = "";
 let angleMode = "DEG";
@@ -26,59 +23,7 @@ function unlockCatalog() {
     unlockStarted = true;
     sessionStorage.setItem("arcadeUnlocked", "1");
     sessionStorage.setItem("arcadeEntryStartedAt", String(Date.now()));
-    const transition = document.querySelector("#unlockTransition");
-    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!reducedMotion) {
-        document.querySelector(".calculator-layout").style.animation = "none";
-        const calculator = document.querySelector(".calculator");
-        const calculatorBounds = calculator.getBoundingClientRect();
-        const display = document.querySelector("#current");
-        display.textContent = "2323";
-        const bounds = display.getBoundingClientRect();
-        const centerX = innerWidth / 2 - (calculatorBounds.left + calculatorBounds.width / 2);
-        const centerY = innerHeight / 2 - (calculatorBounds.top + calculatorBounds.height / 2);
-        const numberX = innerWidth / 2 - (bounds.left + bounds.width / 2);
-        const numberY = innerHeight / 2 - (bounds.top + bounds.height / 2);
-        Object.assign(calculator.style, {
-            position: "fixed",
-            left: `${calculatorBounds.left}px`,
-            top: `${calculatorBounds.top}px`,
-            width: `${calculatorBounds.width}px`,
-            margin: "0",
-            zIndex: "70",
-            transformOrigin: "center"
-        });
-        calculator.animate([
-            { offset: 0, transform: "translate3d(0,0,0) scale(1) rotateZ(0deg)", opacity: 1 },
-            { offset: .28, transform: `translate3d(${centerX}px,${centerY}px,0) scale(1.08) rotateZ(0deg)`, opacity: 1 },
-            { offset: .42, transform: `translate3d(${centerX}px,${centerY}px,0) scale(1.08) rotateZ(0deg)`, opacity: 1 },
-            { offset: .72, transform: `translate3d(${centerX}px,${centerY}px,0) scale(.58) rotateZ(540deg)`, opacity: .92 },
-            { offset: 1, transform: `translate3d(${centerX}px,${centerY}px,0) scale(.008) rotateZ(1260deg)`, opacity: 0 }
-        ], { duration: 2750, easing: "cubic-bezier(.16,.72,.22,1)", fill: "forwards" });
-
-        const zoom = document.createElement("span");
-        zoom.className = "unlock-zoom-value";
-        zoom.textContent = "2323";
-        zoom.style.left = `${bounds.left}px`;
-        zoom.style.top = `${bounds.top}px`;
-        zoom.style.width = `${bounds.width}px`;
-        zoom.style.height = `${bounds.height}px`;
-        zoom.style.fontSize = getComputedStyle(display).fontSize;
-        transition.append(zoom);
-        transition.classList.add("is-zooming");
-        zoom.animate([
-            { offset: 0, transform: "translate3d(0,0,0) scale(.7) rotateZ(0deg)", opacity: 0 },
-            { offset: .2, transform: `translate3d(${numberX}px,${numberY}px,0) scale(.7) rotateZ(0deg)`, opacity: 0 },
-            { offset: .6, transform: `translate3d(${numberX}px,${numberY}px,0) scale(.7) rotateZ(0deg)`, opacity: 0 },
-            { offset: .69, transform: `translate3d(${numberX}px,${numberY}px,0) scale(1.35) rotateZ(-20deg)`, opacity: 1 },
-            { offset: .84, transform: `translate3d(${numberX}px,${numberY}px,0) scale(6) rotateZ(90deg)`, opacity: 1 },
-            { offset: 1, transform: `translate3d(${numberX}px,${numberY}px,0) scale(18) rotateZ(300deg)`, opacity: 0 }
-        ], { duration: 3000, delay: 160, easing: "cubic-bezier(.16,.72,.2,1)", fill: "forwards" });
-    }
-    transition.setAttribute("aria-hidden", "false");
-    document.body.classList.add("is-unlocking");
-    const transitionTime = reducedMotion ? 220 : 3300;
-    window.setTimeout(() => window.location.assign("/scientific-calculator"), transitionTime);
+    window.location.assign("/scientific-calculator");
 }
 
 function recordUnlockKey(value) {
@@ -98,46 +43,6 @@ function recordUnlockKey(value) {
     }
     return false;
 }
-
-function setTheme(themeId) {
-    const preset = window.themePresets[themeId];
-    if (!preset) return;
-    document.documentElement.style.setProperty("--accent", preset.accent);
-    document.documentElement.style.setProperty("--accent-rgb", preset.rgb);
-    document.documentElement.style.setProperty("--accent-gradient", preset.gradient);
-    themeColor.setAttribute("content", preset.accent);
-    localStorage.setItem("calculatorTheme", themeId);
-    themePicker.querySelectorAll(".theme-swatch").forEach(swatch => {
-        swatch.setAttribute("aria-pressed", String(swatch.dataset.theme === themeId));
-    });
-}
-
-setTheme(localStorage.getItem("calculatorTheme") || "default");
-
-function toggleThemePicker(open) {
-    const shouldOpen = open ?? themePicker.hidden;
-    themePicker.hidden = !shouldOpen;
-    themeTrigger.setAttribute("aria-expanded", String(shouldOpen));
-    if (shouldOpen) themePicker.querySelector('[aria-pressed="true"]').focus();
-}
-
-themeTrigger.addEventListener("click", () => toggleThemePicker());
-themePicker.addEventListener("click", event => {
-    const swatch = event.target.closest(".theme-swatch");
-    if (!swatch) return;
-    setTheme(swatch.dataset.theme);
-    toggleThemePicker(false);
-    themeTrigger.focus();
-});
-document.addEventListener("click", event => {
-    if (!event.target.closest(".theme-picker")) toggleThemePicker(false);
-});
-document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && !themePicker.hidden) {
-        toggleThemePicker(false);
-        themeTrigger.focus();
-    }
-});
 
 function updateDisplay() {
     currentDisplay.textContent = expression || "0";
@@ -305,6 +210,7 @@ angleModeButton.addEventListener("click", () => {
 });
 
 document.addEventListener("keydown", event => {
+    if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable='true']")) return;
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     if (/^[0-9.]$/.test(event.key)) {
         event.preventDefault();

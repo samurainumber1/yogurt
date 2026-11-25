@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f6f7">
+    <meta name="description" content="{{ tool.description }}">
+    <title>{{ tool.title }} · Everyday Math</title>
+    <script>(() => {
+        const assetRoot = window.location.hostname.toLowerCase() === "samurainumber1.github.io" ? "/yogurt/" : "/";
+        document.write('<script src="' + assetRoot + 'assets/canonical-host.js"><' + '/script>');
+    })();</script>
+    <link rel="stylesheet" href="/assets/calculator.css">
+    <script src="/assets/study-tools.js" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="/calculator">Everyday Math</a>
+        <nav class="site-nav" aria-label="Main navigation">
+            <a href="/calculator#calculator">Calculator</a>
+            <a href="/calculator#study-tools">All tools</a>
+            <a href="/calculator#about">About</a>
+        </nav>
+    </header>
+
+    <main class="tool-page">
+        <a class="tool-back" href="/calculator#study-tools">← All math tools</a>
+        <section class="tool-page-panel {{ tool.style }}" data-tool="{{ tool.kind }}" aria-labelledby="tool-title">
+            <div class="tool-card-top">
+                <span class="tool-icon" aria-hidden="true">{{ tool.symbol }}</span>
+                <span class="tool-category">{{ tool.category }}</span>
+            </div>
+            <h1 id="tool-title">{{ tool.title }}</h1>
+            <p>{{ tool.description }}</p>
+
+            <form class="tool-form" id="toolForm">
+                {% for field in tool.fields %}
+                <label for="{{ field.name }}">{{ field.label }}</label>
+                {% if field.type == "select" %}
+                <select id="{{ field.name }}" data-field="{{ field.name }}">
+                    {% for value, label in field.options %}
+                    <option value="{{ value }}" {% if value == field.default %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                {% elif field.type == "textarea" %}
+                <textarea id="{{ field.name }}" data-field="{{ field.name }}" rows="{{ field.rows }}" placeholder="{{ field.placeholder }}"></textarea>
+                {% elif field.suffix %}
+                <div class="input-with-suffix">
+                    <input id="{{ field.name }}" data-field="{{ field.name }}" type="{{ field.type }}" step="{{ field.step }}" placeholder="{{ field.placeholder }}">
+                    <span>{{ field.suffix }}</span>
+                </div>
+                {% else %}
+                <input id="{{ field.name }}" data-field="{{ field.name }}" type="{{ field.type }}" step="{{ field.step }}" placeholder="{{ field.placeholder }}">
+                {% endif %}
+                {% endfor %}
+                <output class="tool-result" id="toolResult" aria-live="polite">Enter values to calculate.</output>
+            </form>
+
+            <p class="tool-page-note">Your values are calculated in this browser and are not saved.</p>
+        </section>
+    </main>
+    <footer class="site-footer">Everyday Math · Free online study tools</footer>
+</body>
+</html>
