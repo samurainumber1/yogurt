@@ -66,7 +66,7 @@
             question.textContent = poll.question;
             const options = document.createElement("div");
             options.className = "global-poll-options";
-            poll.options.slice(0, 2).forEach((label, index) => {
+            poll.options.forEach((label, index) => {
                 const button = document.createElement("button");
                 button.type = "button";
                 button.className = "global-poll-option";
@@ -86,7 +86,7 @@
             pollNode.append(question, options, footer);
         }
         const buttons = [...pollNode.querySelectorAll(".global-poll-option")];
-        const hasVoted = poll.myVote === 0 || poll.myVote === 1;
+        const hasVoted = Number.isInteger(poll.myVote) && poll.myVote >= 0 && poll.myVote < poll.options.length;
         buttons.forEach((button, index) => {
             const count = poll.counts[index] || 0;
             const percentage = poll.total ? Math.round(count * 100 / poll.total) : 0;

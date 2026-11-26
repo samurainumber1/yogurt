@@ -26,13 +26,15 @@ function getClientId() {
 }
 
 const presenceClientId = getClientId();
+const presencePagePath = window.location.pathname.slice(0, 200);
+window.sitePresenceClientId = presenceClientId;
 
 async function sendPresence(path, keepalive = false) {
     try {
         const response = await fetch(path, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ clientId: presenceClientId }),
+            body: JSON.stringify({ clientId: presenceClientId, pagePath: presencePagePath }),
             keepalive,
             credentials: "same-origin",
         });
@@ -44,12 +46,14 @@ async function sendPresence(path, keepalive = false) {
     }
 }
 
-sendPresence("/api/presence");
-const presenceInterval = window.setInterval(() => {
-    if (!document.hidden) sendPresence("/api/presence");
-}, 20000);
+if (window.self === window.top) {
+    sendPresence("/api/presence");
+    const presenceInterval = window.setInterval(() => {
+        if (!document.hidden) sendPresence("/api/presence");
+    }, 20000);
 
-window.addEventListener("pagehide", () => {
-    window.clearInterval(presenceInterval);
-    sendPresence("/api/presence/leave", true);
-}, { once: true });
+    window.addEventListener("pagehide", () => {
+        window.clearInterval(presenceInterval);
+        sendPresence("/api/presence/leave", true);
+    }, { once: true });
+}

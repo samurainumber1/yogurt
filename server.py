@@ -198,6 +198,11 @@ def _serve_r2_object(key):
     if body is None:
         return Response(status=status, headers=headers, content_type=content_type)
 
+    if status == 200 and content_type.split(";", 1)[0].strip().lower() == "text/html":
+        document = body.read()
+        body.close()
+        return Response(document, status=status, headers=headers, content_type=content_type)
+
     def stream_body():
         try:
             yield from body.iter_chunks(chunk_size=64 * 1024)
@@ -363,11 +368,10 @@ def _slow_roads_document():
         document = response.get_data()
         if b"</head>" not in document:
             raise RuntimeError("Could not find the closing head tag in the local Slow Roads page.")
-        local_presence = b'<script src="/assets/presence.js" defer></script>'
         response.set_data(
             document.replace(
                 b"</head>",
-                local_presence + offline_guard + b"</head>",
+                offline_guard + b"</head>",
                 1,
             )
         )
@@ -625,15 +629,17 @@ def set_slow_roads_headers(response):
     if (
         response.status_code == 200
         and response.mimetype == "text/html"
-        and not response.is_streamed
-        and response.calculate_content_length() is not None
+        and request.method != "HEAD"
     ):
+        response.direct_passthrough = False
         page = response.get_data()
         additions = (
             b'<link rel="stylesheet" href="/assets/global-announcement.css">'
             b'<script defer src="/assets/global-announcement.js"></script>'
         )
         lowered = page.lower()
+        if b"/assets/presence.js" not in lowered:
+            additions += b'<script defer src="/assets/presence.js"></script>'
         head_end = lowered.find(b"</head>")
         if head_end >= 0:
             page = page[:head_end] + additions + page[head_end:]

@@ -1,13 +1,16 @@
 import io
 import re
+import sqlite3
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from html import escape
 from pathlib import Path
+from types import SimpleNamespace
 from urllib.parse import quote
 
 import pytest
 
+import admin as admin_module
 import server
 from server import app
 
@@ -104,15 +107,28 @@ class FakeR2Client:
 
 
 @pytest.fixture
-def client(monkeypatch):
+def client(monkeypatch, tmp_path):
     app.config["TESTING"] = True
     app.config["ADMIN_PASSWORD"] = "test-only-admin-password"
+    monkeypatch.setattr(admin_module, "_database_path", lambda: tmp_path / "site-state.sqlite3")
     r2_client = FakeR2Client()
     monkeypatch.setattr(server, "_r2_client", lambda: r2_client)
     with app.test_client() as test_client:
         test_client.environ_base["HTTP_HOST"] = "yogurt-ws0r.onrender.com"
         test_client.r2_client = r2_client
         yield test_client
+
+
+def sign_in_admin(client):
+    login_page = client.get("/admin/login")
+    login_token = re.search(rb'name="csrf_token" value="([^"]+)"', login_page.data).group(1).decode()
+    login = client.post(
+        "/admin/login",
+        data={"csrf_token": login_token, "password": "test-only-admin-password"},
+    )
+    assert login.status_code == 302
+    panel = client.get("/admin/panel")
+    return re.search(rb'name="csrf-token" content="([^"]+)"', panel.data).group(1).decode()
 
 
 def test_wrong_host_shows_canonical_link_and_preserves_requested_path():
@@ -151,6 +167,8 @@ def test_calculator_is_the_only_default_page(client):
 
     assert response.status_code == 200
     assert b"assets/calculator.js" in response.data
+    assert b"assets/global-announcement.js" in response.data
+    assert b"assets/presence.js" in response.data
     assert b"assets/catalog.js" not in response.data
     assert b"id=\"themeTrigger\"" not in response.data
     assert b"id=\"unlockTransition\"" not in response.data
@@ -194,6 +212,8 @@ def test_study_tool_pages_open_from_homepage_links(client):
         assert response.status_code == 200
         assert escape(tool["title"]).encode() in response.data
         assert b"assets/study-tools.js" in response.data
+        assert b"assets/global-announcement.js" in response.data
+        assert b"assets/presence.js" in response.data
         assert f'data-tool="{tool["kind"]}"'.encode() in response.data
         assert response.data.count(b'data-field="') == len(tool["fields"])
 
@@ -207,6 +227,8 @@ def test_catalog_is_gated_and_minecraft_1206_is_removed(client):
     assert b"assets/access-guard.js" in catalog.data
     assert b"assets/catalog-lock.js" in catalog.data
     assert b"assets/presence.js" in catalog.data
+    assert b"assets/global-announcement.js" in catalog.data
+    assert b'id="trendingTitle"' in catalog.data
     assert b"ALEX MODS was locked by an Administrator." in catalog.data
     assert b"graph-calculator" not in catalog.data
     assert b"Minecraft 1.20.6" not in catalog.data
@@ -249,11 +271,24 @@ def test_admin_login_dashboard_and_catalog_lock(client):
     dashboard = client.get("/admin/panel")
     assert dashboard.status_code == 200
     assert b"id=\"trafficChart\"" in dashboard.data
+    assert b"id=\"dailyTrafficChart\"" in dashboard.data
+    assert b"id=\"announcementTime\"" in dashboard.data
+    assert b"id=\"pollHistory\"" in dashboard.data
     assert b"id=\"catalogLockButton\"" in dashboard.data
     csrf_token = re.search(rb'name="csrf-token" content="([^"]+)"', dashboard.data).group(1).decode()
+    first_client = str(uuid.uuid4())
+    second_client = str(uuid.uuid4())
+    client.post("/api/presence", json={"clientId": first_client, "pagePath": "/calculator"})
+    client.post("/api/presence", json={"clientId": second_client, "pagePath": "/tools/percentage"})
     metrics = client.get("/api/admin/metrics")
     assert metrics.status_code == 200
     assert len(metrics.json["samples"]) == 72
+    assert len(metrics.json["daily"]) == 30
+    assert {"Calculator", "Math tools"}.issubset(
+        {page["category"] for page in metrics.json["pages"]}
+    )
+    client.post("/api/presence/leave", json={"clientId": first_client})
+    client.post("/api/presence/leave", json={"clientId": second_client})
 
     locked = client.post(
         "/api/admin/catalog-lock",
@@ -278,16 +313,182 @@ def test_admin_login_dashboard_and_catalog_lock(client):
     assert client.get("/api/admin/metrics").status_code == 401
 
 
+def test_announcement_today_schedule_and_poll_history(client, monkeypatch):
+    fixed_now = datetime(2030, 5, 14, 12, 0, tzinfo=timezone.utc).timestamp()
+    clock = [fixed_now]
+    monkeypatch.setattr(admin_module, "time", SimpleNamespace(time=lambda: clock[0]))
+    csrf_token = sign_in_admin(client)
+    headers = {"X-CSRF-Token": csrf_token}
+
+    immediate = client.post(
+        "/api/admin/announcement",
+        headers=headers,
+        json={"message": "Current message", "schedule": None},
+    )
+    assert immediate.status_code == 200
+    assert client.get("/api/announcement").json["message"] == "Current message"
+
+    scheduled = client.post(
+        "/api/admin/announcement",
+        headers=headers,
+        json={
+            "message": "Scheduled message",
+            "schedule": {
+                "localDate": "2030-05-14",
+                "timezoneOffset": 0,
+                "startsAt": "2030-05-14T18:30:00+00:00",
+                "expiresAt": "2030-05-15T00:00:00+00:00",
+            },
+        },
+    )
+    assert scheduled.status_code == 200
+    assert scheduled.json["schedule"]["localDate"] == "2030-05-14"
+    assert client.get("/api/announcement").json["message"] == "Current message"
+    assert client.get("/api/admin/announcement").json["message"] == "Scheduled message"
+    clock[0] = datetime(2030, 5, 14, 18, 31, tzinfo=timezone.utc).timestamp()
+    assert client.get("/api/announcement").json["message"] == "Scheduled message"
+    clock[0] = datetime(2030, 5, 15, 0, 0, tzinfo=timezone.utc).timestamp()
+    assert client.get("/api/announcement").json["message"] == ""
+    clock[0] = fixed_now
+
+    next_day = client.post(
+        "/api/admin/announcement",
+        headers=headers,
+        json={
+            "message": "Not allowed tomorrow",
+            "schedule": {
+                "localDate": "2030-05-15",
+                "timezoneOffset": 0,
+                "startsAt": "2030-05-15T09:00:00+00:00",
+                "expiresAt": "2030-05-16T00:00:00+00:00",
+            },
+        },
+    )
+    assert next_day.status_code == 400
+
+    poll = client.post(
+        "/api/admin/poll",
+        headers=headers,
+        json={
+            "question": "Choose a favorite",
+            "options": ["Alpha", "Beta", "Gamma"],
+            "closesAt": "2030-05-14T19:00:00+00:00",
+            "localDate": "2030-05-14",
+            "timezoneOffset": 0,
+        },
+    )
+    assert poll.status_code == 200
+    assert poll.json["closesAt"] == datetime(2030, 5, 14, 19, tzinfo=timezone.utc).timestamp()
+    voter_id = str(uuid.uuid4())
+    vote = client.post(
+        "/api/poll/vote",
+        json={"pollId": poll.json["id"], "voterId": voter_id, "optionIndex": 2},
+    )
+    assert vote.status_code == 200
+    assert vote.json["counts"] == [0, 0, 1]
+
+    ended = client.post(
+        "/api/admin/poll",
+        headers=headers,
+        json={"question": "", "options": []},
+    )
+    assert ended.status_code == 200
+    history = client.get("/api/admin/poll-history")
+    assert history.status_code == 200
+    assert history.json["history"][0]["question"] == "Choose a favorite"
+    assert history.json["history"][0]["counts"] == [0, 0, 1]
+
+    auto_close = client.post(
+        "/api/admin/poll",
+        headers=headers,
+        json={
+            "question": "This poll expires",
+            "options": ["Yes", "No"],
+            "closesAt": "2030-05-14T12:05:00+00:00",
+            "localDate": "2030-05-14",
+            "timezoneOffset": 0,
+        },
+    )
+    assert auto_close.status_code == 200
+    clock[0] = datetime(2030, 5, 14, 12, 6, tzinfo=timezone.utc).timestamp()
+    assert client.get("/api/poll").json["active"] is False
+    history = client.get("/api/admin/poll-history").json["history"]
+    assert history[0]["question"] == "This poll expires"
+
+
+def test_trending_game_launches_are_counted_once_per_tab_per_day(client):
+    first_client = str(uuid.uuid4())
+    second_client = str(uuid.uuid4())
+    game_path = "games/ALEX MODS - Space Waves.html"
+    first = client.post("/api/game-view", json={"clientId": first_client, "gamePath": game_path})
+    repeat = client.post("/api/game-view", json={"clientId": first_client, "gamePath": game_path})
+    second = client.post("/api/game-view", json={"clientId": second_client, "gamePath": game_path})
+
+    assert first.status_code == repeat.status_code == second.status_code == 200
+    assert client.post(
+        "/api/game-view",
+        json={"clientId": str(uuid.uuid4()), "gamePath": "games/not-a-catalog-game.html"},
+    ).status_code == 400
+    trending = client.get("/api/trending-games")
+    space_waves = next(game for game in trending.json["games"] if game["path"] == game_path)
+    assert space_waves["plays"] == 2
+
+
+def test_existing_poll_votes_migrate_to_support_more_choices(client, tmp_path):
+    database_path = tmp_path / "site-state.sqlite3"
+    client.get("/api/poll")
+    voter_id = str(uuid.uuid4())
+    with sqlite3.connect(database_path) as connection:
+        connection.execute("DROP TABLE poll_votes")
+        connection.execute(
+            """
+            CREATE TABLE poll_votes (
+                poll_id TEXT NOT NULL,
+                voter_id TEXT NOT NULL,
+                option_index INTEGER NOT NULL CHECK (option_index IN (0, 1)),
+                created_at REAL NOT NULL,
+                PRIMARY KEY (poll_id, voter_id)
+            )
+            """
+        )
+        connection.execute(
+            "INSERT INTO poll_votes (poll_id, voter_id, option_index, created_at) VALUES (?, ?, ?, ?)",
+            ("legacy-poll", voter_id, 1, 123.0),
+        )
+
+    client.get("/api/poll")
+    with sqlite3.connect(database_path) as connection:
+        schema = connection.execute(
+            "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'poll_votes'"
+        ).fetchone()[0]
+        migrated_vote = connection.execute(
+            "SELECT option_index FROM poll_votes WHERE poll_id = ? AND voter_id = ?",
+            ("legacy-poll", voter_id),
+        ).fetchone()[0]
+    assert "BETWEEN 0 AND 4" in schema
+    assert migrated_vote == 1
+
+
 def test_presence_counts_are_anonymous_and_bucketed(client):
     first_client = str(uuid.uuid4())
     second_client = str(uuid.uuid4())
-    first = client.post("/api/presence", json={"clientId": first_client})
-    second = client.post("/api/presence", json={"clientId": second_client})
+    first = client.post(
+        "/api/presence",
+        json={"clientId": first_client, "pagePath": "/calculator"},
+    )
+    second = client.post(
+        "/api/presence",
+        json={"clientId": second_client, "pagePath": "/tools/percentage"},
+    )
 
     assert first.status_code == 200
     assert first.json["online"] >= 1
     assert second.json["online"] >= 2
     assert client.post("/api/presence", json={"clientId": "invalid"}).status_code == 400
+    assert client.post(
+        "/api/presence",
+        json={"clientId": str(uuid.uuid4()), "pagePath": "/calculator?secret=value"},
+    ).status_code == 400
 
     client.post("/api/presence/leave", json={"clientId": first_client})
     client.post("/api/presence/leave", json={"clientId": second_client})
@@ -300,6 +501,8 @@ def test_game_assets_are_served(client):
     space_waves = client.get("/games/ALEX%20MODS%20-%20Space%20Waves.html").data
     assert b"<iframe" not in space_waves
     assert b"101games.io" not in space_waves
+    assert b"assets/global-announcement.js" in space_waves
+    assert b"assets/presence.js" in space_waves
     for build_file in (
         "space-waves-3d.loader.js",
         "space-waves-3d.data",
@@ -315,6 +518,7 @@ def test_game_assets_are_served(client):
     assert '{ title: "Drift Hunters"' in catalog
     catalog_page = client.get("/scientific-calculator")
     assert b"assets/catalog.js" in catalog_page.data
+    assert "api/trending-games" in catalog
     assert '{ title: "Space Waves"' in catalog
     assert b"<strong>Drift Hunters</strong>" not in catalog_page.data
     slowroads = client.get("/games/ALEX%20MODS%20-%20Slowroads.io.html")
@@ -510,10 +714,13 @@ def test_routes_are_explicit():
         "/api/catalog-lock",
         "/api/presence",
         "/api/presence/leave",
+        "/api/game-view",
+        "/api/trending-games",
         "/api/admin/metrics",
         "/api/admin/catalog-lock",
         "/api/admin/announcement",
         "/api/admin/poll",
+        "/api/admin/poll-history",
         "/api/announcement",
         "/api/poll",
         "/api/poll/vote",

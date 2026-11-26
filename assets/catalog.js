@@ -149,6 +149,8 @@ const mapDialog = document.querySelector("#mapDialog");
 const feedbackDialog = document.querySelector("#feedbackDialog");
 const recentGrid = document.querySelector("#recentGrid");
 const recentSection = document.querySelector("#recentSection");
+const trendingGrid = document.querySelector("#trendingGrid");
+const trendingEmpty = document.querySelector("#trendingEmpty");
 const RECENTS_KEY = "alexmods-game-recents";
 const themePicker = document.querySelector("#themePalette");
 const themeTrigger = document.querySelector("#themeTrigger");
@@ -309,9 +311,10 @@ if (themePicker && themeTrigger && window.themePresets) {
     });
 }
 
-function createGameCard(game, index, isRecent = false) {
+function createGameCard(game, index, isRecent = false, isTrending = false) {
     const card = document.createElement("article");
     card.className = "game-card";
+    if (isTrending) card.classList.add("is-trending");
     card.style.animationDelay = `${Math.min(index, 20) * 22}ms`;
     card.style.setProperty("--card-delay", `${Math.min(index, 34) * 32}ms`);
     card.style.setProperty("--card-tilt", `${(index % 3 - 1) * 7}deg`);
@@ -323,7 +326,11 @@ function createGameCard(game, index, isRecent = false) {
 
     const artIndex = document.createElement("span");
     artIndex.className = "art-index";
-    artIndex.textContent = isRecent ? "RECENTLY PLAYED" : `PICK ${String(index + 1).padStart(2, "0")}`;
+    artIndex.textContent = isRecent
+        ? "RECENTLY PLAYED"
+        : isTrending
+            ? `TRENDING #${index + 1}`
+            : `PICK ${String(index + 1).padStart(2, "0")}`;
 
     const icon = document.createElement("span");
     icon.className = "art-icon";
@@ -340,7 +347,9 @@ function createGameCard(game, index, isRecent = false) {
     const meta = document.createElement("div");
     meta.className = "card-meta";
     const metaType = document.createElement("span");
-    metaType.textContent = game.maps ? "CITY COLLECTION" : "IN THE GAME STASH";
+    metaType.textContent = game.weeklyPlays
+        ? `${game.weeklyPlays} PLAYS THIS WEEK`
+        : game.maps ? "CITY COLLECTION" : "IN THE GAME STASH";
     const metaCategory = document.createElement("span");
     metaCategory.textContent = game.category;
     meta.append(metaType, metaCategory);
@@ -376,6 +385,47 @@ function renderGames() {
 
     gameGrid.replaceChildren(...filtered.map((game, index) => createGameCard(game, index)));
     emptyState.hidden = filtered.length !== 0;
+}
+
+function renderTrendingGames(trending) {
+    const trendingGames = trending.map(item => {
+        const game = games.find(candidate => candidate.path === item.path)
+            || (item.path === "games/Subway Surfers" ? games.find(candidate => candidate.maps) : null);
+        return game ? { ...game, weeklyPlays: item.plays } : null;
+    }).filter(Boolean).slice(0, 5);
+    trendingGrid.replaceChildren(
+        ...trendingGames.map((game, index) => createGameCard(game, index, false, true))
+    );
+    if (!trendingGames.length) {
+        trendingEmpty.textContent = "Trending games will appear here as people play from the catalog.";
+    }
+    trendingEmpty.hidden = trendingGames.length > 0;
+}
+
+async function loadTrendingGames() {
+    try {
+        const response = await fetch("/api/trending-games", { cache: "no-store" });
+        if (!response.ok) throw new Error(`Trending games request failed (${response.status}).`);
+        const data = await response.json();
+        renderTrendingGames(Array.isArray(data.games) ? data.games : []);
+    } catch (error) {
+        trendingEmpty.textContent = "Trending games could not be loaded right now.";
+        console.warn("Could not load trending games:", error);
+    }
+}
+
+function trackGameLaunch(game) {
+    const clientId = window.sitePresenceClientId;
+    if (!clientId || !game.path) return;
+    const gamePath = game.path.startsWith("games/Subway Surfers/")
+        ? "games/Subway Surfers"
+        : game.path;
+    fetch("/api/game-view", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clientId, gamePath }),
+    }).catch(error => console.warn("Could not record game play:", error));
 }
 
 function loadRecents() {
@@ -453,6 +503,7 @@ function openGame(game) {
         return;
     }
 
+    trackGameLaunch(game);
     saveRecent(game);
     lastFocusedElement = document.activeElement;
     document.querySelector("#playerTitle").textContent = game.title;
@@ -547,6 +598,7 @@ document.addEventListener("keydown", event => {
 document.querySelector("#gameCount").textContent = String(games.length);
 renderGames();
 renderRecents();
+loadTrendingGames();
 if (document.documentElement.classList.contains("catalog-intro")) {
     window.setTimeout(() => document.documentElement.classList.remove("catalog-intro"), 3300);
 }
@@ -565,6 +617,7 @@ async function applyEditableGameNames() {
         });
         renderGames();
         renderRecents();
+        loadTrendingGames();
     } catch (error) {
         console.warn("Could not load editable game display names:", error);
     }
